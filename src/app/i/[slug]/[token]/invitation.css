@@ -77,6 +77,72 @@
   color: var(--color-on-sage);
 }
 
+/* A page over a full-bleed photo */
+.scene {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5cqw;
+  padding: 16cqw 8cqw;
+  text-align: center;
+  color: #fff;
+  background: #59604f;
+}
+
+/* Soft dark wash so white text stays readable on any photo */
+.scene::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background: linear-gradient(
+    to bottom,
+    rgb(28 31 24 / 0.35),
+    rgb(28 31 24 / 0.12) 40%,
+    rgb(28 31 24 / 0.42)
+  );
+}
+
+.scene > :not(.bgx) {
+  position: relative;
+  z-index: 2;
+}
+
+.scene .scr {
+  font-size: 14cqw;
+  text-shadow: 0 1px 14px rgb(0 0 0 / 0.3);
+}
+
+.scene .caps {
+  text-shadow: 0 1px 10px rgb(0 0 0 / 0.35);
+}
+
+/* Background photo, taller than the page so the parallax never shows an edge */
+.bgx {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -12%;
+  height: 124%;
+  will-change: transform;
+}
+
+.bgx-img {
+  object-fit: cover;
+}
+
+/* Cards float gently */
+.float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes float {
+  50% {
+    translate: 0 -6px;
+  }
+}
+
 /* Line icons that draw themselves */
 .icon {
   width: 20cqw;
@@ -114,6 +180,16 @@
   transform: scale(1.04);
 }
 
+.invitation[data-motion] [data-a="zoom"]:not(.in) {
+  opacity: 0;
+  transform: scale(0.9) rotate(-6deg);
+}
+
+.invitation[data-motion] [data-a="rise"]:not(.in) {
+  opacity: 0;
+  transform: translateY(40px);
+}
+
 .invitation[data-motion] [data-a="draw"]:not(.in) {
   stroke-dashoffset: 420;
 }
@@ -121,5 +197,9 @@
 @media (prefers-reduced-motion: reduce) {
   .invitation [data-a] {
     transition-duration: 0.01s !important;
+  }
+
+  .float {
+    animation: none;
   }
 }

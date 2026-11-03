@@ -1,8 +1,10 @@
 import { notFound } from "next/navigation";
 import { Envelope } from "@/components/envelope/Envelope";
 import { Hero } from "@/components/hero/Hero";
+import { FramedScene } from "@/components/framed/FramedScene";
+import { LaceTextures } from "@/components/lace/LaceTextures";
 import { Letter } from "@/components/letter/Letter";
-import { RevealObserver } from "@/components/motion/RevealObserver";
+import { PageMotion } from "@/components/motion/PageMotion";
 import { copy } from "@/lib/copy";
 import { formatDate } from "@/lib/format";
 import { getInvitation, getGuest, allGuestPaths } from "@/lib/getInvitation";
@@ -30,7 +32,9 @@ export default async function GuestInvitation({
   const myEvents = inv.events.filter((e) => guest.events.includes(e.id));
 
   const names = `${inv.couple.groom[L]}${t.and}${inv.couple.bride[L]}`;
-  const when = `${formatDate(inv.date, L, { day: "numeric", month: "long", year: "numeric" })} · ${inv.city[L]}`;
+  const day = formatDate(inv.date, L, { day: "numeric", month: "long", year: "numeric" });
+  const weekday = formatDate(inv.date, L, { weekday: "long" });
+  const when = `${day} · ${inv.city[L]}`;
 
   return (
     <main className="invitation" lang={L} dir={L === "ar" ? "rtl" : "ltr"}>
@@ -60,6 +64,15 @@ export default async function GuestInvitation({
         signature={names}
       />
 
+      <FramedScene
+        background={inv.media.landscape}
+        photo={inv.media.framed}
+        photoAlt={names}
+        monogram={inv.couple.monogram}
+        title={t.married}
+        when={`${weekday} · ${day}`}
+      />
+
       {/* Temporary: guest data, until the next sections are built */}
       <section style={{ display: "grid", placeContent: "center", gap: 8, padding: 32, textAlign: "center" }}>
         <p>{guest.name[L]}</p>
@@ -72,7 +85,8 @@ export default async function GuestInvitation({
           ))}
         </ul>
       </section>
-      <RevealObserver />
+      <LaceTextures />
+      <PageMotion />
     </main>
   );
 }
