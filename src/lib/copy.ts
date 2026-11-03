@@ -21,6 +21,9 @@ const en = {
   openDetails: "Open the details",
   closeDetails: "Close the details",
   goodToKnow: "Good to know",
+  giftIntro: "For those who wish, a gift can also be sent with",
+  copy: "Copy",
+  copied: "Copied",
 };
 
 const ar: typeof en = {
@@ -42,6 +45,9 @@ const ar: typeof en = {
   openDetails: "افتحوا التفاصيل",
   closeDetails: "أغلقوا التفاصيل",
   goodToKnow: "معلومات تهمّكم",
+  giftIntro: "ولمن يرغب، يمكن إرسال الهدية عبر",
+  copy: "نسخ",
+  copied: "تمّ النسخ",
 };
 
 export const copy: Record<Lang, typeof en> = { en, ar };

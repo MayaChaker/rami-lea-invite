@@ -107,6 +107,14 @@ export default async function GuestInvitation({
       <Notes
         label={t.goodToKnow}
         notes={inv.notes.map((n) => ({ title: n.title[L], text: n.text[L] }))}
+        gifts={
+          inv.gifts && {
+            intro: t.giftIntro,
+            copy: t.copy,
+            copied: t.copied,
+            methods: inv.gifts,
+          }
+        }
       />
 
       {/* Temporary: guest data, until the next sections are built */}
