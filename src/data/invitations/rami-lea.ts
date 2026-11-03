@@ -7,6 +7,10 @@ export const ramiLea: Invitation = {
     groom: { en: "Rami", ar: "رامي" },
     bride: { en: "Lea", ar: "ليا" },
     monogram: "R&L",
+    families: {
+      groom: { en: "Nassar", ar: "نصّار" },
+      bride: { en: "Khalil", ar: "خليل" },
+    },
   },
   date: "2027-06-19T17:00:00+03:00",
   city: { en: "Jounieh, Lebanon", ar: "جونيه، لبنان" },

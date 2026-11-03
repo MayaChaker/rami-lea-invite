@@ -9,7 +9,9 @@ const nextConfig: NextConfig = {
   partialPrefetching: true,
   turbopack: {
     rules: {
-      "*.css": {
+      // Run Tailwind only on the global stylesheet. A "*.css" rule with
+      // `as: "*.css"` also catches *.module.css and turns CSS Modules off.
+      "globals.css": {
         loaders: ["@tailwindcss/turbopack"],
         as: "*.css",
       },

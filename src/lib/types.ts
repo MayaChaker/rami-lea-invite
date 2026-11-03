@@ -22,7 +22,13 @@ export interface Guest {
 
 export interface Invitation {
   slug: string;
-  couple: { groom: Localized; bride: Localized; monogram: string };
+  couple: {
+    groom: Localized;
+    bride: Localized;
+    monogram: string;
+    // Family names, for the line "The ... & ... families have the honour of inviting you"
+    families: { groom: Localized; bride: Localized };
+  };
   date: string;
   city: Localized;
   rsvpBy: string;
