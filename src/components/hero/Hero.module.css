@@ -1,0 +1,169 @@
+/* Ported from the prototype's .hero. Sizes in cqw / cqh follow the screen. */
+.hero {
+  position: relative;
+  container-type: size;
+  overflow: hidden;
+  color: #fff;
+  background: #59604f;
+}
+
+/* Slow Ken Burns zoom, paused until the envelope opens. */
+.zoom {
+  position: absolute;
+  inset: 0;
+  animation: kenburns 18s ease-out forwards;
+  animation-play-state: paused;
+}
+
+:global(html[data-opened]) .zoom {
+  animation-play-state: running;
+}
+
+.video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Soften the colours toward the palette */
+  filter: saturate(0.82) sepia(0.1) brightness(1.03) contrast(0.97);
+}
+
+/* Darker at the top (for the text) and bottom (for the cue). */
+.hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgb(28 31 24 / 0.5) 0%,
+    rgb(28 31 24 / 0.15) 42%,
+    rgb(28 31 24 / 0) 60%,
+    rgb(28 31 24 / 0.35) 100%
+  );
+}
+
+.text {
+  position: absolute;
+  z-index: 1;
+  inset-inline: 6cqw;
+  top: 15cqh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3cqw;
+  text-align: center;
+  text-shadow: 0 1px 16px rgb(0 0 0 / 0.3);
+}
+
+.caps {
+  margin: 0;
+  font-size: 2.7cqw;
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+}
+
+.names {
+  margin: 0;
+  font-family: var(--font-script);
+  font-size: 20cqw;
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.amp {
+  margin: 0 0.04em;
+  font-size: 0.72em;
+}
+
+:global([dir="rtl"]) .caps {
+  font-size: 3.8cqw;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+:global([dir="rtl"]) .names {
+  font-family: var(--font-ar-display);
+  font-size: 13cqw;
+  line-height: 1.5;
+}
+
+/* "Scroll" with a line that drips down */
+.cue {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  right: 0;
+  bottom: 4cqh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6cqw;
+  color: rgb(255 255 255 / 0.85);
+}
+
+.cue .caps {
+  font-size: 2.3cqw;
+}
+
+.cue i {
+  width: 1px;
+  height: 7cqw;
+  background: linear-gradient(rgb(255 255 255 / 0.85), transparent);
+  transform-origin: top;
+  animation: drip 2.2s ease-in-out infinite;
+}
+
+/* ---------- reveal after the envelope opens ---------- */
+.reveal {
+  opacity: 0;
+  transform: translateY(10px);
+  transition:
+    opacity 1.2s ease,
+    transform 1.2s cubic-bezier(0.2, 0.7, 0.2, 1),
+    filter 1.4s ease;
+  transition-delay: var(--d, 0s);
+}
+
+/* The names start blurred and come into focus */
+.names.reveal {
+  filter: blur(10px);
+}
+
+:global(html[data-opened]) .reveal {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+
+@keyframes kenburns {
+  from {
+    transform: scale(1.04);
+  }
+  to {
+    transform: scale(1.16);
+  }
+}
+
+@keyframes drip {
+  0% {
+    transform: scaleY(0);
+  }
+  50% {
+    transform: scaleY(1);
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero *,
+  .hero::after {
+    animation: none !important;
+    transition-duration: 0.01s !important;
+  }
+}

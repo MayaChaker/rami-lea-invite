@@ -32,3 +32,35 @@ body {
 [dir="rtl"] {
   font-family: var(--font-ar);
 }
+
+/* ---------- the invitation: one screen per page, one swipe per page ---------- */
+body:has(.invitation) {
+  overflow: hidden;
+}
+
+.invitation {
+  height: 100svh;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scroll-snap-type: y mandatory;
+  scrollbar-width: none;
+}
+
+.invitation::-webkit-scrollbar {
+  display: none;
+}
+
+.invitation > section {
+  position: relative;
+  container-type: size; /* so cqw / cqh follow each page's size */
+  height: 100svh;
+  overflow: hidden;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* No scrolling until the envelope is open */
+html:not([data-opened]) .invitation {
+  overflow-y: hidden;
+}
