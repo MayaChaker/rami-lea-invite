@@ -1,0 +1,18 @@
+.rows {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.row {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6cqw;
+  padding: 5cqw 0;
+}
+
+/* A hairline between notes */
+.row + .row {
+  border-top: 1px solid var(--color-line);
+}

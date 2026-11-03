@@ -7,6 +7,7 @@ import { FramedScene } from "@/components/framed/FramedScene";
 import { LaceTextures } from "@/components/lace/LaceTextures";
 import { Letter } from "@/components/letter/Letter";
 import { PageMotion } from "@/components/motion/PageMotion";
+import { Notes } from "@/components/notes/Notes";
 import { copy } from "@/lib/copy";
 import { formatDate } from "@/lib/format";
 import { getInvitation, getGuest, allGuestPaths } from "@/lib/getInvitation";
@@ -101,6 +102,11 @@ export default async function GuestInvitation({
             mapsQuery: e.mapsQuery,
           })),
         }}
+      />
+
+      <Notes
+        label={t.goodToKnow}
+        notes={inv.notes.map((n) => ({ title: n.title[L], text: n.text[L] }))}
       />
 
       {/* Temporary: guest data, until the next sections are built */}
