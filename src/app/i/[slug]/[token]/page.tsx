@@ -1,4 +1,5 @@
 import { notFound } from "next/navigation";
+import { CountdownBand } from "@/components/countdown/CountdownBand";
 import { Envelope } from "@/components/envelope/Envelope";
 import { Hero } from "@/components/hero/Hero";
 import { FramedScene } from "@/components/framed/FramedScene";
@@ -71,6 +72,13 @@ export default async function GuestInvitation({
         monogram={inv.couple.monogram}
         title={t.married}
         when={`${weekday} · ${day}`}
+      />
+
+      <CountdownBand
+        label={`${weekday} · ${day}`}
+        title={t.countdown}
+        target={inv.date}
+        units={t.units}
       />
 
       {/* Temporary: guest data, until the next sections are built */}

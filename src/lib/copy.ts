@@ -12,6 +12,8 @@ const en = {
   amp: "&",
   scroll: "Scroll",
   married: "are getting married",
+  countdown: "The countdown to forever",
+  units: ["days", "hours", "min", "sec"],
 };
 
 const ar: typeof en = {
@@ -24,6 +26,8 @@ const ar: typeof en = {
   amp: "و",
   scroll: "مرّروا للأسفل",
   married: "يحتفلان بزفافهما",
+  countdown: "العدّ إلى الأبد",
+  units: ["يوم", "ساعة", "دقيقة", "ثانية"],
 };
 
 export const copy: Record<Lang, typeof en> = { en, ar };

@@ -1,0 +1,55 @@
+.count {
+  display: flex;
+  justify-content: center;
+  gap: 4.6cqw;
+  font-variant-numeric: tabular-nums lining-nums; /* digits keep the same width */
+}
+
+.unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6cqw;
+  min-width: 13cqw;
+}
+
+/* A window one line tall, so the new number slides in from above */
+.number {
+  display: block;
+  height: 11cqw;
+  overflow: hidden;
+  font-size: 11cqw;
+  font-weight: 400;
+  line-height: 1;
+}
+
+.digit {
+  display: block;
+  font-style: normal;
+  animation: slide 0.5s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.label {
+  font-size: 2.3cqw;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  opacity: 0.75;
+}
+
+:global([dir="rtl"]) .label {
+  font-size: 3.4cqw;
+  letter-spacing: 0;
+}
+
+@keyframes slide {
+  from {
+    transform: translateY(-60%);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .digit {
+    animation: none;
+  }
+}
