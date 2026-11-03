@@ -74,9 +74,10 @@ export default async function GuestInvitation({
   return (
     <main className="invitation" lang={L} dir={L === "ar" ? "rtl" : "ltr"}>
       <Envelope
-        tapLabel={t.tapSeal}
+        tapLabel={t.tapOpen}
         skipLabel={t.skip}
-        monogram={inv.couple.monogram}
+        photo={inv.media.cameo}
+        photoAlt={names}
       />
 
       <Hero
