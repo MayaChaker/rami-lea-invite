@@ -51,6 +51,7 @@ export interface Invitation {
   letter: Localized;
   notes: { title: Localized; text: Localized }[];
   gifts?: GiftMethod[]; // leave out to show no gift options
+  albumUrl?: string; // shared photo album for the QR page; leave out to hide it
   events: EventItem[];
   guests: Guest[];
 }

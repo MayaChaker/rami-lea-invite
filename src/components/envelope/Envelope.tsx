@@ -21,10 +21,11 @@ const FLAPS: FlapName[] = ["right", "left", "bottom", "top"];
 
 type Props = {
   tapLabel: string; // e.g. "Tap the seal to open"
+  skipLabel: string; // e.g. "Skip"
   monogram: string; // pressed into the wax seal, e.g. "R&L"
 };
 
-export function Envelope({ tapLabel, monogram }: Props) {
+export function Envelope({ tapLabel, skipLabel, monogram }: Props) {
   const [stage, setStage] = useState<Stage>("closed");
   const timers = useRef<number[]>([]);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -49,9 +50,11 @@ export function Envelope({ tapLabel, monogram }: Props) {
     const el = stageRef.current;
     const inner = innerRef.current;
     if (!el || !inner) return;
-    const observer = new ResizeObserver(() =>
-      drawEnvelope(el, inner, flapRefs.current),
-    );
+    const observer = new ResizeObserver(() => {
+      drawEnvelope(el, inner, flapRefs.current);
+      // The CSS shows plain sage flaps until now, then fades the paper and lace in.
+      el.dataset.drawn = "";
+    });
     observer.observe(el);
     return () => observer.disconnect();
   }, []);
@@ -89,18 +92,53 @@ export function Envelope({ tapLabel, monogram }: Props) {
     };
   }
 
+  // Download the hero video only after the page has settled, so it does not
+  // compete with the page itself on a slow connection. The guest is looking at
+  // the envelope meanwhile, so it is usually ready by the time they tap.
+  useEffect(() => {
+    const video = document.getElementById(HERO_VIDEO_ID);
+    if (!(video instanceof HTMLVideoElement)) return;
+    const start = () => {
+      video.preload = "auto";
+      video.load();
+    };
+    const idle = window.requestIdleCallback ?? ((fn: () => void) => window.setTimeout(fn, 1200));
+    const id = idle(start);
+    return () => (window.cancelIdleCallback ?? window.clearTimeout)(id);
+  }, []);
+
   // Once the envelope starts fading, tell the page it is open:
   // the hero text reveals itself and scrolling is unlocked (both in CSS).
   useEffect(() => {
     if (stage === "fading") document.documentElement.dataset.opened = "";
   }, [stage]);
 
-  function open() {
-    if (stage !== "closed") return;
-    // Start the video inside the tap itself: phones in low-power mode only
-    // allow playback that a user action started.
+  // Start the video inside the tap itself: phones in low-power mode only
+  // allow playback that a user action started.
+  function playVideo() {
     const video = document.getElementById(HERO_VIDEO_ID);
     if (video instanceof HTMLVideoElement) video.play().catch(() => {});
+  }
+
+  // Straight to the invitation, no animation: the Skip button, and guests
+  // whose phone asks for less motion.
+  function skip() {
+    timers.current.forEach(clearTimeout);
+    timers.current.length = 0;
+    playVideo();
+    document.documentElement.dataset.opened = "";
+    setStage("gone");
+  }
+
+  useEffect(() => {
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) skip();
+    // Runs once on mount; skip() only uses refs and setters.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  function open() {
+    if (stage !== "closed") return;
+    playVideo();
     for (const { name, at } of STAGES) {
       timers.current.push(window.setTimeout(() => setStage(name), at));
     }
@@ -151,6 +189,17 @@ export function Envelope({ tapLabel, monogram }: Props) {
           </span>
         </button>
       </div>
+
+      <button
+        type="button"
+        className={styles.skip}
+        onClick={(e) => {
+          e.stopPropagation(); // do not also start the opening animation
+          skip();
+        }}
+      >
+        {skipLabel}
+      </button>
 
       <p className={styles.tap} aria-hidden="true">
         {tapLabel}

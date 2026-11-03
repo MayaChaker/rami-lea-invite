@@ -1,0 +1,12 @@
+/* A white card so the code scans well on the sage band */
+.qr {
+  padding: 4cqw;
+  background: #fff;
+  box-shadow: 0 10px 24px -14px rgb(20 22 16 / 0.5);
+}
+
+.qr svg {
+  display: block;
+  width: 32cqw;
+  height: 32cqw;
+}

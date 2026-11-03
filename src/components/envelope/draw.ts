@@ -19,7 +19,7 @@ export function drawEnvelope(
 
   const dpr = Math.min(2, window.devicePixelRatio || 1);
   const C = { x: W / 2, y: H / 2 }; // centre, where the four tips meet
-  const lw = W * 0.13; // lace width
+  const lw = W * 0.09; // lace width: fine, like real lace, not a ribbon
   const o = W * 0.035; // how far the tips reach past the centre
   const sage =
     getComputedStyle(stage).getPropertyValue("--color-sage").trim() || "#6E7B5F";
@@ -103,7 +103,11 @@ export function drawEnvelope(
     x.clip(outline);
     paper(x, W, H, tones[k]);
     x.restore();
-    x.strokeStyle = "rgba(40,46,34,.35)";
+    // The paper's edge: a soft light bevel, then a fine dark cut line.
+    x.strokeStyle = "rgba(255,255,255,.22)";
+    x.lineWidth = 2.4;
+    x.stroke(outline);
+    x.strokeStyle = "rgba(40,46,34,.4)";
     x.lineWidth = 0.8;
     x.stroke(outline);
 

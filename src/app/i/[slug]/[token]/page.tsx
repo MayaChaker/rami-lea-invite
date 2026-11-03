@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CountdownBand } from "@/components/countdown/CountdownBand";
 import { DetailsScene } from "@/components/details/DetailsScene";
+import { PageDots } from "@/components/dots/PageDots";
+import { End } from "@/components/end/End";
 import { Envelope } from "@/components/envelope/Envelope";
 import { Hero } from "@/components/hero/Hero";
 import { FramedScene } from "@/components/framed/FramedScene";
@@ -9,6 +11,7 @@ import { LaceTextures } from "@/components/lace/LaceTextures";
 import { Letter } from "@/components/letter/Letter";
 import { PageMotion } from "@/components/motion/PageMotion";
 import { Notes } from "@/components/notes/Notes";
+import { PhotosQr } from "@/components/photos/PhotosQr";
 import { RsvpScene } from "@/components/rsvp/RsvpScene";
 import { copy } from "@/lib/copy";
 import { formatDate } from "@/lib/format";
@@ -72,6 +75,7 @@ export default async function GuestInvitation({
     <main className="invitation" lang={L} dir={L === "ar" ? "rtl" : "ltr"}>
       <Envelope
         tapLabel={t.tapSeal}
+        skipLabel={t.skip}
         monogram={inv.couple.monogram}
       />
 
@@ -176,6 +180,24 @@ export default async function GuestInvitation({
           close: t.close,
         }}
       />
+      {inv.albumUrl && (
+        <PhotosQr
+          label={t.onTheDay}
+          title={t.shareMoments}
+          text={t.scanText}
+          url={inv.albumUrl}
+          qrLabel={t.qrLabel}
+        />
+      )}
+
+      {/* TODO: the prototype uses hero.webp here; the video's poster until it is added. */}
+      <End
+        background={inv.media.heroPoster}
+        signature={names}
+        date={formatDate(inv.date, "en", { day: "2-digit", month: "2-digit", year: "numeric" }).replaceAll("/", " · ")}
+      />
+
+      <PageDots />
       <LaceTextures />
       <PageMotion />
     </main>
