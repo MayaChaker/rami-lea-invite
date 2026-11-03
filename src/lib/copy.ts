@@ -20,6 +20,7 @@ const en = {
   map: "Map",
   openDetails: "Open the details",
   closeDetails: "Close the details",
+  goodToKnow: "Good to know",
 };
 
 const ar: typeof en = {
@@ -40,6 +41,7 @@ const ar: typeof en = {
   map: "الخريطة",
   openDetails: "افتحوا التفاصيل",
   closeDetails: "أغلقوا التفاصيل",
+  goodToKnow: "معلومات تهمّكم",
 };
 
 export const copy: Record<Lang, typeof en> = { en, ar };

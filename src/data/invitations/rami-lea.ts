@@ -47,7 +47,10 @@ export const ramiLea: Invitation = {
     },
     {
       title: { en: "Gifts", ar: "الهدايا" },
-      text: { en: "Your presence is the best gift.", ar: "حضوركم أجمل هدية." },
+      text: {
+        en: "Your presence is the best gift. A wishing well will be at the reception for those who wish.",
+        ar: "حضوركم أجمل هدية. ستتوفّر علبة هدايا في حفل الاستقبال لمن يرغب.",
+      },
     },
   ],
   events: [

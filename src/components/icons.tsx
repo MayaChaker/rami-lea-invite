@@ -13,6 +13,17 @@ export function BowIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+export function RingsIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 100 60" aria-hidden="true" {...props}>
+      <circle cx="40" cy="36" r="17" />
+      <circle cx="60" cy="36" r="17" />
+      <path d="M36 18 L40 12 L44 18 Z" />
+      <path d="M40 12 L40 9" />
+    </svg>
+  );
+}
+
 export function HandIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>
