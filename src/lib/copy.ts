@@ -24,6 +24,31 @@ const en = {
   giftIntro: "For those who wish, a gift can also be sent with",
   copy: "Copy",
   copied: "Copied",
+  rsvpTitle: "Kindly reply",
+  replyBy: (date: string) => `Please reply before ${date}`,
+  seats: (n: number) =>
+    n === 1
+      ? "One seat has been reserved in your honour."
+      : `${n === 2 ? "Two" : n} seats have been reserved in your honour.`,
+  tapReply: "Tap to reply",
+  openReply: "Reply to the invitation",
+  accept: "Joyfully accept",
+  decline: "Regretfully decline",
+  howMany: "Number attending",
+  less: "One less",
+  more: "One more",
+  noteFor: (names: string) => `A note for ${names}`,
+  optional: "optional",
+  send: "Send reply",
+  chooseFirst: "Choose one of the two answers first.",
+  merci: "With gratitude",
+  thanksYesOne: "Your seat is confirmed. We can’t wait to celebrate with you.",
+  thanksYesMany: "Your seats are confirmed. We can’t wait to celebrate with you.",
+  thanksNo: "Thank you for letting us know. You will be missed.",
+  attending: "attending",
+  declined: "Regretfully declined",
+  change: "Change reply",
+  close: "Close",
 };
 
 const ar: typeof en = {
@@ -48,6 +73,29 @@ const ar: typeof en = {
   giftIntro: "ولمن يرغب، يمكن إرسال الهدية عبر",
   copy: "نسخ",
   copied: "تمّ النسخ",
+  rsvpTitle: "نرجو الردّ",
+  replyBy: (date: string) => `نرجو الردّ قبل ${date}`,
+  seats: (n: number) =>
+    n === 1 ? "حُجز لكم مقعد واحد." : n === 2 ? "حُجز لكم مقعدان." : `حُجز لكم ${n} مقاعد.`,
+  tapReply: "اضغطوا للردّ",
+  openReply: "الردّ على الدعوة",
+  accept: "نلبّي الدعوة بكل فرح",
+  decline: "نعتذر عن الحضور",
+  howMany: "عدد الحضور",
+  less: "شخص أقل",
+  more: "شخص أكثر",
+  noteFor: (names: string) => `كلمة لـ${names}`,
+  optional: "اختياري",
+  send: "إرسال الردّ",
+  chooseFirst: "اختاروا أحد الجوابين أولًا.",
+  merci: "بكلّ امتنان",
+  thanksYesOne: "تمّ تأكيد مقعدكم. ننتظركم بفارغ الصبر.",
+  thanksYesMany: "تمّ تأكيد مقاعدكم. ننتظركم بفارغ الصبر.",
+  thanksNo: "شكرًا لإعلامنا. سنفتقدكم.",
+  attending: "حضور",
+  declined: "اعتذرتم عن الحضور",
+  change: "تعديل الردّ",
+  close: "إغلاق",
 };
 
 export const copy: Record<Lang, typeof en> = { en, ar };

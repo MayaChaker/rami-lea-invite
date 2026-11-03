@@ -8,6 +8,7 @@ import { LaceTextures } from "@/components/lace/LaceTextures";
 import { Letter } from "@/components/letter/Letter";
 import { PageMotion } from "@/components/motion/PageMotion";
 import { Notes } from "@/components/notes/Notes";
+import { RsvpScene } from "@/components/rsvp/RsvpScene";
 import { copy } from "@/lib/copy";
 import { formatDate } from "@/lib/format";
 import { getInvitation, getGuest, allGuestPaths } from "@/lib/getInvitation";
@@ -117,18 +118,36 @@ export default async function GuestInvitation({
         }
       />
 
-      {/* Temporary: guest data, until the next sections are built */}
-      <section style={{ display: "grid", placeContent: "center", gap: 8, padding: 32, textAlign: "center" }}>
-        <p>{guest.name[L]}</p>
-        <p>{guest.seats} seats</p>
-        <ul style={{ listStyle: "none", padding: 0 }}>
-          {myEvents.map((e) => (
-            <li key={e.id}>
-              {e.label[L]} · {e.time[L]} · {e.place[L]}
-            </li>
-          ))}
-        </ul>
-      </section>
+      <RsvpScene
+        background={inv.media.landscape}
+        storageKey={`rsvp:${inv.slug}:${guest.token}`}
+        guestName={guest.name[L]}
+        seats={guest.seats}
+        replyBy={t.replyBy(formatDate(inv.rsvpBy, L, { day: "numeric", month: "long", year: "numeric" }))}
+        seatsText={t.seats(guest.seats)}
+        t={{
+          title: t.rsvpTitle,
+          tapReply: t.tapReply,
+          openLabel: t.openReply,
+          accept: t.accept,
+          decline: t.decline,
+          howMany: t.howMany,
+          less: t.less,
+          more: t.more,
+          note: t.noteFor(names),
+          optional: t.optional,
+          send: t.send,
+          chooseFirst: t.chooseFirst,
+          merci: t.merci,
+          thanksYesOne: t.thanksYesOne,
+          thanksYesMany: t.thanksYesMany,
+          thanksNo: t.thanksNo,
+          attending: t.attending,
+          declined: t.declined,
+          change: t.change,
+          close: t.close,
+        }}
+      />
       <LaceTextures />
       <PageMotion />
     </main>
