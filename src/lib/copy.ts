@@ -14,6 +14,12 @@ const en = {
   married: "are getting married",
   countdown: "The countdown to forever",
   units: ["days", "hours", "min", "sec"],
+  details: "The details",
+  tapOpen: "Tap to open",
+  tapClose: "Tap to close",
+  map: "Map",
+  openDetails: "Open the details",
+  closeDetails: "Close the details",
 };
 
 const ar: typeof en = {
@@ -28,6 +34,12 @@ const ar: typeof en = {
   married: "يحتفلان بزفافهما",
   countdown: "العدّ إلى الأبد",
   units: ["يوم", "ساعة", "دقيقة", "ثانية"],
+  details: "التفاصيل",
+  tapOpen: "اضغطوا للفتح",
+  tapClose: "اضغطوا للإغلاق",
+  map: "الخريطة",
+  openDetails: "افتحوا التفاصيل",
+  closeDetails: "أغلقوا التفاصيل",
 };
 
 export const copy: Record<Lang, typeof en> = { en, ar };

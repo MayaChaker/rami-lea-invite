@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { CountdownBand } from "@/components/countdown/CountdownBand";
+import { DetailsScene } from "@/components/details/DetailsScene";
 import { Envelope } from "@/components/envelope/Envelope";
 import { Hero } from "@/components/hero/Hero";
 import { FramedScene } from "@/components/framed/FramedScene";
@@ -79,6 +80,27 @@ export default async function GuestInvitation({
         title={t.countdown}
         target={inv.date}
         units={t.units}
+      />
+
+      {/* TODO: the prototype uses hero.webp here; land.webp until it is added. */}
+      <DetailsScene
+        background={inv.media.landscape}
+        card={{
+          title: t.details,
+          tapOpen: t.tapOpen,
+          tapClose: t.tapClose,
+          mapLabel: t.map,
+          openLabel: t.openDetails,
+          closeLabel: t.closeDetails,
+          // Only the events this guest is invited to
+          items: myEvents.map((e) => ({
+            id: e.id,
+            label: e.label[L],
+            time: e.time[L],
+            place: e.place[L],
+            mapsQuery: e.mapsQuery,
+          })),
+        }}
       />
 
       {/* Temporary: guest data, until the next sections are built */}

@@ -47,6 +47,10 @@
 7. Deploy to Vercel, test on iPhone and Android, inside the WhatsApp in-app browser, and add Open Graph tags for the WhatsApp preview.
 8. Performance pass against the budgets below.
 
+## Reminders (tell Maya when relevant)
+- **Missing photo `hero.webp`.** The prototype uses it behind "The details" and on the End page. Until Maya sends a real field or nature photo (no AI), "The details" reuses `land.webp`, so the Framed scene and the Details page show the same photo back to back (see the TODO in `page.tsx`).
+- `cameo.webp` and `arch.webp` are frames taken from the couple's video. Swap them if Maya finds the original photos.
+
 ## Open questions (decide before Step 5, Supabase)
 - **One shared link for many guests.** Today every guest needs a personal link with a token (`/i/rami-lea/haddad-7x2k`). Many couples want to send one link to a WhatsApp group, and they won't give us every guest's name. Plan: support both. A personal link (name, seats, language known) and a shared link like `/i/rami-lea` (no token). On the shared link, the RSVP asks for the guest's name and number attending, the language is set per link by the couple, and the dashboard shows which link each reply came from. The `guests` and `rsvps` tables must allow an RSVP with no known guest.
 

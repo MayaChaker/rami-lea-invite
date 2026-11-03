@@ -8,6 +8,7 @@ type Props = {
   children: ReactNode;
   className?: string;
   style?: CSSProperties;
+  inert?: boolean;
 } & Record<`data-${string}`, string>;
 
 export function DoilyFrame({ children, className = "", ...rest }: Props) {
