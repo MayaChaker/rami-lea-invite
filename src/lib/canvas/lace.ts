@@ -353,3 +353,119 @@ export function rosette(size: number, dpr: number): HTMLCanvasElement {
   }
   return c;
 }
+
+/**
+ * A lace ring around an oval: tulle, small daisies and a scalloped outer edge
+ * with picots. `W`×`H` is the whole image (CSS px); the ring is `band` wide and
+ * its inner edge hugs an oval of (W − 2·band)×(H − 2·band).
+ */
+export function laceOval(W: number, H: number, band: number, dpr: number): HTMLCanvasElement {
+  const c = document.createElement("canvas");
+  c.width = Math.ceil(W * dpr);
+  c.height = Math.ceil(H * dpr);
+  const x = c.getContext("2d")!;
+  x.scale(dpr, dpr);
+  x.lineCap = "round";
+  x.lineJoin = "round";
+
+  const cx = W / 2;
+  const cy = H / 2;
+  const rx = W / 2 - band; // inner edge of the ring
+  const ry = H / 2 - band;
+  // A point at angle `a`, `k` px out from the inner edge.
+  const at = (a: number, k: number) => [cx + Math.cos(a) * (rx + k), cy + Math.sin(a) * (ry + k)] as const;
+
+  const cord = (path: Path2D, width: number, alpha = 1) => {
+    x.save();
+    x.translate(0.45, 0.6);
+    x.strokeStyle = `rgba(118,106,88,${0.28 * alpha})`;
+    x.lineWidth = width + 0.4;
+    x.stroke(path);
+    x.restore();
+    x.strokeStyle = "#FDFBF6";
+    x.lineWidth = width;
+    x.stroke(path);
+  };
+
+  const N = 44; // scallops around the oval
+  const step = TAU / N;
+  const edge = band * 0.8; // where the scallops start
+
+  // Outer scalloped edge
+  const scallops = new Path2D();
+  for (let i = 0; i <= N; i++) {
+    const a = i * step;
+    const [px, py] = at(a, edge);
+    if (i === 0) scallops.moveTo(px, py);
+    else {
+      const [qx, qy] = at(a - step / 2, edge + band * 0.32);
+      scallops.quadraticCurveTo(qx, qy, px, py);
+    }
+  }
+  scallops.closePath();
+
+  const inner = new Path2D();
+  inner.ellipse(cx, cy, rx, ry, 0, 0, TAU);
+
+  // The ring itself: inside the scallops, outside the inner oval
+  const ring = new Path2D();
+  ring.addPath(scallops);
+  ring.addPath(inner);
+
+  x.save();
+  x.clip(ring, "evenodd");
+  x.fillStyle = "rgba(250,247,240,.82)";
+  x.fillRect(0, 0, W, H);
+  x.strokeStyle = "rgba(170,158,138,.32)";
+  x.lineWidth = 0.3;
+  for (let k = -H; k < W + H; k += 2.2) {
+    x.beginPath();
+    x.moveTo(k, 0);
+    x.lineTo(k + H, H);
+    x.stroke();
+    x.beginPath();
+    x.moveTo(k + H, 0);
+    x.lineTo(k, H);
+    x.stroke();
+  }
+  x.restore();
+
+  // Small daisies, one on every other scallop
+  for (let i = 0; i < N; i += 2) {
+    const [fx, fy] = at(i * step + step / 2, band * 0.42);
+    const R = band * 0.2;
+    const rays = new Path2D();
+    for (let j = 0; j < 8; j++) {
+      const a = (j * Math.PI) / 4;
+      rays.moveTo(fx, fy);
+      rays.lineTo(fx + Math.cos(a) * R, fy + Math.sin(a) * R);
+    }
+    const disc = new Path2D();
+    disc.arc(fx, fy, R * 0.95, 0, TAU);
+    x.fillStyle = "rgba(253,251,247,.95)";
+    x.fill(disc);
+    cord(disc, 0.5);
+    cord(rays, 0.4);
+    const heart = new Path2D();
+    heart.arc(fx, fy, R * 0.3, 0, TAU);
+    x.fillStyle = "#F2ECE1";
+    x.fill(heart);
+    cord(heart, 0.4);
+  }
+
+  // Threads: inner edge, scallops, and picots along the scallops
+  cord(inner, 0.8);
+  cord(scallops, 0.9);
+  for (let i = 0; i < N; i++) {
+    for (let j = 1; j < 4; j++) {
+      const t = j / 4;
+      const a = i * step + t * step;
+      const [px, py] = at(a, edge + band * 0.32 * 4 * t * (1 - t) * 0.5 + 1.2);
+      const dot = new Path2D();
+      dot.arc(px, py, 0.8, 0, TAU);
+      cord(dot, 0.4);
+    }
+  }
+
+  return c;
+}
