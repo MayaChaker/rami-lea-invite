@@ -43,6 +43,7 @@ export interface Invitation {
     heroVideo: string;
     heroPoster: string;
     heroAlt: Localized; // describes the hero video for screen readers
+    ogPhoto: string; // JPEG behind the WhatsApp preview, 1200×630
     landscape: string;
     cameo: string;
     framed: string;

@@ -22,6 +22,7 @@ export const ramiLea: Invitation = {
       en: "Rami and Lea walking out under a white flower arch as guests throw petals",
       ar: "رامي وليا يخرجان من تحت قوس الورود البيضاء والضيوف ينثرون البتلات",
     },
+    ogPhoto: `${base}/og.jpg`,
     landscape: `${base}/land.webp`,
     cameo: `${base}/cameo.webp`,
     framed: `${base}/arch.webp`,
