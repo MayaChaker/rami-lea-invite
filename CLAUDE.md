@@ -24,7 +24,8 @@
 - Windows, terminal is **Git Bash (MINGW64)**: use forward slashes `/` in paths and bash syntax, not PowerShell.
 - Dev server runs on **port 3001** (`npm run dev -- -p 3001`, or `"dev": "next dev -p 3001"` in package.json). Port 3000 was busy.
 - Next.js (latest, App Router, **Cache Components enabled**, Turbopack), TypeScript, Tailwind, ESLint, `src/` directory, import alias `@/*`.
-- Maya commits and pushes after each working step: `git add . && git commit -m "..." && git push`. Claude only reminds her and suggests a commit message; it never runs these commands itself.
+- **Git workflow: feature branches, never straight to `main`.** `main` is what Vercel serves on the main link (the one shown in the pitch), so it must always work. Each feature gets a branch (`feature/<name>`), commits and pushes go there (Vercel gives each branch its own preview link), then a Pull Request merges it into `main` once it is tested. Run `npm run build` before pushing.
+- Maya commits and pushes after each working step. Claude reminds her and suggests a commit message, and runs git commands only when she asks. Never add `Co-Authored-By` or any Claude attribution to commits or PRs.
 
 ## Current status
 - Step 1 (setup, Git, GitHub) is done.
