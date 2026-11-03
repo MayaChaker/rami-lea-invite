@@ -7,6 +7,18 @@ const nextConfig: NextConfig = {
   },
   cacheComponents: true,
   partialPrefetching: true,
+  // Demo: the site's home sends people straight to the sample invitation,
+  // so the link GitHub and Vercel show opens the envelope, not a blank page.
+  // Temporary (not permanent) so it can become a real landing page later.
+  async redirects() {
+    return [
+      {
+        source: "/",
+        destination: "/i/rami-lea/haddad-7x2k",
+        permanent: false,
+      },
+    ];
+  },
   turbopack: {
     rules: {
       // Run Tailwind only on the global stylesheet. A "*.css" rule with
