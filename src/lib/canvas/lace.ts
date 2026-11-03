@@ -80,6 +80,99 @@ export function paper(
 }
 
 /**
+ * Linen, painted over paper(): fine woven threads both ways, each one a little
+ * lighter or darker, with the odd thicker "slub" that real linen has.
+ */
+export function linen(x: CanvasRenderingContext2D, W: number, H: number, seed = 4) {
+  const r = seeded(seed);
+  const threads = (horizontal: boolean) => {
+    const size = horizontal ? H : W;
+    for (let p = 0; p < size; p += 1.3) {
+      const light = r() < 0.5;
+      x.strokeStyle = light ? `rgba(255,255,255,${0.03 + r() * 0.06})` : `rgba(30,34,24,${0.03 + r() * 0.06})`;
+      x.lineWidth = r() < 0.04 ? 1.4 : 0.6; // an occasional slub
+      x.beginPath();
+      if (horizontal) {
+        x.moveTo(0, p);
+        x.lineTo(W, p);
+      } else {
+        x.moveTo(p, 0);
+        x.lineTo(p, H);
+      }
+      x.stroke();
+    }
+  };
+  threads(true);
+  threads(false);
+
+  // A gentle, uneven sheen, as cloth catches the light
+  for (let i = 0; i < 14; i++) {
+    const px = r() * W;
+    const py = r() * H;
+    const rad = (0.2 + r() * 0.4) * Math.max(W, H);
+    const g = x.createRadialGradient(px, py, 0, px, py, rad);
+    g.addColorStop(0, r() < 0.5 ? "rgba(255,255,245,.05)" : "rgba(20,24,16,.05)");
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    x.fillStyle = g;
+    x.fillRect(0, 0, W, H);
+  }
+}
+
+/**
+ * Old cotton stationery, painted over paper(): a mottled hand-made tone, laid
+ * lines (the fine ribbing of laid writing paper), warm aged edges and a few
+ * foxing specks. Same seed, same paper on every load.
+ */
+export function vintage(x: CanvasRenderingContext2D, W: number, H: number, seed = 3) {
+  const r = seeded(seed);
+
+  // 1. Mottling: large soft blotches, a touch lighter or darker
+  for (let i = 0; i < 26; i++) {
+    const px = r() * W;
+    const py = r() * H;
+    const rad = (0.15 + r() * 0.35) * Math.max(W, H);
+    const g = x.createRadialGradient(px, py, 0, px, py, rad);
+    g.addColorStop(0, r() < 0.5 ? "rgba(70,60,35,.06)" : "rgba(255,250,235,.07)");
+    g.addColorStop(1, "rgba(0,0,0,0)");
+    x.fillStyle = g;
+    x.fillRect(0, 0, W, H);
+  }
+
+  // 2. Laid lines, with wider "chain lines" across them
+  x.lineWidth = 0.5;
+  x.strokeStyle = "rgba(255,255,255,.07)";
+  for (let y = 0; y < H; y += 1.6) {
+    x.beginPath();
+    x.moveTo(0, y);
+    x.lineTo(W, y);
+    x.stroke();
+  }
+  x.lineWidth = 0.8;
+  x.strokeStyle = "rgba(60,52,32,.05)";
+  for (let cx = 12; cx < W; cx += 28) {
+    x.beginPath();
+    x.moveTo(cx, 0);
+    x.lineTo(cx, H);
+    x.stroke();
+  }
+
+  // 3. Warm, slightly darker edges, as old paper ages from the outside in
+  const edge = x.createRadialGradient(W / 2, H / 2, Math.min(W, H) * 0.35, W / 2, H / 2, Math.max(W, H) * 0.75);
+  edge.addColorStop(0, "rgba(0,0,0,0)");
+  edge.addColorStop(1, "rgba(92,74,40,.24)");
+  x.fillStyle = edge;
+  x.fillRect(0, 0, W, H);
+
+  // 4. Foxing: tiny warm specks
+  for (let i = 0; i < (W * H) / 9000; i++) {
+    x.fillStyle = `rgba(120,96,50,${0.05 + r() * 0.08})`;
+    x.beginPath();
+    x.arc(r() * W, r() * H, 0.4 + r() * 1.2, 0, TAU);
+    x.fill();
+  }
+}
+
+/**
  * One horizontal lace strip, `len` long and `w` high (CSS px), drawn at `dpr` resolution.
  * Top edge is straight (sewn to the flap), bottom edge is scalloped with picots.
  */

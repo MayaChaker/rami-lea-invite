@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { drawEnvelope, type FlapName } from "./draw";
 import styles from "./Envelope.module.css";
-import { SealDefs } from "./Seal";
+import Image from "next/image";
 import { HERO_VIDEO_ID } from "@/lib/ids";
 
 // Opening sequence, in order. Each stage starts at `at` ms after the tap.
@@ -20,12 +20,13 @@ type Stage = "closed" | (typeof STAGES)[number]["name"];
 const FLAPS: FlapName[] = ["right", "left", "bottom", "top"];
 
 type Props = {
-  tapLabel: string; // e.g. "Tap the seal to open"
+  tapLabel: string; // e.g. "Tap to open"
   skipLabel: string; // e.g. "Skip"
-  monogram: string; // pressed into the wax seal, e.g. "R&L"
+  photo: string; // the couple's cameo, in a lace oval, where a wax seal would be
+  photoAlt: string;
 };
 
-export function Envelope({ tapLabel, skipLabel, monogram }: Props) {
+export function Envelope({ tapLabel, skipLabel, photo, photoAlt }: Props) {
   const [stage, setStage] = useState<Stage>("closed");
   const timers = useRef<number[]>([]);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -158,7 +159,6 @@ export function Envelope({ tapLabel, skipLabel, monogram }: Props) {
 
   return (
     <div className={className} onClick={open} onPointerMove={onPointerMove}>
-      <SealDefs monogram={monogram} />
 
       <div ref={stageRef} className={styles.stage}>
         <canvas ref={innerRef} aria-hidden="true" />
@@ -176,16 +176,10 @@ export function Envelope({ tapLabel, skipLabel, monogram }: Props) {
         ))}
 
         <div className={styles.sheen} aria-hidden="true" />
+        {/* The "seal": the couple's photo in a lace oval, as on the letter page */}
         <button type="button" className={styles.seal} aria-label={tapLabel}>
-          <span className={`${styles.half} ${styles.halfA}`}>
-            <svg viewBox="0 0 120 96" aria-hidden="true">
-              <use href="#seal-wax" />
-            </svg>
-          </span>
-          <span className={`${styles.half} ${styles.halfB}`}>
-            <svg viewBox="0 0 120 96" aria-hidden="true">
-              <use href="#seal-wax" />
-            </svg>
+          <span className={styles.cameo}>
+            <Image src={photo} alt={photoAlt} fill sizes="35vw" priority className={styles.cameoPhoto} />
           </span>
         </button>
       </div>

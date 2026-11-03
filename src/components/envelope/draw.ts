@@ -1,5 +1,5 @@
 // Canvas drawing for the envelope's inside and its four flaps.
-import { laceStrip, paper, tint, type PaperTone } from "@/lib/canvas/lace";
+import { laceStrip, linen, paper, seeded, tint, vintage, type PaperTone } from "@/lib/canvas/lace";
 
 export type FlapName = "top" | "bottom" | "left" | "right";
 type Point = { x: number; y: number };
@@ -36,6 +36,7 @@ export function drawEnvelope(
   // Inside of the envelope: ivory paper, a little darker toward the edges.
   const z = setup(inner);
   paper(z, W, H, { from: "#F4F1E8", to: "#E4E0D3", light: 0.5 });
+  vintage(z, W, H, 9);
   const shade = z.createRadialGradient(C.x, C.y, W * 0.1, C.x, C.y, H * 0.7);
   shade.addColorStop(0, "rgba(0,0,0,0)");
   shade.addColorStop(1, "rgba(60,55,45,.18)");
@@ -50,31 +51,51 @@ export function drawEnvelope(
     right: { from: tint(sage, 0.09), to: tint(sage, -0.06), light: 0.14 },
   };
 
-  // Flap outlines: from the outer edge to a softly rounded tip at the centre.
+  // A deckled edge: a straight line that wavers a little, like cotton paper
+  // torn by hand rather than cut by a machine.
+  const deckle = (p: Path2D, x0: number, y0: number, x1: number, y1: number, seed: number) => {
+    const r = seeded(seed);
+    const len = Math.hypot(x1 - x0, y1 - y0);
+    const nx = -(y1 - y0) / len;
+    const ny = (x1 - x0) / len;
+    const n = Math.ceil(len / 3);
+    for (let i = 1; i <= n; i++) {
+      const t = i / n;
+      const j = i === n ? 0 : (r() - 0.5) * 1.6;
+      p.lineTo(x0 + (x1 - x0) * t + nx * j, y0 + (y1 - y0) * t + ny * j);
+    }
+  };
+
+  // Flap outlines: from the outer edge to a softly rounded tip at the centre,
+  // with deckled inner edges.
   const shapes: Record<FlapName, (p: Path2D) => void> = {
     top: (p) => {
       p.moveTo(-1, -1);
       p.lineTo(W + 1, -1);
-      p.lineTo(C.x + o, C.y - o * 0.6);
+      deckle(p, W + 1, -1, C.x + o, C.y - o * 0.6, 1);
       p.quadraticCurveTo(C.x, C.y + o * 0.5, C.x - o, C.y - o * 0.6);
+      deckle(p, C.x - o, C.y - o * 0.6, -1, -1, 2);
     },
     bottom: (p) => {
       p.moveTo(-1, H + 1);
       p.lineTo(W + 1, H + 1);
-      p.lineTo(C.x + o, C.y + o * 0.6);
+      deckle(p, W + 1, H + 1, C.x + o, C.y + o * 0.6, 3);
       p.quadraticCurveTo(C.x, C.y - o * 0.5, C.x - o, C.y + o * 0.6);
+      deckle(p, C.x - o, C.y + o * 0.6, -1, H + 1, 4);
     },
     left: (p) => {
       p.moveTo(-1, -1);
       p.lineTo(-1, H + 1);
-      p.lineTo(C.x + o * 0.8, C.y + o);
+      deckle(p, -1, H + 1, C.x + o * 0.8, C.y + o, 5);
       p.quadraticCurveTo(C.x + o * 1.6, C.y, C.x + o * 0.8, C.y - o);
+      deckle(p, C.x + o * 0.8, C.y - o, -1, -1, 6);
     },
     right: (p) => {
       p.moveTo(W + 1, -1);
       p.lineTo(W + 1, H + 1);
-      p.lineTo(C.x - o * 0.8, C.y + o);
+      deckle(p, W + 1, H + 1, C.x - o * 0.8, C.y + o, 7);
       p.quadraticCurveTo(C.x - o * 1.6, C.y, C.x - o * 0.8, C.y - o);
+      deckle(p, C.x - o * 0.8, C.y - o, W + 1, -1, 8);
     },
   };
 
@@ -102,6 +123,7 @@ export function drawEnvelope(
     x.save();
     x.clip(outline);
     paper(x, W, H, tones[k]);
+    linen(x, W, H); // the flaps look like sage linen
     x.restore();
     // The paper's edge: a soft light bevel, then a fine dark cut line.
     x.strokeStyle = "rgba(255,255,255,.22)";
