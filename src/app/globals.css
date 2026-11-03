@@ -60,6 +60,11 @@ body:has(.invitation) {
   scroll-snap-stop: always;
 }
 
+/* No scrolling behind an open sheet (RSVP, wishes) */
+.invitation:has(dialog[open]) {
+  overflow-y: hidden;
+}
+
 /* No scrolling until the envelope is open */
 html:not([data-opened]) .invitation {
   overflow-y: hidden;
