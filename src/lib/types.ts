@@ -35,6 +35,7 @@ export interface Invitation {
   media: {
     heroVideo: string;
     heroPoster: string;
+    heroAlt: Localized; // describes the hero video for screen readers
     landscape: string;
     cameo: string;
     framed: string;

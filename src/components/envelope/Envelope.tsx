@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { drawEnvelope, type FlapName } from "./draw";
 import styles from "./Envelope.module.css";
 import { SealDefs } from "./Seal";
+import { HERO_VIDEO_ID } from "@/lib/ids";
 
 // Opening sequence, in order. Each stage starts at `at` ms after the tap.
 const STAGES = [
@@ -91,8 +92,18 @@ export function Envelope({ families, honour, tapLabel, monogram }: Props) {
     };
   }
 
+  // Once the envelope starts fading, tell the page it is open:
+  // the hero text reveals itself and scrolling is unlocked (both in CSS).
+  useEffect(() => {
+    if (stage === "fading") document.documentElement.dataset.opened = "";
+  }, [stage]);
+
   function open() {
     if (stage !== "closed") return;
+    // Start the video inside the tap itself: phones in low-power mode only
+    // allow playback that a user action started.
+    const video = document.getElementById(HERO_VIDEO_ID);
+    if (video instanceof HTMLVideoElement) video.play().catch(() => {});
     for (const { name, at } of STAGES) {
       timers.current.push(window.setTimeout(() => setStage(name), at));
     }

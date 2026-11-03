@@ -18,13 +18,17 @@ export const ramiLea: Invitation = {
   media: {
     heroVideo: `${base}/couple.mp4`,
     heroPoster: `${base}/couple-poster.webp`,
+    heroAlt: {
+      en: "Rami and Lea walking out under a white flower arch as guests throw petals",
+      ar: "رامي وليا يخرجان من تحت قوس الورود البيضاء والضيوف ينثرون البتلات",
+    },
     landscape: `${base}/land.webp`,
     cameo: `${base}/cameo.webp`,
     framed: `${base}/arch.webp`,
   },
   letter: {
-    en: "As we begin this new chapter together, we would be honoured to have you by our side.",
-    ar: "ونحن نبدأ هذا الفصل الجديد معًا، يشرّفنا أن تكونوا إلى جانبنا.",
+    en: "As we begin this new chapter together, we would be honoured to have you by our side. Here you will find everything you need for the day: the details, a way to reply, and a place to leave us a wish.",
+    ar: "ونحن نبدأ هذا الفصل الجديد معًا، يشرّفنا أن تكونوا إلى جانبنا. ستجدون هنا كل ما تحتاجونه لهذا اليوم: التفاصيل، وتأكيد الحضور، ومكانًا لتتركوا لنا أمنية.",
   },
   notes: [
     {

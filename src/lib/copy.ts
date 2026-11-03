@@ -9,6 +9,8 @@ const en = {
   tapSeal: "Tap the seal to open",
   skip: "Skip",
   and: " & ",
+  amp: "&",
+  scroll: "Scroll",
 };
 
 const ar: typeof en = {
@@ -18,6 +20,8 @@ const ar: typeof en = {
   tapSeal: "اضغطوا على الختم",
   skip: "تخطّي",
   and: " و",
+  amp: "و",
+  scroll: "مرّروا للأسفل",
 };
 
 export const copy: Record<Lang, typeof en> = { en, ar };
