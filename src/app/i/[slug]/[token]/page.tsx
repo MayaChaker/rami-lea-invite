@@ -1,6 +1,9 @@
 import { notFound } from "next/navigation";
 import { getInvitation, getGuest, allGuestPaths } from "@/lib/getInvitation";
 
+// Guests open this page directly from WhatsApp, never through in-app navigation.
+export const instant = false;
+
 export function generateStaticParams() {
   return allGuestPaths();
 }

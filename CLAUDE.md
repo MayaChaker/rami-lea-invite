@@ -28,14 +28,15 @@
 
 ## Current status
 - Step 1 (setup, Git, GitHub) is done.
-- Step 2 (data model + guest route) files were created:
+- Step 2 (data model + guest route) is done and working:
   - `src/lib/types.ts`: `Lang`, `Localized`, `EventItem`, `Guest`, `Invitation`
   - `src/data/invitations/rami-lea.ts`: the sample invitation, with 2 guests: `haddad-7x2k` (English, 2 seats, 3 events) and `khoury-m4q9` (Arabic RTL, 4 seats, ceremony + reception only)
   - `src/lib/getInvitation.ts`: `getInvitation(slug)`, `getGuest(inv, token)`, `allGuestPaths()`
   - `src/app/i/[slug]/[token]/page.tsx`: test page using `generateStaticParams`, `notFound()`, `dir="rtl"` for Arabic
   - Assets are in `public/invitations/rami-lea/`: `hero.webp`, `land.webp`, `cameo.webp`, `arch.webp`, `couple.mp4`, `couple-poster.webp`
-- **Open issue: `http://localhost:3001/i/rami-lea/haddad-7x2k` returns 404.** First suspects: the page file is not at `src/app/i/[slug]/[token]/page.tsx`, or the project has its `app/` folder at the root (outside `src/`), in which case Next.js ignores `src/app`. Check with `find . -name "page.tsx" -not -path "./node_modules/*"`. Also check whether Cache Components needs anything for dynamic params.
-- Expected after the fix: haddad link shows English, 2 seats, 3 events; khoury link shows Arabic right-to-left, 4 seats, 2 events; `/i/rami-lea/abc` shows 404.
+- The 404 was fixed: the root `app/` folder was moved into `src/app/` (Next.js ignores `src/app` when `app/` exists at the root), the `@/*` alias in `tsconfig.json` now points to `./src/*`, and a stray `export const =` line in `rami-lea.ts` was removed.
+- Verified: `haddad-7x2k` and `khoury-m4q9` return 200, `/i/rami-lea/abc` returns 404.
+- Next: Step 3 (fonts and design tokens).
 
 ## Roadmap (one step at a time)
 3. Fonts (with `next/font/google`) and design tokens in Tailwind / CSS variables

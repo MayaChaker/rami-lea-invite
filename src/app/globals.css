@@ -1,26 +1,34 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Palette */
+  --color-paper: #F8F5EE;
+  --color-paper-2: #F1EDE3;
+  --color-sage: #6E7B5F;
+  --color-sage-dark: #56614A;
+  --color-ink: #2E3229;
+  --color-muted: #7D8273;
+  --color-line: #DAD3C4;
+  --color-on-sage: #F6F3EA;
+
+  /* Fonts: role → actual font, with fallbacks */
+  --font-script: var(--font-corinthia), "Snell Roundhand", cursive;
+  --font-serif: var(--font-garamond), Georgia, serif;
+  --font-ar-display: var(--font-aref-ruqaa), var(--font-amiri), serif;
+  --font-ar: var(--font-amiri), "Noto Naskh Arabic", serif;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html {
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  -webkit-tap-highlight-color: transparent;
+}
+
+[dir="rtl"] {
+  font-family: var(--font-ar);
 }
