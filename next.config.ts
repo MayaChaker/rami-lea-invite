@@ -6,6 +6,11 @@ const nextConfig: NextConfig = {
     agentFeedback: true,
   },
   cacheComponents: true,
+  // The WhatsApp preview image reads its fonts and photo from disk. On Vercel
+  // it runs as a function, so these files must be packed with it.
+  outputFileTracingIncludes: {
+    "/i/[slug]/[token]/opengraph-image": ["./src/assets/og/**", "./public/invitations/*/og.jpg"],
+  },
   partialPrefetching: true,
   // Demo: the site's home sends people straight to the sample invitation,
   // so the link GitHub and Vercel show opens the envelope, not a blank page.

@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { CountdownBand } from "@/components/countdown/CountdownBand";
 import { DetailsScene } from "@/components/details/DetailsScene";
@@ -19,6 +20,33 @@ export const instant = false;
 
 export function generateStaticParams() {
   return allGuestPaths();
+}
+
+// What WhatsApp shows above the link: title, description (in the guest's
+// language) and the picture from opengraph-image.tsx. Guest pages are private,
+// so search engines are asked not to list them.
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string; token: string }>;
+}): Promise<Metadata> {
+  const { slug, token } = await params;
+  const inv = getInvitation(slug);
+  const guest = inv && getGuest(inv, token);
+  if (!inv || !guest) return {};
+
+  const L = guest.lang;
+  const t = copy[L];
+  const names = `${inv.couple.groom[L]}${t.and}${inv.couple.bride[L]}`;
+  const title = `${names} · ${t.married}`;
+  const description = `${formatDate(inv.date, L, { weekday: "long", day: "numeric", month: "long", year: "numeric" })} · ${inv.city[L]}`;
+
+  return {
+    title,
+    description,
+    openGraph: { title, description, type: "website", locale: L === "ar" ? "ar_LB" : "en_GB" },
+    robots: { index: false, follow: false },
+  };
 }
 
 export default async function GuestInvitation({
