@@ -20,6 +20,13 @@ export interface Guest {
   events: EventId[];
 }
 
+// A way guests can send a money gift. Optional: many couples prefer not to.
+export interface GiftMethod {
+  kind: "whish" | "omt" | "iban";
+  name: string; // shown as is, e.g. "Whish Money"
+  value: string; // phone number or IBAN, copied by the guest
+}
+
 export interface Invitation {
   slug: string;
   couple: {
@@ -42,6 +49,7 @@ export interface Invitation {
   };
   letter: Localized;
   notes: { title: Localized; text: Localized }[];
+  gifts?: GiftMethod[]; // leave out to show no gift options
   events: EventItem[];
   guests: Guest[];
 }

@@ -53,6 +53,8 @@ export const ramiLea: Invitation = {
       },
     },
   ],
+  // Sample number, not a real account.
+  gifts: [{ kind: "whish", name: "Whish Money", value: "+961 70 000 000" }],
   events: [
     {
       id: "zaffe",

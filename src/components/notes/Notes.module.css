@@ -16,3 +16,33 @@
 .row + .row {
   border-top: 1px solid var(--color-line);
 }
+
+/* ---------- optional money gift ---------- */
+.gifts {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3cqw;
+  width: 100%;
+  padding-top: 5cqw;
+  border-top: 1px solid var(--color-line);
+}
+
+.intro {
+  font-size: 3.8cqw;
+  color: var(--color-muted);
+}
+
+.method {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2cqw;
+}
+
+.value {
+  font-size: 5cqw;
+  letter-spacing: 0.04em;
+  font-variant-numeric: lining-nums;
+  user-select: all; /* one tap selects the whole number */
+}
