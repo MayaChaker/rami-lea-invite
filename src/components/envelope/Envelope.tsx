@@ -10,9 +10,8 @@ import { HERO_VIDEO_ID } from "@/lib/ids";
 const STAGES = [
   { name: "cracked", at: 0 },
   { name: "opened", at: 650 },
-  { name: "rising", at: 1500 },
-  { name: "fading", at: 2300 },
-  { name: "gone", at: 3100 },
+  { name: "fading", at: 1500 },
+  { name: "gone", at: 2200 },
 ] as const;
 
 type Stage = "closed" | (typeof STAGES)[number]["name"];
@@ -21,13 +20,11 @@ type Stage = "closed" | (typeof STAGES)[number]["name"];
 const FLAPS: FlapName[] = ["right", "left", "bottom", "top"];
 
 type Props = {
-  families: string; // e.g. "The Nassar & Khalil families"
-  honour: string; // e.g. "have the honour of inviting you"
   tapLabel: string; // e.g. "Tap the seal to open"
   monogram: string; // pressed into the wax seal, e.g. "R&L"
 };
 
-export function Envelope({ families, honour, tapLabel, monogram }: Props) {
+export function Envelope({ tapLabel, monogram }: Props) {
   const [stage, setStage] = useState<Stage>("closed");
   const timers = useRef<number[]>([]);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -128,12 +125,6 @@ export function Envelope({ families, honour, tapLabel, monogram }: Props) {
       <div ref={stageRef} className={styles.stage}>
         <canvas ref={innerRef} aria-hidden="true" />
 
-        {/* The card inside: the families' traditional invitation line. No guest name,
-            so it works on personal links and on one link shared with many guests. */}
-        <div className={styles.card}>
-          <p className={styles.families}>{families}</p>
-          <p className={styles.honour}>{honour}</p>
-        </div>
 
         {FLAPS.map((name) => (
           <div key={name} className={`${styles.flap} ${styles[name]}`}>

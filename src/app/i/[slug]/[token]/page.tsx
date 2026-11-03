@@ -43,8 +43,6 @@ export default async function GuestInvitation({
   return (
     <main className="invitation" lang={L} dir={L === "ar" ? "rtl" : "ltr"}>
       <Envelope
-        families={t.families(inv.couple.families.groom[L], inv.couple.families.bride[L])}
-        honour={t.honour}
         tapLabel={t.tapSeal}
         monogram={inv.couple.monogram}
       />
@@ -64,6 +62,8 @@ export default async function GuestInvitation({
       <Letter
         photo={inv.media.cameo}
         photoAlt={names}
+        families={t.families(inv.couple.families.groom[L], inv.couple.families.bride[L])}
+        honour={t.honour}
         letter={inv.letter[L]}
         signature={names}
       />

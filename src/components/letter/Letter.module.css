@@ -1,17 +1,33 @@
+/* The cameo holds the oval and the lace ring drawn around it. */
+.cameo {
+  position: relative;
+  margin: 6cqw 0 7cqw;
+}
+
+/* Lace ring: drawn for a 200×250 oval with a 26 px band, so it reaches
+   26/200 of the oval's width past each side. A soft shadow lifts the ivory
+   lace off the ivory paper. */
+.cameo::after {
+  content: "";
+  position: absolute;
+  inset: calc(-52cqw * 26 / 200) calc(-52cqw * 26 / 200);
+  background-image: var(--lace-oval);
+  background-size: 100% 100%;
+  filter: drop-shadow(0 2px 3px rgb(120 112 92 / 0.35));
+  pointer-events: none;
+}
+
 /* An oval photo pressed into the paper, with a thin outer line. */
 .oval {
   position: relative;
   width: 52cqw;
   aspect-ratio: 4 / 5;
-  margin: 3cqw 0 6cqw;
   overflow: hidden;
   border-radius: 50%;
   background: var(--color-paper);
   box-shadow:
     inset 3px 3px 5px rgb(255 255 255 / 0.95),
     inset -3px -3px 6px rgb(120 112 92 / 0.2),
-    0 0 0 2.4cqw var(--color-paper),
-    0 0 0 calc(2.4cqw + 1px) var(--color-line),
     2px 3px 6px rgb(120 112 92 / 0.18);
 }
 
@@ -26,8 +42,25 @@
 }
 
 /* The photo settles from a slight zoom when the page comes on screen */
-:global(.invitation[data-motion]) .oval:not(:global(.in)) .photo {
+:global(.invitation[data-motion]) .cameo:not(:global(.in)) .photo {
   transform: scale(1.15);
+}
+
+.families {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1cqw;
+}
+
+.families :global(.caps) {
+  color: var(--color-ink);
+  line-height: 1.6;
+  text-wrap: balance;
+}
+
+.honour {
+  color: var(--color-muted);
 }
 
 .sign {
