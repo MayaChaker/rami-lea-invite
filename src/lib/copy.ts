@@ -11,6 +11,7 @@ const en = {
   and: " & ",
   amp: "&",
   scroll: "Scroll",
+  married: "are getting married",
 };
 
 const ar: typeof en = {
@@ -22,6 +23,7 @@ const ar: typeof en = {
   and: " و",
   amp: "و",
   scroll: "مرّروا للأسفل",
+  married: "يحتفلان بزفافهما",
 };
 
 export const copy: Record<Lang, typeof en> = { en, ar };

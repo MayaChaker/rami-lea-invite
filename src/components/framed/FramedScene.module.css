@@ -1,0 +1,29 @@
+/* The monogram in a thin white ring */
+.crest {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 15cqw;
+  height: 15cqw;
+  border: 1px solid rgb(255 255 255 / 0.75);
+  border-radius: 50%;
+  font-family: var(--font-script);
+  font-size: 7.5cqw;
+  color: #fff;
+}
+
+/* The lace frame sits slightly turned, like a card dropped on the grass */
+.framed {
+  width: 60cqw;
+  margin: 8cqw 0 6cqw;
+  padding: 3cqw;
+  rotate: -3deg;
+}
+
+.photo {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+}

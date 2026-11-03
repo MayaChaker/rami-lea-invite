@@ -1,7 +1,7 @@
 // Champagne-gold wax seal pressed with the couple's monogram.
 // <SealDefs /> defines the shape once; the envelope shows it twice, one half each.
 
-import { seeded } from "./draw";
+import { seeded } from "@/lib/canvas/lace";
 
 // An uneven poured-wax outline: an oval whose radius wobbles a little,
 // joined with smooth curves (Catmull-Rom turned into cubic Béziers).
