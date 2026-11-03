@@ -54,6 +54,8 @@ export const ramiLea: Invitation = {
       },
     },
   ],
+  // Sample album link (placeholder domain).
+  albumUrl: "https://rami-and-lea.example/album",
   // Sample number, not a real account.
   gifts: [{ kind: "whish", name: "Whish Money", value: "+961 70 000 000" }],
   events: [

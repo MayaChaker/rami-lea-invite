@@ -30,7 +30,7 @@ export function Hero(p: Props) {
           muted
           playsInline
           loop
-          preload="auto"
+          preload="none" /* the envelope starts the download once the page has settled */
           aria-label={p.videoLabel}
         />
       </div>

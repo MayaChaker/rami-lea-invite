@@ -48,6 +48,10 @@ const en = {
   attending: "attending",
   declined: "Regretfully declined",
   change: "Change reply",
+  onTheDay: "On the day",
+  shareMoments: "Share the moments",
+  scanText: "Scan the code at the wedding to add your photos to our album.",
+  qrLabel: "QR code for the shared photo album",
   close: "Close",
 };
 
@@ -95,6 +99,10 @@ const ar: typeof en = {
   attending: "حضور",
   declined: "اعتذرتم عن الحضور",
   change: "تعديل الردّ",
+  onTheDay: "يوم العرس",
+  shareMoments: "شاركونا اللحظات",
+  scanText: "امسحوا الرمز في العرس لإضافة صوركم إلى ألبومنا.",
+  qrLabel: "رمز QR لألبوم الصور المشترك",
   close: "إغلاق",
 };
 

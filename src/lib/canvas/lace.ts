@@ -139,7 +139,7 @@ export function laceStrip(len: number, w: number, dpr: number): HTMLCanvasElemen
   x.clip(area);
 
   // 1. Tulle net
-  x.fillStyle = "rgba(247,243,235,.42)";
+  x.fillStyle = "rgba(250,247,240,.3)"; // lighter tulle, so the lace reads white, not grey
   x.fillRect(0, 0, len, w * 1.2);
   x.strokeStyle = "rgba(170,158,138,.3)";
   x.lineWidth = 0.3;
