@@ -154,8 +154,6 @@ export function Envelope({ tapLabel, skipLabel, photo, photoAlt }: Props) {
     <div className={className} onClick={open} onPointerMove={onPointerMove}>
 
       <div ref={stageRef} className={styles.stage}>
-        <div className={styles.inside} aria-hidden="true" />
-
         {FLAPS.map((name) => (
           <div key={name} className={`${styles.flap} ${styles[name]}`} aria-hidden="true">
             <span className={styles.face} />
