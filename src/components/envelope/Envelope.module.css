@@ -10,7 +10,7 @@
   overflow: hidden;
   container-type: size;
   perspective: 1300px;
-  background: var(--color-paper-2);
+  /* No background: as the flaps open, the hero video behind shows straight through. */
   cursor: pointer;
   transition: opacity 0.7s ease;
 }
@@ -44,15 +44,6 @@
 
 .opened .sheen {
   opacity: 0;
-}
-
-/* Inside of the envelope (seen as the flaps open): ivory paper, darker toward the edges */
-.inside {
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(closest-side, rgb(0 0 0 / 0) 30%, rgb(60 55 45 / 0.18)),
-    linear-gradient(160deg, #f4f1e8, #e4e0d3);
 }
 
 /* ---------- four flaps, hinged on their outer edge ---------- */
