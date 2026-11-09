@@ -1,6 +1,9 @@
 // Canvas drawing shared by the envelope, the lace frames and the sheets:
 // cotton paper, lace strips and lace rosettes. Ported from docs/prototype.html.
 // Pure functions: they only draw on what they are given.
+// The envelope does not draw at load time: its lace, linen and the oval's lace
+// ring are images in public/lace/, drawn once with laceStrip(), linen threads
+// and laceOval(), so the envelope is complete before any JavaScript runs.
 
 const TAU = Math.PI * 2;
 

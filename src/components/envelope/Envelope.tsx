@@ -1,10 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState, type PointerEvent } from "react";
-import { drawEnvelope, type FlapName } from "./draw";
+import { preload } from "react-dom";
 import styles from "./Envelope.module.css";
 import Image from "next/image";
 import { HERO_VIDEO_ID } from "@/lib/ids";
+
+type FlapName = "top" | "bottom" | "left" | "right";
+
+// Lace along the inner edges: two strips on the top flap, two on the bottom.
+const LACE: Partial<Record<FlapName, string[]>> = {
+  top: [styles.laceTL, styles.laceTR],
+  bottom: [styles.laceBL, styles.laceBR],
+};
 
 // Opening sequence, in order. Each stage starts at `at` ms after the tap.
 const STAGES = [
@@ -30,13 +38,6 @@ export function Envelope({ tapLabel, skipLabel, photo, photoAlt }: Props) {
   const [stage, setStage] = useState<Stage>("closed");
   const timers = useRef<number[]>([]);
   const stageRef = useRef<HTMLDivElement>(null);
-  const innerRef = useRef<HTMLCanvasElement>(null);
-  const flapRefs = useRef<Record<FlapName, HTMLCanvasElement | null>>({
-    top: null,
-    bottom: null,
-    left: null,
-    right: null,
-  });
   // Pointer position, from -0.5 to 0.5 on each axis. A ref, so moving the mouse never re-renders.
   const pointer = useRef({ x: 0, y: 0 });
 
@@ -44,20 +45,6 @@ export function Envelope({ tapLabel, skipLabel, photo, photoAlt }: Props) {
   useEffect(() => {
     const pending = timers.current;
     return () => pending.forEach(clearTimeout);
-  }, []);
-
-  // Paint the paper and lace now, and again whenever the screen size changes.
-  useEffect(() => {
-    const el = stageRef.current;
-    const inner = innerRef.current;
-    if (!el || !inner) return;
-    const observer = new ResizeObserver(() => {
-      drawEnvelope(el, inner, flapRefs.current);
-      // The CSS shows plain sage flaps until now, then fades the paper and lace in.
-      el.dataset.drawn = "";
-    });
-    observer.observe(el);
-    return () => observer.disconnect();
   }, []);
 
   // Idle motion while closed: a slow tilt, nudged by the pointer, and a light that follows it.
@@ -145,6 +132,12 @@ export function Envelope({ tapLabel, skipLabel, photo, photoAlt }: Props) {
     }
   }
 
+  // Ask for the linen and lace images at the top of the HTML, so they arrive
+  // together with the page and the envelope is complete on its first frame.
+  preload("/lace/linen.webp", { as: "image", fetchPriority: "high" });
+  preload("/lace/strip.webp", { as: "image", fetchPriority: "high" });
+  preload("/lace/oval.webp", { as: "image", fetchPriority: "high" });
+
   if (stage === "gone") return null;
 
   // Every stage reached so far stays on, so the CSS can build on it.
@@ -161,17 +154,14 @@ export function Envelope({ tapLabel, skipLabel, photo, photoAlt }: Props) {
     <div className={className} onClick={open} onPointerMove={onPointerMove}>
 
       <div ref={stageRef} className={styles.stage}>
-        <canvas ref={innerRef} aria-hidden="true" />
-
+        <div className={styles.inside} aria-hidden="true" />
 
         {FLAPS.map((name) => (
-          <div key={name} className={`${styles.flap} ${styles[name]}`}>
-            <canvas
-              ref={(el) => {
-                flapRefs.current[name] = el;
-              }}
-              aria-hidden="true"
-            />
+          <div key={name} className={`${styles.flap} ${styles[name]}`} aria-hidden="true">
+            <span className={styles.face} />
+            {LACE[name]?.map((cls) => (
+              <span key={cls} className={`${styles.lace} ${cls}`} />
+            ))}
           </div>
         ))}
 
