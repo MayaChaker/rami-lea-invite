@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { CountdownBand } from "@/components/countdown/CountdownBand";
 import { DetailsScene } from "@/components/details/DetailsScene";
 import { PageDots } from "@/components/dots/PageDots";
-import { End } from "@/components/end/End";
 import { Envelope } from "@/components/envelope/Envelope";
 import { Hero } from "@/components/hero/Hero";
 import { FramedScene } from "@/components/framed/FramedScene";
@@ -190,13 +189,6 @@ export default async function GuestInvitation({
           qrLabel={t.qrLabel}
         />
       )}
-
-      {/* TODO: the prototype uses hero.webp here; the video's poster until it is added. */}
-      <End
-        background={inv.media.heroPoster}
-        signature={names}
-        date={formatDate(inv.date, "en", { day: "2-digit", month: "2-digit", year: "numeric" }).replaceAll("/", " · ")}
-      />
 
       <PageDots />
       <LaceTextures />
