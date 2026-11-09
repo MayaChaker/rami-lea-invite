@@ -20,6 +20,9 @@
 
 html {
   color-scheme: light;
+  /* Lace ring for the oval cameo (envelope and letter page). A static image,
+     so it shows from the very first frame, before any JavaScript runs. */
+  --lace-oval: url("/lace/oval.webp");
 }
 
 body {

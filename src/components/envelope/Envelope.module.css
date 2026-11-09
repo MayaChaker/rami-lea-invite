@@ -1,4 +1,8 @@
-/* Full-screen opening. The flaps cover the inside paper, the seal sits on top. */
+/* Full-screen opening. The flaps cover the inside paper, the seal sits on top.
+   Everything here is plain HTML + CSS + three small images (public/lace/), so
+   the envelope looks finished from the very first frame, before any
+   JavaScript has run. The colour comes from --color-sage, so it can change
+   per client. */
 .envelope {
   position: fixed;
   inset: 0;
@@ -42,60 +46,23 @@
   opacity: 0;
 }
 
-.stage canvas {
+/* Inside of the envelope (seen as the flaps open): ivory paper, darker toward the edges */
+.inside {
   position: absolute;
   inset: 0;
-  display: block;
-  width: 100%;
-  height: 100%;
-  /* Painted by JavaScript; fades in over the plain sage flaps below */
-  opacity: 0;
-  transition: opacity 0.6s ease;
-}
-
-.stage[data-drawn] canvas {
-  opacity: 1;
-}
-
-/* Plain sage flaps straight from the HTML, so the envelope looks whole from
-   the first frame, before any JavaScript has run. They meet in the centre;
-   the painted flaps overlap a little past it, so these never peek out. */
-.flap::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  transition: opacity 0.6s ease;
-}
-
-.stage[data-drawn] .flap::before {
-  opacity: 0;
-}
-
-.top::before {
-  clip-path: polygon(0 0, 100% 0, 50% 50%);
-  background: color-mix(in srgb, var(--color-sage), white 14%);
-}
-
-.bottom::before {
-  clip-path: polygon(0 100%, 100% 100%, 50% 50%);
-  background: color-mix(in srgb, var(--color-sage), white 8%);
-}
-
-.left::before {
-  clip-path: polygon(0 0, 0 100%, 50% 50%);
-  background: color-mix(in srgb, var(--color-sage), white 4%);
-}
-
-.right::before {
-  clip-path: polygon(100% 0, 100% 100%, 50% 50%);
-  background: var(--color-sage);
+  background:
+    radial-gradient(closest-side, rgb(0 0 0 / 0) 30%, rgb(60 55 45 / 0.18)),
+    linear-gradient(160deg, #f4f1e8, #e4e0d3);
 }
 
 /* ---------- four flaps, hinged on their outer edge ---------- */
-/* Each flap sits a pixel higher than the one before, so they never flicker. */
+/* Each flap sits a pixel higher than the one before, so they never flicker.
+   A flap is a size container: its shape and lace are measured in cqw / cqh
+   of the flap itself. */
 .flap {
   position: absolute;
   inset: 0;
+  container-type: size;
   pointer-events: none;
   backface-visibility: hidden;
   transition:
@@ -124,6 +91,130 @@
   transform-origin: 50% 0;
   transform: translateZ(4px);
   filter: drop-shadow(0 10px 14px rgb(30 34 26 / 0.34));
+}
+
+/* The sage linen of a flap: woven threads (a transparent tile) over a soft
+   light and a gradient. Each flap catches the light a little differently. */
+.face {
+  position: absolute;
+  inset: 0;
+  --from: color-mix(in srgb, var(--color-sage), white var(--a));
+  --to: color-mix(in srgb, var(--color-sage), var(--b-mix));
+  background:
+    url("/lace/linen.webp") 0 0 / 130px 130px,
+    radial-gradient(90cqh 90cqh at 25% 15%, rgb(255 255 255 / var(--light)), rgb(255 255 255 / 0)),
+    linear-gradient(150deg, var(--from), var(--to));
+}
+
+/* The flap shapes: from the outer edge to a softly rounded tip just past the
+   centre. o = 3.5cqw is how far the tips reach past the centre; the middle
+   points follow the curve of the tip. */
+.top .face {
+  --a: 20%;
+  --b-mix: white 4%;
+  --light: 0.24;
+  clip-path: polygon(
+    -1px -1px,
+    calc(100% + 1px) -1px,
+    calc(50% + 3.5cqw) calc(50% - 2.1cqw),
+    calc(50% + 1.75cqw) calc(50% - 0.66cqw),
+    50% calc(50% - 0.18cqw),
+    calc(50% - 1.75cqw) calc(50% - 0.66cqw),
+    calc(50% - 3.5cqw) calc(50% - 2.1cqw)
+  );
+}
+
+.bottom .face {
+  --a: 15%;
+  --b-mix: white 1%;
+  --light: 0.18;
+  clip-path: polygon(
+    -1px calc(100% + 1px),
+    calc(100% + 1px) calc(100% + 1px),
+    calc(50% + 3.5cqw) calc(50% + 2.1cqw),
+    calc(50% + 1.75cqw) calc(50% + 0.66cqw),
+    50% calc(50% + 0.18cqw),
+    calc(50% - 1.75cqw) calc(50% + 0.66cqw),
+    calc(50% - 3.5cqw) calc(50% + 2.1cqw)
+  );
+}
+
+.left .face {
+  --a: 12%;
+  --b-mix: black 4%;
+  --light: 0.16;
+  clip-path: polygon(
+    -1px -1px,
+    -1px calc(100% + 1px),
+    calc(50% + 2.8cqw) calc(50% + 3.5cqw),
+    calc(50% + 3.85cqw) calc(50% + 1.75cqw),
+    calc(50% + 4.2cqw) 50%,
+    calc(50% + 3.85cqw) calc(50% - 1.75cqw),
+    calc(50% + 2.8cqw) calc(50% - 3.5cqw)
+  );
+}
+
+.right .face {
+  --a: 9%;
+  --b-mix: black 6%;
+  --light: 0.14;
+  clip-path: polygon(
+    calc(100% + 1px) -1px,
+    calc(100% + 1px) calc(100% + 1px),
+    calc(50% - 2.8cqw) calc(50% + 3.5cqw),
+    calc(50% - 3.85cqw) calc(50% + 1.75cqw),
+    calc(50% - 4.2cqw) 50%,
+    calc(50% - 3.85cqw) calc(50% - 1.75cqw),
+    calc(50% - 2.8cqw) calc(50% - 3.5cqw)
+  );
+}
+
+/* ---------- lace along the inner edges of the top and bottom flaps ---------- */
+/* One strip per edge: it starts at one end of the edge, is turned to lie along
+   it (atan2), and is exactly as long as the edge (hypot), so every strip ends
+   at the tip. The tile repeats along the strip; its straight side sits on the
+   edge and the scallops hang over the flap below. */
+.lace {
+  --dx: 46.5cqw; /* 50cqw - o */
+  --dy: calc(50cqh - 2.1cqw); /* 50cqh - 0.6·o */
+  position: absolute;
+  width: hypot(var(--dx), var(--dy));
+  height: 10.08cqw; /* lace width 9cqw, plus the scallops */
+  transform-origin: 0 0;
+  background: url("/lace/strip.webp") 0 0 / auto 100% repeat-x;
+}
+
+/* top flap: corner → tip on the left, tip → corner on the right */
+.laceTL {
+  left: 0;
+  top: 0;
+  transform: rotate(atan2(var(--dy), var(--dx))) translateY(-1px);
+}
+
+.laceTR {
+  left: calc(50cqw + 3.5cqw);
+  top: calc(50cqh - 2.1cqw);
+  transform: rotate(atan2(calc(-1 * var(--dy)), var(--dx))) translateY(-1px);
+}
+
+/* bottom flap: tip → corner on the left, corner → tip on the right */
+.laceBL {
+  left: calc(50cqw - 3.5cqw);
+  top: calc(50cqh + 2.1cqw);
+  transform: rotate(atan2(var(--dy), calc(-1 * var(--dx)))) translateY(-1px);
+}
+
+.laceBR {
+  left: 100cqw;
+  top: 100cqh;
+  transform: rotate(atan2(calc(-1 * var(--dy)), calc(-1 * var(--dx)))) translateY(-1px);
+}
+
+/* Older browsers without hypot()/atan2(): no lace rather than lace at the wrong angle */
+@supports not (width: hypot(1px, 1px)) {
+  .lace {
+    display: none;
+  }
 }
 
 /* ---------- the "seal": the couple's cameo in a lace oval ---------- */
@@ -168,7 +259,7 @@
   border-radius: 50%;
 }
 
-/* Lace ring around the oval (same drawing as the letter page: a 200×250 oval
+/* Lace ring around the oval (same image as the letter page: a 200×250 oval
    with a 26 px band reaches 26/200 of the oval's width past each side) */
 .seal::after {
   content: "";
