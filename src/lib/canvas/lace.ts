@@ -426,7 +426,8 @@ function laceRing(
 
   x.save();
   x.clip(ring, "evenodd");
-  x.fillStyle = "rgba(250,247,240,.82)";
+  // Nearly opaque, so the lace stays ivory on sage linen too, not grey
+  x.fillStyle = "rgba(250,247,240,.95)";
   x.fillRect(0, 0, W, H);
   x.strokeStyle = "rgba(170,158,138,.32)";
   x.lineWidth = 0.3;
@@ -545,14 +546,24 @@ function roundedRectEdge(x0: number, y0: number, w: number, h: number, r: number
 
 /**
  * The same lace ring around a rounded rectangle (lace frames and cards).
- * `W`×`H` is the whole image; the card inside is (W − 2·band)×(H − 2·band).
+ * `W`×`H` is the whole image; the card inside is (W − 2·band)×(H − 2·band)
+ * and is painted too, in `card`, so card and lace make one shape (one shadow).
  */
-export function laceRect(W: number, H: number, band: number, dpr: number, radius = 6): HTMLCanvasElement {
+export function laceRect(
+  W: number,
+  H: number,
+  band: number,
+  dpr: number,
+  card = "#FBF8F3",
+  radius = 6,
+): HTMLCanvasElement {
   const { c, x } = makeCanvas(W, H, dpr);
   const w = W - band * 2;
   const h = H - band * 2;
   const inner = new Path2D();
   inner.roundRect(band, band, w, h, radius);
+  x.fillStyle = card;
+  x.fill(inner);
   const edge = roundedRectEdge(band, band, w, h, radius);
   // About one scallop every 13 px, so the daisies keep their size on any card
   laceRing(

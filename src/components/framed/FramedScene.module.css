@@ -12,12 +12,11 @@
   color: #fff;
 }
 
-/* The lace frame sits slightly turned, like a card dropped on the grass */
+/* The lace frame, straight like the other lace cards */
 .framed {
   width: 60cqw;
   margin: 9cqw 0 7cqw;
   padding: 2cqw;
-  rotate: -3deg;
 }
 
 .photo {

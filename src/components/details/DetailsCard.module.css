@@ -1,7 +1,7 @@
 /* Ported from the prototype's .tapcard */
 .card {
   width: 72cqw;
-  height: 118cqw;
+  height: 112cqw;
   margin-top: 4cqw;
   perspective: 1400px;
   cursor: pointer;
@@ -40,7 +40,7 @@
 }
 
 .title {
-  font-size: 16cqw;
+  font-size: 15cqw;
   white-space: nowrap;
   color: var(--color-ink);
   text-shadow: none !important;
@@ -53,19 +53,6 @@
 
 .summary {
   color: var(--color-muted);
-}
-
-/* A soft light sweeps across the front, inviting a tap */
-.front::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.75) 50%, transparent 65%);
-  background-size: 260% 100%;
-  background-position: 130% 0;
-  animation: sheen 3.6s ease-in-out infinite 1s;
 }
 
 /* Rings that spread out from a pressing hand */
@@ -152,16 +139,6 @@
   outline-offset: 6px;
 }
 
-@keyframes sheen {
-  0% {
-    background-position: 130% 0;
-  }
-  45%,
-  100% {
-    background-position: -30% 0;
-  }
-}
-
 @keyframes ripple {
   from {
     transform: scale(0.35);
@@ -188,7 +165,6 @@
     transition-duration: 0.01s;
   }
 
-  .front::before,
   .ripple::before,
   .ripple::after,
   .ripple svg {

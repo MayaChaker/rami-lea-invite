@@ -1,7 +1,7 @@
 import { delay } from "@/lib/motion";
 import { Countdown } from "./Countdown";
 
-// Page 4: the one sage band. Server Component; only the numbers are client-side.
+// The countdown: the same sage linen as the lace pages, without a card. Server Component; only the numbers are client-side.
 type Props = {
   label: string; // "Saturday · 19 June 2027"
   title: string; // "The countdown to forever"
@@ -11,7 +11,7 @@ type Props = {
 
 export function CountdownBand({ label, title, target, units }: Props) {
   return (
-    <section className="band">
+    <section className="band linen">
       <p className="caps" style={{ opacity: 0.75 }} data-a="up">
         {label}
       </p>

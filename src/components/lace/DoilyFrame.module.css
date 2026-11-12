@@ -1,19 +1,16 @@
-/* An ivory card. Its lace is a canvas around it (.ring), drawn by <LaceRing />. */
+/* An ivory card. The card and its lace are one canvas (.ring) drawn by
+   <LaceRing />, behind the content, so the shadow falls only outside them. */
 .doily {
   --band: 6.2cqw; /* how far the lace reaches past the card */
   position: relative;
-  border-radius: 6px;
-  background: var(--grain), #fcfaf5;
+  isolation: isolate; /* keeps the canvas (z-index: -1) inside the card */
   color: var(--color-ink);
 }
 
-/* A fine inner line, like a printed border */
-.doily::after {
-  content: "";
-  position: absolute;
-  inset: 2.6cqw;
-  border: 1px solid var(--color-line);
-  pointer-events: none;
+/* Until the canvas is drawn (or without JavaScript), a plain ivory card */
+.doily:has(> .ring:not([width])) {
+  border-radius: 6px;
+  background: #fbf8f3;
 }
 
 /* The lace: one band wider than the card on every side. The shadow follows
@@ -23,6 +20,7 @@
   inset: calc(var(--band) * -1);
   width: calc(100% + var(--band) * 2);
   height: calc(100% + var(--band) * 2);
+  z-index: -1;
   pointer-events: none;
   filter:
     drop-shadow(0 2px 2px rgb(36 32 25 / 0.18))
