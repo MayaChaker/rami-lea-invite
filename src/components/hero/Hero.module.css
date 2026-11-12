@@ -1,10 +1,19 @@
-/* Ported from the prototype's .hero. Sizes in cqw / cqh follow the screen. */
+/* The photo on top (about two thirds of the screen), then a sheet of ivory
+   paper with a torn top edge, carrying the names. Sizes in cqw / cqh follow
+   the screen. */
 .hero {
   position: relative;
   container-type: size;
   overflow: hidden;
-  color: #fff;
-  background: #5C5A42;
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+/* The photo: everything above the paper, plus a little under its torn edge */
+.frame {
+  position: absolute;
+  inset: 0 0 30cqh;
+  overflow: hidden;
 }
 
 /* Slow Ken Burns zoom, paused until the envelope opens. */
@@ -19,57 +28,62 @@
   animation-play-state: running;
 }
 
-/* The couple's photo fills the page; their faces sit a little above the
-   middle, so the text goes at the bottom, away from them. */
 .photo {
   object-fit: cover;
-  object-position: 50% 35%;
+  object-position: 50% 30%;
 }
 
-/* A touch darker at the top, and clearly darker at the bottom, where the
-   names are, so white text stays readable on the light dress and flowers. */
-.hero::after {
-  content: "";
+/* ---------- the paper ---------- */
+.sheet {
   position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    to bottom,
-    rgb(36 32 25 / 0.25) 0%,
-    rgb(36 32 25 / 0) 22%,
-    rgb(36 32 25 / 0) 48%,
-    rgb(36 32 25 / 0.45) 70%,
-    rgb(36 32 25 / 0.7) 100%
-  );
-}
-
-.text {
-  position: absolute;
-  z-index: 1;
-  inset-inline: 6cqw;
-  bottom: 15cqh;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 34cqh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3cqw;
+  justify-content: center;
+  gap: 1.6cqh;
+  padding: 3cqh 8cqw 4cqh;
   text-align: center;
-  text-shadow: 0 1px 16px rgb(0 0 0 / 0.3);
+  background: var(--grain), var(--color-paper);
+}
+
+/* The torn edge: a strip of the same paper above the sheet, cut by a ragged
+   clip-path (set in Hero.tsx), with a soft shadow on the photo. */
+.tear {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% - 1px);
+  height: 4.5cqh;
+  background: var(--grain), var(--color-paper); /* same paper as the sheet */
+  filter: drop-shadow(0 -3px 4px rgb(36 32 25 / 0.18));
 }
 
 .caps {
   margin: 0;
-  font-size: 2.7cqw;
-  font-weight: 500;
-  letter-spacing: 0.32em;
+  font-size: 2.9cqw;
+  letter-spacing: 0.28em;
+  line-height: 1.8;
   text-transform: uppercase;
+  text-wrap: balance;
+}
+
+.invited {
+  max-width: 24em;
+  color: var(--color-muted);
 }
 
 .names {
-  margin: 0;
+  margin: 0.4cqh 0 0.8cqh;
   font-family: var(--font-script);
-  font-size: 20cqw;
+  font-size: 17cqw;
   font-weight: 400;
   line-height: 1;
   white-space: nowrap;
+  color: var(--color-sage-dark);
 }
 
 .amp {
@@ -77,9 +91,26 @@
   font-size: 0.72em;
 }
 
+/* A short line with a dot in the middle */
+.divider {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 20cqw;
+  height: 6px;
+  background: radial-gradient(circle, var(--color-sage) 0 1px, transparent 1.5px) center / 6px 6px no-repeat;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  width: 7cqw;
+  height: 1px;
+  background: var(--color-line);
+}
+
 :global([dir="rtl"]) .caps {
   font-size: 3.8cqw;
-  font-weight: 400;
   letter-spacing: 0;
 }
 
@@ -87,32 +118,6 @@
   font-family: var(--font-ar-display);
   font-size: 13cqw;
   line-height: 1.5;
-}
-
-/* "Scroll" with a line that drips down */
-.cue {
-  position: absolute;
-  z-index: 1;
-  left: 0;
-  right: 0;
-  bottom: 4cqh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.6cqw;
-  color: rgb(255 255 255 / 0.85);
-}
-
-.cue .caps {
-  font-size: 2.3cqw;
-}
-
-.cue i {
-  width: 1px;
-  height: 7cqw;
-  background: linear-gradient(rgb(255 255 255 / 0.85), transparent);
-  transform-origin: top;
-  animation: drip 2.2s ease-in-out infinite;
 }
 
 /* ---------- reveal after the envelope opens ---------- */
@@ -139,29 +144,15 @@
 
 @keyframes kenburns {
   from {
-    transform: scale(1.04);
+    transform: scale(1.02);
   }
   to {
-    transform: scale(1.16);
-  }
-}
-
-@keyframes drip {
-  0% {
-    transform: scaleY(0);
-  }
-  50% {
-    transform: scaleY(1);
-  }
-  100% {
-    transform: scaleY(1);
-    opacity: 0;
+    transform: scale(1.12);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .hero *,
-  .hero::after {
+  .hero * {
     animation: none !important;
     transition-duration: 0.01s !important;
   }

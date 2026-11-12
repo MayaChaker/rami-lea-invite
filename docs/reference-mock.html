@@ -1,0 +1,276 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="https://fonts.googleapis.com/css2?family=Corinthia&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=block" rel="stylesheet">
+<style>
+  :root { --paper: #F7F2EC; --card: #FBF8F3; --sage: #7C7A5C; --sage-dark: #5C5A42; --ink: #4A4436; --muted: #8C8476; --line: #D9CDBB; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: #DCD6CB; font-family: "EB Garamond", serif; color: var(--ink); padding: 30px; display: none; gap: 26px; }
+  body[data-s] { display: flex; }
+  .slot { display: none; flex-direction: column; align-items: center; gap: 12px; }
+  body[data-s="a"] .a, body[data-s="b"] .b { display: flex; }
+  .slot > b { font: 500 20px "EB Garamond", serif; color: #4A463C; }
+  .page { position: relative; width: 390px; height: 844px; overflow: hidden; background: var(--paper); border-radius: 30px;
+    box-shadow: 0 0 0 7px #CBB98F, 0 0 0 8px #A8946A, 0 30px 50px -20px rgb(40 34 24 / .5); }
+  .paper { background:
+      radial-gradient(90% 60% at 30% 10%, rgb(255 255 255 / .6), transparent 70%),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='240' height='240'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .28 0 0 0 0 .27 0 0 0 0 .22 0 0 0 .07 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"),
+      var(--paper); }
+  .center { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 0 40px; }
+  .photo { position: absolute; inset: 0; background-size: cover; background-position: center; }
+  .deco { position: absolute; pointer-events: none; background-size: contain; background-repeat: no-repeat; }
+  .sprig { background-image: url('../public/decor/deco-sprig.webp'); }
+  .roses { background-image: url('../public/decor/deco-roses.webp'); }
+  .lace { background-image: url('../public/decor/deco-lace.webp'); }
+
+  /* type */
+  .title { font-size: 25px; font-weight: 400; letter-spacing: .28em; text-transform: uppercase; color: var(--ink); text-indent: .28em; }
+  .caps { font-size: 11.5px; letter-spacing: .28em; text-transform: uppercase; color: var(--ink); line-height: 1.75; text-indent: .28em; }
+  .scr { font-family: Corinthia, cursive; font-weight: 400; line-height: 1; color: var(--sage-dark); }
+  .body { font-size: 17px; line-height: 1.55; font-style: italic; color: var(--ink); text-wrap: balance; }
+  .muted { color: var(--muted); }
+  .div { display: flex; align-items: center; gap: 8px; margin: 14px auto; color: var(--sage); }
+  .div::before, .div::after { content: ""; width: 26px; height: 1px; background: var(--line); }
+  .div i { width: 4px; height: 4px; border-radius: 50%; background: var(--sage); opacity: .6; }
+  svg.ic { fill: none; stroke: var(--sage-dark); stroke-width: 1.15; stroke-linecap: round; stroke-linejoin: round; }
+
+  /* the label-shaped card (scooped corners, small arch at the top) */
+  .label { position: absolute; left: 36px; right: 36px; }
+  .label > svg.shape { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; filter: drop-shadow(0 18px 26px rgb(40 34 24 / .28)) drop-shadow(0 2px 3px rgb(40 34 24 / .15)); }
+  .label > .in { position: relative; display: flex; flex-direction: column; align-items: center; text-align: center; padding: 44px 26px 30px; }
+
+  /* 1 envelope */
+  .env .photo { background-image: url('../public/invitations/rami-lea/envelope-lace.webp'); background-position: 50% 20%; }
+  .env .bottom { position: absolute; left: 0; right: 0; bottom: 56px; text-align: center; }
+  .env .for { font-size: 30px; margin-bottom: 14px; }
+  .env .chev { width: 14px; height: 14px; margin: 8px auto 0; border-right: 1px solid var(--ink); border-bottom: 1px solid var(--ink); transform: rotate(45deg); }
+
+  /* 2 hero */
+  .hero .photo { bottom: 270px; background-image: url('../public/invitations/rami-lea/couple-hero.webp'); background-position: 50% 30%; }
+  .hero .sheet { position: absolute; left: 0; right: 0; bottom: 0; height: 300px; }
+  .hero .sheet .in { position: absolute; inset: 52px 30px 0; text-align: center; }
+  .hero .names { font-size: 68px; margin: 8px 0 10px; }
+
+  /* 3 letter */
+  .letter .oval { width: 170px; height: 214px; border-radius: 50%; padding: 7px; border: 1px solid var(--line); margin-bottom: 26px; position: relative; }
+  .letter .oval::after { content: ""; position: absolute; inset: -6px; border-radius: 50%; border: 1px solid rgb(124 122 92 / .35); }
+  .letter .oval div { width: 100%; height: 100%; border-radius: 50%; background: url('../public/invitations/rami-lea/couple-cameo.webp') 50% 30% / cover; }
+  .letter .names { font-size: 70px; margin: 12px 0 2px; }
+
+  /* 4 framed */
+  .framed .arch { width: 236px; height: 300px; border-radius: 118px 118px 4px 4px; padding: 8px; border: 1px solid var(--line); margin-bottom: 28px; background: var(--card); box-shadow: 0 16px 30px -14px rgb(40 34 24 / .35); }
+  .framed .arch div { width: 100%; height: 100%; border-radius: 110px 110px 2px 2px; background: url('../public/invitations/rami-lea/couple-framed.webp') 50% 30% / cover; }
+  .framed .scr { font-size: 58px; margin: 6px 0 10px; }
+
+  /* 5 countdown */
+  .count .grid { display: grid; grid-template-columns: repeat(4, 1fr); width: 100%; margin-top: 8px; }
+  .count .cell { padding: 6px 0; }
+  .count .cell + .cell { border-left: 1px solid var(--line); }
+  .count .num { font-size: 40px; line-height: 1.1; color: var(--ink); }
+  .count .u { font-size: 9.5px; letter-spacing: .26em; text-transform: uppercase; color: var(--muted); margin-top: 4px; }
+
+  /* 6 details */
+  .details .photo { background-image: url('../public/invitations/rami-lea/scene-garden.webp'); }
+  .ev { display: grid; grid-template-columns: 48px 1fr; gap: 16px; align-items: center; width: 100%; text-align: left; padding: 15px 0; }
+  .ev + .ev { border-top: 1px solid var(--line); }
+  .ev svg { width: 44px; height: 44px; }
+  .ev .t { font-size: 13px; letter-spacing: .22em; text-transform: uppercase; }
+  .ev .h { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--muted); margin-top: 2px; }
+  .ev .p { font-size: 14px; font-style: italic; color: var(--muted); }
+  .ev .m { font-size: 10px; letter-spacing: .24em; text-transform: uppercase; color: var(--sage-dark); border-bottom: 1px solid var(--line); margin-top: 4px; display: inline-block; }
+
+  /* 7 notes */
+  .notes .center { justify-content: flex-start; padding-top: 128px; }
+  .row { display: grid; grid-template-columns: 46px 1fr; gap: 18px; text-align: left; width: 100%; padding: 16px 0; }
+  .row + .row { border-top: 1px solid var(--line); }
+  .row svg { width: 38px; height: 38px; }
+  .row .t { font-size: 13.5px; letter-spacing: .22em; text-transform: uppercase; }
+  .row .d { font-size: 15.5px; font-style: italic; color: var(--muted); line-height: 1.45; margin-top: 2px; }
+  .gift { margin-top: 6px; display: flex; align-items: center; gap: 12px; font-style: normal; }
+  .gift .n { font-size: 15px; color: var(--ink); letter-spacing: .04em; }
+  .gift .cp { font-size: 9.5px; letter-spacing: .26em; text-transform: uppercase; color: var(--sage-dark); border: 1px solid var(--sage); border-radius: 99px; padding: 4px 10px; }
+
+  /* 8 rsvp */
+  .rsvp .photo { background-image: url('../public/invitations/rami-lea/scene-candles.webp'); }
+  .field { width: 100%; display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; background: #fff8; font-size: 15px; font-style: italic; color: var(--muted); text-align: left; }
+  .field + .field { margin-top: 10px; }
+  .field svg { width: 16px; height: 16px; flex: none; }
+  .field.name { color: var(--ink); font-style: normal; }
+  .field .chev { margin-left: auto; width: 8px; height: 8px; border-right: 1px solid var(--muted); border-bottom: 1px solid var(--muted); transform: rotate(45deg) translateY(-3px); }
+  .btn { width: 100%; margin-top: 16px; padding: 14px 0; border-radius: 99px; background: var(--sage); color: #F7F2EC; font-size: 11.5px; letter-spacing: .3em; text-transform: uppercase; text-indent: .3em; box-shadow: 0 8px 16px -8px rgb(60 58 40 / .6); }
+
+  /* 9 qr */
+  .qrbox { margin: 22px auto 16px; padding: 10px; border: 1px solid var(--line); background: var(--card); }
+  .qrbox canvas { display: block; width: 132px; height: 132px; }
+  .dots { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: grid; gap: 8px; }
+  .dots i { width: 4px; height: 4px; border-radius: 50%; background: rgb(74 68 54 / .25); }
+  .dots i.on { background: var(--sage); transform: scale(1.5); }
+</style>
+</head>
+<body>
+
+<!-- 1 -->
+<div class="slot a"><div class="page env">
+  <div class="photo"></div>
+  <div class="bottom">
+    <p class="scr for">The Haddad Family</p>
+    <p class="caps">Open the invitation</p>
+    <div class="chev"></div>
+  </div>
+</div><b>1 · Envelope</b></div>
+
+<!-- 2 -->
+<div class="slot a"><div class="page hero">
+  <div class="photo"></div>
+  <div class="sheet"><svg class="torn" width="390" height="300" viewBox="0 0 390 300" style="position:absolute;inset:0;filter:drop-shadow(0 -6px 10px rgb(40 34 24 / .18))"><path fill="#F7F2EC"/></svg>
+    <div class="in">
+      <p class="caps">The wedding of</p>
+      <p class="scr names">Rami &amp; Lea</p>
+      <p class="caps muted">You are cordially invited<br>to celebrate our wedding</p>
+      <div class="div"><i></i></div>
+      <p class="caps">Saturday · 19 June 2027</p>
+    </div>
+  </div>
+</div><b>2 · Hero</b></div>
+
+<!-- 3 -->
+<div class="slot a"><div class="page paper letter">
+  <div class="deco sprig" style="left:-6px;top:-4px;width:190px;height:180px"></div>
+  <div class="deco roses" style="right:-12px;bottom:-10px;width:200px;height:186px;transform:scaleX(-1)"></div>
+  <div class="center">
+    <div class="oval"><div></div></div>
+    <p class="caps">The Nassar &amp; Khalil families</p>
+    <p class="body muted" style="margin-top:4px">have the honour of inviting you<br>to the marriage of their children</p>
+    <p class="scr names">Rami &amp; Lea</p>
+    <div class="div"><i></i></div>
+    <p class="body">As we begin this new chapter together, we would be honoured to have you by our side.</p>
+  </div>
+  <div class="dots"><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+</div><b>3 · Letter</b></div>
+
+<!-- 4 -->
+<div class="slot a"><div class="page paper framed">
+  <div class="deco lace" style="right:-4px;top:-2px;width:250px;height:167px"></div>
+  <div class="deco roses" style="left:-14px;bottom:-12px;width:190px;height:174px"></div>
+  <div class="center">
+    <div class="arch"><div></div></div>
+    <p class="caps">Rami &amp; Lea</p>
+    <p class="scr">are getting married</p>
+    <p class="caps muted">Saturday · 19 June 2027</p>
+  </div>
+  <div class="dots"><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i><i></i></div>
+</div><b>4 · Framed</b></div>
+
+<!-- 5 -->
+<div class="slot a"><div class="page paper count">
+  <div class="deco sprig" style="left:-6px;top:-4px;width:200px;height:186px"></div>
+  <div class="deco roses" style="right:-14px;bottom:-12px;width:190px;height:174px;transform:scaleX(-1)"></div>
+  <div class="center">
+    <p class="caps muted">Saturday · 19 June 2027</p>
+    <h2 class="title" style="margin-top:12px">Counting down</h2>
+    <div class="div"><i></i></div>
+    <div class="grid">
+      <div class="cell"><p class="num">218</p><p class="u">Days</p></div>
+      <div class="cell"><p class="num">17</p><p class="u">Hours</p></div>
+      <div class="cell"><p class="num">43</p><p class="u">Min</p></div>
+      <div class="cell"><p class="num">40</p><p class="u">Sec</p></div>
+    </div>
+    <p class="scr" style="font-size:40px;margin-top:26px">until forever</p>
+  </div>
+  <div class="dots"><i></i><i></i><i></i><i class="on"></i><i></i><i></i><i></i><i></i></div>
+</div><b>5 · Countdown</b></div>
+
+<!-- 6 -->
+<div class="slot b"><div class="page details">
+  <div class="photo"></div>
+  <div class="label" style="top:138px"><svg class="shape"></svg><div class="in">
+    <svg class="ic" viewBox="0 0 40 16" style="width:40px;height:16px;margin-bottom:10px"><path d="M2 12 C12 12 16 4 20 4 C24 4 28 12 38 12"/><path d="M20 4 l0 -2"/><path d="M12 9 q-3 -4 -6 -3 M28 9 q3 -4 6 -3"/></svg>
+    <h2 class="title">The celebration</h2>
+    <div class="div"><i></i></div>
+    <div class="ev"><svg class="ic" viewBox="0 0 48 48"><ellipse cx="24" cy="15" rx="14" ry="5"/><path d="M10 15 v16 c0 3 6 6 14 6 s14 -3 14 -6 V15"/><path d="M10 22 l28 0 M14 27 l6 6 M22 27 l6 6 M30 27 l5 5"/><path d="M33 6 l6 -4 M37 9 l8 -3"/></svg><div><p class="t">The zaffé</p><p class="h">3:00 PM</p><p class="p">The bride's home, Achrafieh</p></div></div>
+    <div class="ev"><svg class="ic" viewBox="0 0 48 48"><circle cx="19" cy="28" r="10"/><circle cx="29" cy="28" r="10"/><path d="M15 15 l4 -6 l4 6 z"/></svg><div><p class="t">The ceremony</p><p class="h">5:00 PM</p><p class="p">Saint Elie Church, Jounieh</p></div></div>
+    <div class="ev"><svg class="ic" viewBox="0 0 48 48"><path d="M12 8 h10 l-1 12 a4 4 0 0 1 -8 0 z M17 24 v14 M12 40 h10"/><path d="M26 8 h10 l-1 12 a4 4 0 0 1 -8 0 z M31 24 v14 M26 40 h10"/><path d="M13 13 h8 M27 13 h8"/></svg><div><p class="t">The reception</p><p class="h">8:00 PM</p><p class="p">Villa Sindiane, Faraya</p></div></div>
+    <p class="caps" style="margin-top:12px;color:var(--sage-dark);font-size:10.5px">Tap a place for the map</p>
+  </div></div>
+  <div class="deco roses" style="left:14px;top:560px;width:150px;height:137px"></div>
+</div><b>6 · The details</b></div>
+
+<!-- 7 -->
+<div class="slot b"><div class="page paper notes">
+  <div class="deco sprig" style="left:-6px;top:-4px;width:200px;height:186px"></div>
+  <div class="deco roses" style="right:-14px;bottom:-12px;width:170px;height:156px;transform:scaleX(-1)"></div>
+  <div class="center">
+    <h2 class="title">Good to know</h2>
+    <div class="div"><i></i></div>
+    <div class="row"><svg class="ic" viewBox="0 0 48 48"><path d="M24 10 a4 4 0 1 1 4 4 c-2 0 -4 1 -4 3 v2 L6 32 c-2 1 -1 4 1 4 h34 c2 0 3 -3 1 -4 L24 19"/></svg><div><p class="t">Dress code</p><p class="d">Black tie. Soft greens, ivory and neutral tones are welcome.</p></div></div>
+    <div class="row"><svg class="ic" viewBox="0 0 48 48"><circle cx="17" cy="16" r="6"/><circle cx="32" cy="16" r="6"/><path d="M6 38 c0 -8 5 -13 11 -13 s11 5 11 13 M24 27 c2 -1.5 5 -2 8 -2 c6 0 10 5 10 13"/></svg><div><p class="t">Adults only</p><p class="d">We love your little ones, but this evening is for adults only.</p></div></div>
+    <div class="row"><svg class="ic" viewBox="0 0 48 48"><rect x="8" y="18" width="32" height="22"/><path d="M6 12 h36 v6 H6z M24 12 v28"/><path d="M24 12 q-9 -9 -11 -2 q2 4 11 2 q9 -9 11 -2 q-2 4 -11 2"/></svg><div><p class="t">Gifts</p><p class="d">Your presence is the greatest gift. For those who wish:</p><p class="d gift"><span class="n">Whish · +961 70 000 000</span><span class="cp">Copy</span></p></div></div>
+  </div>
+  <div class="dots"><i></i><i></i><i></i><i></i><i></i><i class="on"></i><i></i><i></i></div>
+</div><b>7 · Good to know</b></div>
+
+<!-- 8 -->
+<div class="slot b"><div class="page rsvp">
+  <div class="photo"></div>
+  <div class="label" style="top:150px"><svg class="shape"></svg><div class="in">
+    <svg class="ic" viewBox="0 0 40 16" style="width:40px;height:16px;margin-bottom:10px"><path d="M2 12 C12 12 16 4 20 4 C24 4 28 12 38 12"/><path d="M12 9 q-3 -4 -6 -3 M28 9 q3 -4 6 -3"/></svg>
+    <h2 class="title">RSVP</h2>
+    <p class="caps muted" style="margin-top:6px">Kindly reply before<br>19 May 2027</p>
+    <div class="div"><i></i></div>
+    <div class="field name"><svg class="ic" viewBox="0 0 16 16"><circle cx="8" cy="5" r="3"/><path d="M2 15 c0 -4 3 -6 6 -6 s6 2 6 6"/></svg>The Haddad Family · 2 seats</div>
+    <div class="field"><svg class="ic" viewBox="0 0 16 16"><path d="M3 8 l3 3 l7 -7"/></svg>Will you be joining us?<span class="chev"></span></div>
+    <div class="field" style="height:64px;align-items:flex-start"><svg class="ic" viewBox="0 0 16 16"><path d="M2 3 h12 v8 h-7 l-3 3 v-3 h-2 z"/></svg>A note for the couple (optional)</div>
+    <div class="btn">Confirm RSVP</div>
+  </div></div>
+</div><b>8 · RSVP</b></div>
+
+<!-- 9 -->
+<div class="slot b"><div class="page paper qr">
+  <div class="deco lace" style="right:-4px;top:-2px;width:260px;height:173px"></div>
+  <div class="deco roses" style="left:-14px;bottom:-12px;width:210px;height:192px"></div>
+  <div class="center">
+    <h2 class="title">Thank you</h2>
+    <div class="div"><i></i></div>
+    <p class="caps">For being part<br>of our story</p>
+    <div class="qrbox"><canvas width="132" height="132"></canvas></div>
+    <p class="caps muted">Scan to share<br>your photos of the day</p>
+  </div>
+  <div class="dots"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i class="on"></i></div>
+</div><b>9 · QR</b></div>
+
+<script>
+document.body.dataset.s = location.hash.slice(1) || "a";
+
+// torn paper edge at the top of the hero sheet
+(() => {
+  let s = 3; const r = () => (s = (s * 16807) % 2147483647, (s - 1) / 2147483646);
+  let d = "M0 300 L0 40 ";
+  for (let x = 0; x <= 390; x += 6) d += `L${x} ${30 + Math.sin(x / 37) * 6 + (r() - .5) * 7} `;
+  d += "L390 300 Z";
+  document.querySelector(".torn path").setAttribute("d", d);
+})();
+
+// label card: scooped corners and a small arch at the top centre
+document.fonts.ready.then(() => {
+  for (const el of document.querySelectorAll(".label")) {
+    const w = el.offsetWidth, h = el.offsetHeight, c = 20, a = 34, ah = 16;
+    const shape = (o) => {
+      const x0 = o, y0 = o + ah, x1 = w - o, y1 = h - o, cc = c - o * .6, aa = a - o * .3, ahh = ah - o * .4;
+      return `M${x0 + cc} ${y0} L${w/2 - aa - 10} ${y0} Q${w/2 - aa} ${y0} ${w/2 - aa + 4} ${y0 - ahh * .6} Q${w/2} ${y0 - ahh * 1.5} ${w/2 + aa - 4} ${y0 - ahh * .6} Q${w/2 + aa} ${y0} ${w/2 + aa + 10} ${y0} L${x1 - cc} ${y0} A${cc} ${cc} 0 0 0 ${x1} ${y0 + cc} L${x1} ${y1 - cc} A${cc} ${cc} 0 0 0 ${x1 - cc} ${y1} L${x0 + cc} ${y1} A${cc} ${cc} 0 0 0 ${x0} ${y1 - cc} L${x0} ${y0 + cc} A${cc} ${cc} 0 0 0 ${x0 + cc} ${y0} Z`;
+    };
+    el.querySelector(".shape").innerHTML = `<path d="${shape(0)}" fill="#FBF8F3"/><path d="${shape(7)}" fill="none" stroke="#D9CDBB" stroke-width="1"/>`;
+    el.querySelector(".in").style.paddingTop = (44 + ah) + "px";
+  }
+});
+
+// fake QR
+let q = 11; const rq = () => (q = (q * 16807) % 2147483647, (q - 1) / 2147483646);
+for (const c of document.querySelectorAll("canvas")) {
+  const x = c.getContext("2d"), n = 25, k = 132 / n; x.fillStyle = "#4A4436";
+  for (let i = 0; i < n; i++) for (let j = 0; j < n; j++) if (rq() > .52) x.fillRect(i * k, j * k, k, k);
+  for (const [a, b] of [[0,0],[n-7,0],[0,n-7]]) { x.clearRect(a*k-k, b*k-k, 9*k, 9*k); x.fillRect(a*k, b*k, 7*k, 7*k); x.clearRect((a+1)*k, (b+1)*k, 5*k, 5*k); x.fillRect((a+2)*k, (b+2)*k, 3*k, 3*k); }
+}
+</script>
+</body>
+</html>

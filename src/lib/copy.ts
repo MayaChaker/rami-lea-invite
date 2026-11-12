@@ -4,6 +4,8 @@ import type { Lang } from "./types";
 // Text specific to one couple lives in src/data/invitations/.
 const en = {
   getting: "We’re getting married",
+  weddingOf: "The wedding of",
+  invited: "You are cordially invited to celebrate our wedding",
   families: (groom: string, bride: string) => `The ${groom} & ${bride} families`,
   honour: "have the honour of inviting you to the marriage of their children",
   openInvitation: "Open the invitation",
@@ -57,6 +59,8 @@ const en = {
 
 const ar: typeof en = {
   getting: "نحتفل بزفافنا",
+  weddingOf: "حفل زفاف",
+  invited: "يسعدنا أن ندعوكم للاحتفال بزفافنا",
   families: (groom: string, bride: string) => `عائلتا ${groom} و${bride}`,
   honour: "تتشرّفان بدعوتكم إلى حفل زفاف ولدَيهما",
   openInvitation: "افتحوا الدعوة",

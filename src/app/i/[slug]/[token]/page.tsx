@@ -68,7 +68,6 @@ export default async function GuestInvitation({
   const names = `${inv.couple.groom[L]}${t.and}${inv.couple.bride[L]}`;
   const day = formatDate(inv.date, L, { day: "numeric", month: "long", year: "numeric" });
   const weekday = formatDate(inv.date, L, { weekday: "long" });
-  const when = `${day} · ${inv.city[L]}`;
 
   // "The zaffé, the ceremony and the reception": this guest's events, in one line
   const labels = myEvents.map((e, i) => {
@@ -88,12 +87,12 @@ export default async function GuestInvitation({
       />
 
       <Hero
-        kicker={t.getting}
+        kicker={t.weddingOf}
         groom={inv.couple.groom[L]}
         amp={t.amp}
         bride={inv.couple.bride[L]}
-        when={when}
-        scrollLabel={t.scroll}
+        invited={t.invited}
+        when={`${weekday} · ${day}`}
         photo={inv.media.hero}
         photoAlt={inv.media.heroAlt[L]}
       />
