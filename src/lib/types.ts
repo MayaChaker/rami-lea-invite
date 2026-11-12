@@ -46,7 +46,9 @@ export interface Invitation {
     hero: string; // the couple's photo on the first page
     heroAlt: Localized; // describes the hero photo for screen readers
     ogPhoto: string; // JPEG behind the WhatsApp preview, 1200×630
-    cameo: string; // the oval photo on the envelope and the letter page (4:5)
+    envelope: string; // the closed envelope, full screen, flaps meeting in the centre (941×1672)
+    ribbon: string; // the satin ribbon and bow tied across it, transparent (1536×1024)
+    cameo: string; // the oval photo on the letter page (4:5)
     framed: string; // the square photo in the lace frame
   };
   letter: Localized;

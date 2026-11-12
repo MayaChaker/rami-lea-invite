@@ -80,10 +80,11 @@ export default async function GuestInvitation({
   return (
     <main className="invitation" lang={L} dir={L === "ar" ? "rtl" : "ltr"}>
       <Envelope
-        tapLabel={t.tapOpen}
+        envelope={inv.media.envelope}
+        ribbon={inv.media.ribbon}
+        guestName={guest.name[L]}
+        tapLabel={t.openInvitation}
         skipLabel={t.skip}
-        photo={inv.media.cameo}
-        photoAlt={names}
       />
 
       <Hero

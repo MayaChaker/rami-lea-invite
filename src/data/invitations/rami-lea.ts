@@ -25,6 +25,8 @@ export const ramiLea: Invitation = {
       ar: "العروسان جبينًا إلى جبين تحت شجرة زيتون",
     },
     ogPhoto: `${base}/og-couple.jpg`,
+    envelope: `${base}/envelope-full.webp`,
+    ribbon: `${base}/ribbon-bow.webp`,
     cameo: `${base}/couple-cameo.webp`,
     framed: `${base}/couple-framed.webp`,
   },

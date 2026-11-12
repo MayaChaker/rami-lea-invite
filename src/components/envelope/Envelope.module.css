@@ -1,297 +1,145 @@
-/* Full-screen opening. The flaps cover the inside paper, the seal sits on top.
-   Everything here is plain HTML + CSS + three small images (public/lace/), so
-   the envelope looks finished from the very first frame, before any
-   JavaScript has run. The colour comes from --color-sage, so it can change
-   per client. */
+/* Full-screen opening: a photo of a closed ivory envelope (--envelope), cut
+   into its four flaps with clip-path, and a satin ribbon (--ribbon) tied on top.
+   Plain HTML + CSS + two preloaded images, so it is complete on the first frame.
+   Tap: the bow is pulled and the ribbon falls away, the flaps open in 3D,
+   then everything fades into the hero underneath. */
 .envelope {
   position: fixed;
   inset: 0;
   z-index: 20;
   overflow: hidden;
   container-type: size;
-  perspective: 1300px;
-  /* No background: as the flaps open, the hero video behind shows straight through. */
+  perspective: 1100px;
+  background: var(--color-paper);
   cursor: pointer;
-  transition: opacity 0.7s ease;
+  transition: background-color 0.5s ease 0.6s, opacity 0.7s ease;
 }
 
-/* Slightly larger than the screen, so no edge shows when it tilts. */
-.stage {
+/* The photo keeps its own proportions (941 × 1672) and covers the screen,
+   centred: on a phone it is a little wider than the screen. */
+.box {
+  --ratio: calc(941 / 1672);
   position: absolute;
-  inset: -4%;
+  left: 50%;
+  top: 50%;
+  width: max(100cqw, 100cqh * var(--ratio));
+  aspect-ratio: 941 / 1672;
+  translate: -50% -50%;
   transform-style: preserve-3d;
 }
 
-/* When it opens, the tilt eases back to flat. */
-.cracked .stage {
-  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Moving light, follows the tilt (--lx / --ly are set from JS). */
-.sheen {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  transform: translateZ(5px);
-  background: radial-gradient(
-    60% 45% at var(--lx, 40%) var(--ly, 30%),
-    rgb(255 255 255 / 0.45),
-    rgb(255 255 255 / 0) 70%
-  );
-  mix-blend-mode: soft-light;
-  transition: opacity 0.6s;
-}
-
-.opened .sheen {
-  opacity: 0;
-}
-
-/* ---------- four flaps, hinged on their outer edge ---------- */
-/* Each flap sits a pixel higher than the one before, so they never flicker.
-   A flap is a size container: its shape and lace are measured in cqw / cqh
-   of the flap itself. */
+/* ---------- four flaps, hinged on their outer edge ----------
+   Each flap is the whole photo, clipped to its triangle. The flaps meet where
+   the lace crosses in the photo: 50% across, 47.9% down. The top and bottom
+   flaps keep their lace. */
 .flap {
   position: absolute;
   inset: 0;
-  container-type: size;
-  pointer-events: none;
+  background: var(--envelope) center / 100% 100%;
   backface-visibility: hidden;
   transition:
-    transform 1.05s cubic-bezier(0.55, 0, 0.25, 1),
-    filter 1.05s ease;
-}
-
-.right {
-  transform-origin: 100% 50%;
-  transform: translateZ(1px);
-}
-
-.left {
-  transform-origin: 0 50%;
-  transform: translateZ(2px);
-  filter: drop-shadow(6px 0 10px rgb(38 34 26 / 0.22));
-}
-
-.bottom {
-  transform-origin: 50% 100%;
-  transform: translateZ(3px);
-  filter: drop-shadow(0 -6px 10px rgb(38 34 26 / 0.26));
+    transform 1.25s cubic-bezier(0.55, 0, 0.25, 1),
+    opacity 0.5s ease 0.7s;
 }
 
 .top {
+  clip-path: polygon(0 0, 100% 0, 100% 23.6%, 50% 47.9%, 0 20.6%);
   transform-origin: 50% 0;
-  transform: translateZ(4px);
-  filter: drop-shadow(0 10px 14px rgb(38 34 26 / 0.34));
+  filter: drop-shadow(0 6px 8px rgb(60 50 34 / 0.18));
 }
 
-/* The sage linen of a flap: woven threads (a transparent tile) over a soft
-   light and a gradient. Each flap catches the light a little differently. */
-.face {
+.bottom {
+  clip-path: polygon(0 100%, 100% 100%, 100% 70.6%, 50% 46.1%, 0 70.6%);
+  transform-origin: 50% 100%;
+  filter: drop-shadow(0 -4px 8px rgb(60 50 34 / 0.12));
+}
+
+.left {
+  clip-path: polygon(0 19%, 51% 47.9%, 0 72%);
+  transform-origin: 0 50%;
+}
+
+.right {
+  clip-path: polygon(100% 22%, 49% 47.9%, 100% 72%);
+  transform-origin: 100% 50%;
+}
+
+/* ---------- the ribbon ----------
+   The image is 1536 × 1024 with the knot at 49.8% / 33.2%. It is set so the
+   knot sits where the flaps meet, wider than the envelope so the band runs
+   off both sides. */
+.ribbon {
   position: absolute;
-  inset: 0;
-  --from: color-mix(in srgb, var(--color-sage), white var(--a));
-  --to: color-mix(in srgb, var(--color-sage), var(--b-mix));
-  background:
-    url("/lace/linen.webp") 0 0 / 130px 130px,
-    radial-gradient(90cqh 90cqh at 25% 15%, rgb(255 255 255 / var(--light)), rgb(255 255 255 / 0)),
-    linear-gradient(150deg, var(--from), var(--to));
-}
-
-/* The flap shapes: from the outer edge to a softly rounded tip just past the
-   centre. o = 3.5cqw is how far the tips reach past the centre; the middle
-   points follow the curve of the tip. */
-.top .face {
-  --a: 20%;
-  --b-mix: white 4%;
-  --light: 0.24;
-  clip-path: polygon(
-    -1px -1px,
-    calc(100% + 1px) -1px,
-    calc(50% + 3.5cqw) calc(50% - 2.1cqw),
-    calc(50% + 1.75cqw) calc(50% - 0.66cqw),
-    50% calc(50% - 0.18cqw),
-    calc(50% - 1.75cqw) calc(50% - 0.66cqw),
-    calc(50% - 3.5cqw) calc(50% - 2.1cqw)
-  );
-}
-
-.bottom .face {
-  --a: 15%;
-  --b-mix: white 1%;
-  --light: 0.18;
-  clip-path: polygon(
-    -1px calc(100% + 1px),
-    calc(100% + 1px) calc(100% + 1px),
-    calc(50% + 3.5cqw) calc(50% + 2.1cqw),
-    calc(50% + 1.75cqw) calc(50% + 0.66cqw),
-    50% calc(50% + 0.18cqw),
-    calc(50% - 1.75cqw) calc(50% + 0.66cqw),
-    calc(50% - 3.5cqw) calc(50% + 2.1cqw)
-  );
-}
-
-.left .face {
-  --a: 12%;
-  --b-mix: black 4%;
-  --light: 0.16;
-  clip-path: polygon(
-    -1px -1px,
-    -1px calc(100% + 1px),
-    calc(50% + 2.8cqw) calc(50% + 3.5cqw),
-    calc(50% + 3.85cqw) calc(50% + 1.75cqw),
-    calc(50% + 4.2cqw) 50%,
-    calc(50% + 3.85cqw) calc(50% - 1.75cqw),
-    calc(50% + 2.8cqw) calc(50% - 3.5cqw)
-  );
-}
-
-.right .face {
-  --a: 9%;
-  --b-mix: black 6%;
-  --light: 0.14;
-  clip-path: polygon(
-    calc(100% + 1px) -1px,
-    calc(100% + 1px) calc(100% + 1px),
-    calc(50% - 2.8cqw) calc(50% + 3.5cqw),
-    calc(50% - 3.85cqw) calc(50% + 1.75cqw),
-    calc(50% - 4.2cqw) 50%,
-    calc(50% - 3.85cqw) calc(50% - 1.75cqw),
-    calc(50% - 2.8cqw) calc(50% - 3.5cqw)
-  );
-}
-
-/* ---------- lace along the inner edges of the top and bottom flaps ---------- */
-/* One strip per edge: it starts at one end of the edge, is turned to lie along
-   it (atan2), and is exactly as long as the edge (hypot), so every strip ends
-   at the tip. The tile repeats along the strip; its straight side sits on the
-   edge and the scallops hang over the flap below. */
-.lace {
-  --dx: 46.5cqw; /* 50cqw - o */
-  --dy: calc(50cqh - 2.1cqw); /* 50cqh - 0.6·o */
-  position: absolute;
-  width: hypot(var(--dx), var(--dy));
-  height: 10.08cqw; /* lace width 9cqw, plus the scallops */
-  transform-origin: 0 0;
-  background: url("/lace/strip.webp") 0 0 / auto 100% repeat-x;
-}
-
-/* top flap: corner → tip on the left, tip → corner on the right */
-.laceTL {
-  left: 0;
-  top: 0;
-  transform: rotate(atan2(var(--dy), var(--dx))) translateY(-1px);
-}
-
-.laceTR {
-  left: calc(50cqw + 3.5cqw);
-  top: calc(50cqh - 2.1cqw);
-  transform: rotate(atan2(calc(-1 * var(--dy)), var(--dx))) translateY(-1px);
-}
-
-/* bottom flap: tip → corner on the left, corner → tip on the right */
-.laceBL {
-  left: calc(50cqw - 3.5cqw);
-  top: calc(50cqh + 2.1cqw);
-  transform: rotate(atan2(var(--dy), calc(-1 * var(--dx)))) translateY(-1px);
-}
-
-.laceBR {
-  left: 100cqw;
-  top: 100cqh;
-  transform: rotate(atan2(calc(-1 * var(--dy)), calc(-1 * var(--dx)))) translateY(-1px);
-}
-
-/* Older browsers without hypot()/atan2(): no lace rather than lace at the wrong angle */
-@supports not (width: hypot(1px, 1px)) {
-  .lace {
-    display: none;
-  }
-}
-
-/* ---------- the "seal": the couple's cameo in a lace oval ---------- */
-.seal {
-  position: absolute;
-  z-index: 1;
-  left: 50%;
-  top: 50%;
-  width: 30cqw;
-  aspect-ratio: 4 / 5;
-  /* One transform for both: a separate `translate` gets merged away by the CSS optimizer. */
-  transform: translate(-50%, -50%) translateZ(8px);
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  background: none;
-  cursor: pointer;
-  transition:
-    transform 0.7s cubic-bezier(0.5, 0, 0.3, 1),
-    opacity 0.6s ease;
-}
-
-/* Ivory paper oval with the photo inset, like the letter page */
-.cameo {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  border-radius: 50%;
-  background: var(--color-paper);
-  box-shadow:
-    inset 3px 3px 5px rgb(255 255 255 / 0.95),
-    inset -3px -3px 6px rgb(120 112 92 / 0.2),
-    0 12px 22px -8px rgb(28 25 18 / 0.55),
-    0 3px 6px rgb(28 25 18 / 0.25);
-}
-
-.cameoPhoto {
-  inset: 2cqw !important;
-  width: calc(100% - 4cqw) !important;
-  height: calc(100% - 4cqw) !important;
-  object-fit: cover;
-  border-radius: 50%;
-}
-
-/* Lace ring around the oval (same image as the letter page: a 200×250 oval
-   with a 26 px band reaches 26/200 of the oval's width past each side) */
-.seal::after {
-  content: "";
-  position: absolute;
-  inset: calc(-30cqw * 26 / 200);
-  background-image: var(--lace-oval);
-  background-size: 100% 100%;
-  filter: drop-shadow(0 2px 3px rgb(28 25 18 / 0.4));
+  left: -4.5%;
+  top: 34.3%;
+  width: 109.5%;
+  aspect-ratio: 1536 / 1024;
+  background: var(--ribbon) center / contain no-repeat;
+  transform-origin: 49.8% 33.2%;
+  filter: drop-shadow(0 6px 8px rgb(50 48 30 / 0.28));
   pointer-events: none;
 }
 
-/* A soft ring that spreads out, inviting a tap */
-.seal::before {
-  content: "";
+/* Moving light across the paper, while it waits */
+.light {
   position: absolute;
-  inset: -26%;
-  border: 1px solid rgb(252 250 245 / 0.8);
-  border-radius: 50%;
-  animation: ripple 2.4s ease-out infinite;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    115deg,
+    rgb(255 255 255 / 0) 30%,
+    rgb(255 255 255 / 0.22) 45%,
+    rgb(255 255 255 / 0) 60%
+  );
+  background-size: 250% 100%;
+  animation: light 5s ease-in-out infinite;
+  transition: opacity 0.4s;
 }
 
-.seal:focus-visible {
-  outline: 2px solid var(--color-on-sage);
-  outline-offset: 14px;
+/* ---------- the guest's name and the call to open ---------- */
+.label {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 7.5cqh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6cqh;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-ink);
+  font: inherit;
+  cursor: pointer;
+  transition: opacity 0.4s;
+}
+
+.guest {
+  font-family: var(--font-script);
+  font-size: 9cqw;
+  line-height: 1;
+  color: var(--color-sage-dark);
 }
 
 .tap {
-  position: absolute;
-  z-index: 1;
-  left: 0;
-  right: 0;
-  bottom: 7%;
-  margin: 0;
-  text-align: center;
-  font-size: 2.7cqw;
-  letter-spacing: 0.32em;
+  font-size: 2.9cqw;
+  letter-spacing: 0.28em;
   text-transform: uppercase;
-  color: var(--color-on-sage);
-  text-shadow: 0 1px 6px rgb(38 34 26 / 0.4);
-  animation: breathe 2.4s ease-in-out infinite;
-  pointer-events: none;
+}
+
+.chevron {
+  width: 3cqw;
+  height: 3cqw;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  rotate: 45deg;
+  animation: bob 1.8s ease-in-out infinite;
+}
+
+:global([dir="rtl"]) .guest {
+  font-family: var(--font-ar-display);
+  line-height: 1.5;
 }
 
 :global([dir="rtl"]) .tap {
@@ -299,21 +147,24 @@
   letter-spacing: 0;
 }
 
+.label:focus-visible {
+  outline: 2px solid var(--color-sage);
+  outline-offset: 6px;
+}
+
 /* Skip the opening, top corner */
 .skip {
   position: absolute;
-  z-index: 2;
   top: max(12px, env(safe-area-inset-top, 0px));
   inset-inline-end: 12px;
   padding: 8px;
   border: 0;
   background: none;
-  color: var(--color-on-sage);
+  color: var(--color-muted);
   font: inherit;
   font-size: 2.5cqw;
   letter-spacing: 0.32em;
   text-transform: uppercase;
-  opacity: 0.8;
   cursor: pointer;
 }
 
@@ -323,50 +174,44 @@
 }
 
 .skip:focus-visible {
-  outline: 2px solid var(--color-on-sage);
+  outline: 2px solid var(--color-sage);
   outline-offset: 2px;
 }
 
-.cracked .skip {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s;
-}
-
 /* ---------- stages (each one stays on once reached) ---------- */
-/* The cameo lifts toward the guest and fades as the flaps open */
-.cracked .seal {
-  transform: translate(-50%, -50%) translateZ(120px) scale(1.12);
+.untie {
+  background-color: transparent; /* the hero shows through as the flaps open */
+}
+
+.untie .ribbon {
+  animation: untie 1.5s cubic-bezier(0.45, 0, 0.85, 0.5) forwards;
+}
+
+.untie .label,
+.untie .skip,
+.untie .light {
   opacity: 0;
   pointer-events: none;
-}
-
-.cracked .seal::before {
-  display: none;
-}
-
-.cracked .tap {
-  animation: none;
-  opacity: 0;
-  transition: opacity 0.3s;
 }
 
 .opened .top {
-  transform: translateZ(4px) rotateX(176deg);
+  transform: rotateX(-170deg);
 }
 
 .opened .bottom {
-  transform: translateZ(3px) rotateX(-176deg);
+  transform: rotateX(170deg);
 }
 
 .opened .left {
-  transform: translateZ(2px) rotateY(-176deg);
-  transition-delay: 0.12s;
+  transform: rotateY(170deg);
 }
 
 .opened .right {
-  transform: translateZ(1px) rotateY(176deg);
-  transition-delay: 0.12s;
+  transform: rotateY(-170deg);
+}
+
+.opened .flap {
+  opacity: 0;
 }
 
 .fading {
@@ -375,20 +220,34 @@
 }
 
 /* ---------- animations ---------- */
-@keyframes ripple {
-  from {
-    transform: scale(0.35);
-    opacity: 0.9;
+/* One piece of ribbon: pulled, the loops close, then it falls with gravity */
+@keyframes untie {
+  0% {
+    transform: none;
   }
-  to {
-    transform: scale(1.4);
-    opacity: 0;
+  14% {
+    transform: scale(1.03, 0.95);
+  }
+  30% {
+    transform: scale(0.95, 1.04) rotate(-2deg);
+  }
+  100% {
+    transform: translate(2%, 210%) rotate(12deg);
   }
 }
 
-@keyframes breathe {
+@keyframes light {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -20% 0;
+  }
+}
+
+@keyframes bob {
   50% {
-    opacity: 0.4;
+    translate: 0 4px;
   }
 }
 
