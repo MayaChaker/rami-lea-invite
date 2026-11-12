@@ -1,7 +1,7 @@
 /* ---------- the card on the page ---------- */
 .card {
-  width: 74cqw;
-  height: 104cqw;
+  width: 72cqw;
+  height: 110cqw;
   margin-top: 4cqw;
   cursor: pointer;
 }
@@ -18,7 +18,8 @@
 }
 
 .cardTitle {
-  font-size: 17cqw;
+  font-size: 15cqw;
+  white-space: nowrap;
   color: var(--color-ink);
   text-shadow: none !important;
 }
@@ -28,13 +29,13 @@
 }
 
 .hint {
-  color: var(--color-muted);
+  color: var(--color-sage-dark);
   text-shadow: none !important;
 }
 
 .seats {
-  font-size: 3.8cqw;
-  color: var(--color-ink);
+  color: var(--color-muted);
+  text-wrap: balance;
 }
 
 .ripple {
@@ -87,7 +88,7 @@
   overflow: visible; /* let the lace edge hang above */
   background: var(--grain), var(--color-paper);
   color: var(--color-ink);
-  box-shadow: 0 -20px 40px -20px rgb(28 31 24 / 0.5);
+  box-shadow: 0 -20px 40px -20px rgb(36 32 25 / 0.5);
   /* slide up when opened, down when closed */
   transform: translateY(105%);
   transition:
@@ -107,7 +108,7 @@
 }
 
 .sheet::backdrop {
-  background: rgb(28 31 24 / 0);
+  background: rgb(36 32 25 / 0);
   transition:
     background 0.4s,
     overlay 0.4s allow-discrete,
@@ -115,12 +116,12 @@
 }
 
 .sheet[open]::backdrop {
-  background: rgb(28 31 24 / 0.45);
+  background: rgb(36 32 25 / 0.45);
 }
 
 @starting-style {
   .sheet[open]::backdrop {
-    background: rgb(28 31 24 / 0);
+    background: rgb(36 32 25 / 0);
   }
 }
 

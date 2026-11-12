@@ -3,7 +3,8 @@ import { BowIcon } from "@/components/icons";
 import { delay } from "@/lib/motion";
 import styles from "./Letter.module.css";
 
-// Page 2: a cameo photo in an oval frame, the couple's letter and their signature.
+// The Letter: a cameo photo in a lace oval, the families' invitation line,
+// the couple's names (the largest line) and their letter.
 type Props = {
   photo: string;
   photoAlt: string;
@@ -27,11 +28,11 @@ export function Letter({ photo, photoAlt, families, honour, letter, signature }:
         <p className="caps">{families}</p>
         <p className={`body it ${styles.honour}`}>{honour}</p>
       </div>
-      <p className="body it" data-a="up" style={delay(0.2)}>
-        {letter}
-      </p>
-      <p className={`scr ${styles.sign}`} data-a="soft" style={delay(0.35)}>
+      <p className={`scr ${styles.sign}`} data-a="soft" style={delay(0.25)}>
         {signature}
+      </p>
+      <p className="body it" data-a="up" style={delay(0.4)}>
+        {letter}
       </p>
       <BowIcon className="icon" data-a="draw" style={delay(0.5)} />
     </section>

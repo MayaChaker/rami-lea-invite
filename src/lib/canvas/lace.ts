@@ -363,99 +363,8 @@ export function laceStrip(len: number, w: number, dpr: number): HTMLCanvasElemen
   return c;
 }
 
-/** A round lace rosette (for the corners of lace frames), `size` CSS px wide. */
-export function rosette(size: number, dpr: number): HTMLCanvasElement {
-  const c = document.createElement("canvas");
-  c.width = c.height = size * dpr;
-  const x = c.getContext("2d")!;
-  x.scale(dpr, dpr);
-  x.lineCap = "round";
-  const m = size / 2;
-
-  const cord = (path: Path2D, width: number) => {
-    x.save();
-    x.translate(0.4, 0.5);
-    x.strokeStyle = "rgba(118,106,88,.22)";
-    x.lineWidth = width + 0.35;
-    x.stroke(path);
-    x.restore();
-    x.strokeStyle = "#FDFBF6";
-    x.lineWidth = width;
-    x.stroke(path);
-  };
-
-  // Scalloped outer edge
-  const N = 14;
-  const outer = new Path2D();
-  for (let i = 0; i <= N; i++) {
-    const a = (i / N) * TAU;
-    const a2 = ((i + 0.5) / N) * TAU;
-    const R = m * 0.86;
-    const R2 = m * 0.98;
-    if (!i) outer.moveTo(m + Math.cos(a) * R, m + Math.sin(a) * R);
-    outer.quadraticCurveTo(
-      m + Math.cos(a2) * R2 * 1.06,
-      m + Math.sin(a2) * R2 * 1.06,
-      m + Math.cos(a + TAU / N) * R,
-      m + Math.sin(a + TAU / N) * R,
-    );
-  }
-  x.fillStyle = "rgba(250,247,241,.9)";
-  x.fill(outer);
-  cord(outer, 0.8);
-
-  // Tulle net inside
-  x.save();
-  x.clip(outer);
-  x.strokeStyle = "rgba(170,158,138,.3)";
-  x.lineWidth = 0.3;
-  for (let k = -size; k < size * 2; k += 2.2) {
-    x.beginPath();
-    x.moveTo(k, 0);
-    x.lineTo(k + size, size);
-    x.stroke();
-    x.beginPath();
-    x.moveTo(k + size, 0);
-    x.lineTo(k, size);
-    x.stroke();
-  }
-  x.restore();
-
-  // Ring, eight petals and a centre
-  const ring = new Path2D();
-  ring.arc(m, m, m * 0.66, 0, TAU);
-  cord(ring, 0.6);
-  const petals = new Path2D();
-  for (let j = 0; j < 8; j++) {
-    const a = (j * Math.PI) / 4;
-    petals.moveTo(m + Math.cos(a) * m * 0.5 + m * 0.14, m + Math.sin(a) * m * 0.5);
-    petals.ellipse(m + Math.cos(a) * m * 0.42, m + Math.sin(a) * m * 0.42, m * 0.2, m * 0.1, a, 0, TAU);
-  }
-  x.fillStyle = "rgba(253,251,247,.96)";
-  x.fill(petals);
-  cord(petals, 0.65);
-  const centre = new Path2D();
-  centre.arc(m, m, m * 0.17, 0, TAU);
-  x.fillStyle = "#F3EEE4";
-  x.fill(centre);
-  cord(centre, 0.6);
-
-  // Picots around the edge
-  for (let j = 0; j < N; j++) {
-    const a = ((j + 0.5) / N) * TAU;
-    const dot = new Path2D();
-    dot.arc(m + Math.cos(a) * m * 0.78, m + Math.sin(a) * m * 0.78, 0.9, 0, TAU);
-    cord(dot, 0.4);
-  }
-  return c;
-}
-
-/**
- * A lace ring around an oval: tulle, small daisies and a scalloped outer edge
- * with picots. `W`×`H` is the whole image (CSS px); the ring is `band` wide and
- * its inner edge hugs an oval of (W − 2·band)×(H − 2·band).
- */
-export function laceOval(W: number, H: number, band: number, dpr: number): HTMLCanvasElement {
+/** A new canvas of W×H CSS px, drawn at `dpr` resolution. */
+function makeCanvas(W: number, H: number, dpr: number) {
   const c = document.createElement("canvas");
   c.width = Math.ceil(W * dpr);
   c.height = Math.ceil(H * dpr);
@@ -463,18 +372,30 @@ export function laceOval(W: number, H: number, band: number, dpr: number): HTMLC
   x.scale(dpr, dpr);
   x.lineCap = "round";
   x.lineJoin = "round";
+  return { c, x };
+}
 
-  const cx = W / 2;
-  const cy = H / 2;
-  const rx = W / 2 - band; // inner edge of the ring
-  const ry = H / 2 - band;
-  // A point at angle `a`, `k` px out from the inner edge.
-  const at = (a: number, k: number) => [cx + Math.cos(a) * (rx + k), cy + Math.sin(a) * (ry + k)] as const;
+/** A point around a shape: `u` goes from 0 to 1 once around it, `k` px outward. */
+type EdgeAt = (u: number, k: number) => readonly [number, number];
 
-  const cord = (path: Path2D, width: number, alpha = 1) => {
+/**
+ * The lace shared by laceOval() and laceRect(): tulle, small daisies and a
+ * scalloped outer edge with picots, `band` px wide, just outside `inner`.
+ * It does not know the shape: it only asks `at()` where each point is.
+ */
+function laceRing(
+  x: CanvasRenderingContext2D,
+  W: number,
+  H: number,
+  band: number,
+  inner: Path2D,
+  at: EdgeAt,
+  N: number, // number of scallops around the shape
+) {
+  const cord = (path: Path2D, width: number) => {
     x.save();
     x.translate(0.45, 0.6);
-    x.strokeStyle = `rgba(118,106,88,${0.28 * alpha})`;
+    x.strokeStyle = "rgba(118,106,88,.28)";
     x.lineWidth = width + 0.4;
     x.stroke(path);
     x.restore();
@@ -483,27 +404,22 @@ export function laceOval(W: number, H: number, band: number, dpr: number): HTMLC
     x.stroke(path);
   };
 
-  const N = 44; // scallops around the oval
-  const step = TAU / N;
+  const step = 1 / N;
   const edge = band * 0.8; // where the scallops start
 
   // Outer scalloped edge
   const scallops = new Path2D();
   for (let i = 0; i <= N; i++) {
-    const a = i * step;
-    const [px, py] = at(a, edge);
+    const [px, py] = at(i * step, edge);
     if (i === 0) scallops.moveTo(px, py);
     else {
-      const [qx, qy] = at(a - step / 2, edge + band * 0.32);
+      const [qx, qy] = at((i - 0.5) * step, edge + band * 0.32);
       scallops.quadraticCurveTo(qx, qy, px, py);
     }
   }
   scallops.closePath();
 
-  const inner = new Path2D();
-  inner.ellipse(cx, cy, rx, ry, 0, 0, TAU);
-
-  // The ring itself: inside the scallops, outside the inner oval
+  // The ring itself: inside the scallops, outside the inner shape
   const ring = new Path2D();
   ring.addPath(scallops);
   ring.addPath(inner);
@@ -555,13 +471,97 @@ export function laceOval(W: number, H: number, band: number, dpr: number): HTMLC
   for (let i = 0; i < N; i++) {
     for (let j = 1; j < 4; j++) {
       const t = j / 4;
-      const a = i * step + t * step;
-      const [px, py] = at(a, edge + band * 0.32 * 4 * t * (1 - t) * 0.5 + 1.2);
+      const [px, py] = at(i * step + t * step, edge + band * 0.32 * 4 * t * (1 - t) * 0.5 + 1.2);
       const dot = new Path2D();
       dot.arc(px, py, 0.8, 0, TAU);
       cord(dot, 0.4);
     }
   }
+}
 
+/**
+ * A lace ring around an oval. `W`×`H` is the whole image (CSS px); the ring is
+ * `band` wide and its inner edge hugs an oval of (W − 2·band)×(H − 2·band).
+ */
+export function laceOval(W: number, H: number, band: number, dpr: number): HTMLCanvasElement {
+  const { c, x } = makeCanvas(W, H, dpr);
+  const cx = W / 2;
+  const cy = H / 2;
+  const rx = W / 2 - band;
+  const ry = H / 2 - band;
+  const inner = new Path2D();
+  inner.ellipse(cx, cy, rx, ry, 0, 0, TAU);
+  laceRing(
+    x, W, H, band, inner,
+    (u, k) => [cx + Math.cos(u * TAU) * (rx + k), cy + Math.sin(u * TAU) * (ry + k)],
+    44,
+  );
+  return c;
+}
+
+/**
+ * Walks around a rounded rectangle. at(s) gives the point `s` px along the edge
+ * (clockwise from the top left) and the outward direction there (nx, ny).
+ */
+function roundedRectEdge(x0: number, y0: number, w: number, h: number, r: number) {
+  type Part = { length: number; at: (t: number) => [number, number, number, number] };
+  const parts: Part[] = [];
+  const line = (ax: number, ay: number, bx: number, by: number, nx: number, ny: number) =>
+    parts.push({
+      length: Math.hypot(bx - ax, by - ay),
+      at: (t) => [ax + (bx - ax) * t, ay + (by - ay) * t, nx, ny],
+    });
+  const corner = (cx: number, cy: number, from: number) =>
+    parts.push({
+      length: (Math.PI * r) / 2,
+      at: (t) => {
+        const a = from + (t * Math.PI) / 2;
+        return [cx + Math.cos(a) * r, cy + Math.sin(a) * r, Math.cos(a), Math.sin(a)];
+      },
+    });
+
+  line(x0 + r, y0, x0 + w - r, y0, 0, -1); // top
+  corner(x0 + w - r, y0 + r, -Math.PI / 2);
+  line(x0 + w, y0 + r, x0 + w, y0 + h - r, 1, 0); // right
+  corner(x0 + w - r, y0 + h - r, 0);
+  line(x0 + w - r, y0 + h, x0 + r, y0 + h, 0, 1); // bottom
+  corner(x0 + r, y0 + h - r, Math.PI / 2);
+  line(x0, y0 + h - r, x0, y0 + r, -1, 0); // left
+  corner(x0 + r, y0 + r, Math.PI);
+
+  const length = parts.reduce((sum, p) => sum + p.length, 0);
+  return {
+    length,
+    at(s: number) {
+      s = ((s % length) + length) % length;
+      for (const p of parts) {
+        if (s <= p.length) return p.at(p.length ? s / p.length : 0);
+        s -= p.length;
+      }
+      return parts[0].at(0);
+    },
+  };
+}
+
+/**
+ * The same lace ring around a rounded rectangle (lace frames and cards).
+ * `W`×`H` is the whole image; the card inside is (W − 2·band)×(H − 2·band).
+ */
+export function laceRect(W: number, H: number, band: number, dpr: number, radius = 6): HTMLCanvasElement {
+  const { c, x } = makeCanvas(W, H, dpr);
+  const w = W - band * 2;
+  const h = H - band * 2;
+  const inner = new Path2D();
+  inner.roundRect(band, band, w, h, radius);
+  const edge = roundedRectEdge(band, band, w, h, radius);
+  // About one scallop every 13 px, so the daisies keep their size on any card
+  laceRing(
+    x, W, H, band, inner,
+    (u, k) => {
+      const [px, py, nx, ny] = edge.at(u * edge.length);
+      return [px + nx * k, py + ny * k];
+    },
+    Math.round(edge.length / 13),
+  );
   return c;
 }

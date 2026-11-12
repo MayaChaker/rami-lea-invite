@@ -56,7 +56,7 @@ export default async function Image({ params }: { params: Promise<{ slug: string
           style={{
             position: "absolute",
             inset: 0,
-            background: "linear-gradient(to bottom, rgba(28,31,24,.35), rgba(28,31,24,.55))",
+            background: "linear-gradient(to bottom, rgba(36,32,25,.35), rgba(36,32,25,.55))",
           }}
         />
         <div

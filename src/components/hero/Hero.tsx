@@ -1,10 +1,10 @@
-import { HERO_VIDEO_ID } from "@/lib/ids";
+import Image from "next/image";
 import { delay } from "@/lib/motion";
 import styles from "./Hero.module.css";
 
-// The first page after the envelope: the couple's video with their names.
-// A Server Component: no JavaScript. The envelope starts the video and sets
-// <html data-opened>, and the CSS below reveals the text when it sees it.
+// The first page after the envelope: the couple's photo with their names.
+// A Server Component: no JavaScript. The envelope sets <html data-opened>,
+// and the CSS below reveals the text and starts the slow zoom when it sees it.
 
 type Props = {
   kicker: string; // "We're getting married"
@@ -13,26 +13,17 @@ type Props = {
   bride: string;
   when: string; // "19 June 2027 · Jounieh, Lebanon"
   scrollLabel: string;
-  video: string;
-  poster: string;
-  videoLabel: string;
+  photo: string;
+  photoAlt: string;
 };
 
 export function Hero(p: Props) {
   return (
     <section className={styles.hero}>
       <div className={styles.zoom}>
-        <video
-          id={HERO_VIDEO_ID}
-          className={styles.video}
-          src={p.video}
-          poster={p.poster}
-          muted
-          playsInline
-          loop
-          preload="none" /* the envelope starts the download once the page has settled */
-          aria-label={p.videoLabel}
-        />
+        {/* The page's main image: `priority` loads it first, so it is ready
+            behind the envelope before the guest taps. */}
+        <Image src={p.photo} alt={p.photoAlt} fill priority sizes="100vw" className={styles.photo} />
       </div>
 
       <div className={styles.text}>

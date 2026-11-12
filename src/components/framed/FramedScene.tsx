@@ -3,10 +3,9 @@ import { DoilyFrame } from "@/components/lace/DoilyFrame";
 import { delay } from "@/lib/motion";
 import styles from "./FramedScene.module.css";
 
-// Page 3: a field photo behind (with parallax), the monogram in a ring,
-// and a photo in a floating lace frame. Server Component.
+// "are getting married": the monogram in a ring and the couple's photo in a
+// floating lace frame, on sage linen. Server Component.
 type Props = {
-  background: string;
   photo: string;
   photoAlt: string;
   monogram: string;
@@ -14,13 +13,9 @@ type Props = {
   when: string; // "Saturday · 19 June 2027"
 };
 
-export function FramedScene({ background, photo, photoAlt, monogram, title, when }: Props) {
+export function FramedScene({ photo, photoAlt, monogram, title, when }: Props) {
   return (
-    <section className="scene">
-      <div className="bgx" data-p="0.25">
-        <Image src={background} alt="" fill sizes="100vw" className="bgx-img" />
-      </div>
-
+    <section className="scene linen">
       <div className={styles.crest} data-a="up">
         <span>{monogram}</span>
       </div>

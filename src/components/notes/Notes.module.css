@@ -12,6 +12,13 @@
   padding: 5cqw 0;
 }
 
+/* The small line icon above each note (shares the drawing animation of .icon) */
+.noteIcon {
+  width: 8.5cqw;
+  height: 8.5cqw;
+  stroke-width: 1.3;
+}
+
 /* A hairline between notes */
 .row + .row {
   border-top: 1px solid var(--color-line);

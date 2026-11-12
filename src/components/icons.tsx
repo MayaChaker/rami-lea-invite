@@ -24,6 +24,45 @@ export function RingsIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+// ---------- small icons for the "Good to know" notes (48×48) ----------
+
+/** Dress code: a gown on a hanger */
+export function DressIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 48 48" aria-hidden="true" {...props}>
+      <path d="M21.5 9.5a2.5 2.5 0 1 1 2.5 2.5v2.5" />
+      <path d="M24 14.5 L9 22 H39 Z" />
+      <path d="M19 22 C19 26 20.5 28 21 29 L14 42 H34 L27 29 C27.5 28 29 26 29 22" />
+    </svg>
+  );
+}
+
+/** Adults only: two champagne flutes raised in a toast */
+export function ToastIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 48 48" aria-hidden="true" {...props}>
+      <path d="M11 11 L20 13 L18 24 A4 4 0 0 1 10.5 22.4 Z" />
+      <path d="M14.2 25 L11.5 37 M7.5 36 L15.5 38" />
+      <path d="M37 11 L28 13 L30 24 A4 4 0 0 0 37.5 22.4 Z" />
+      <path d="M33.8 25 L36.5 37 M32.5 38 L40.5 36" />
+      <path d="M24 4 V8 M20.5 6 L22 8 M27.5 6 L26 8" />
+    </svg>
+  );
+}
+
+/** Gifts: a wrapped box with a bow */
+export function GiftIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 48 48" aria-hidden="true" {...props}>
+      <path d="M8 17 H40 V23 H8 Z" />
+      <path d="M11 23 H37 V41 H11 Z" />
+      <path d="M24 17 V41" />
+      <path d="M24 17 C21 9 13 10 15.5 15 C16.5 17 20 17 24 17 Z" />
+      <path d="M24 17 C27 9 35 10 32.5 15 C31.5 17 28 17 24 17 Z" />
+    </svg>
+  );
+}
+
 export function HandIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>

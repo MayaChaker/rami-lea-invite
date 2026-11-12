@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, type PointerEvent } from "react";
 import { preload } from "react-dom";
 import styles from "./Envelope.module.css";
 import Image from "next/image";
-import { HERO_VIDEO_ID } from "@/lib/ids";
 
 type FlapName = "top" | "bottom" | "left" | "right";
 
@@ -80,40 +79,17 @@ export function Envelope({ tapLabel, skipLabel, photo, photoAlt }: Props) {
     };
   }
 
-  // Download the hero video only after the page has settled, so it does not
-  // compete with the page itself on a slow connection. The guest is looking at
-  // the envelope meanwhile, so it is usually ready by the time they tap.
-  useEffect(() => {
-    const video = document.getElementById(HERO_VIDEO_ID);
-    if (!(video instanceof HTMLVideoElement)) return;
-    const start = () => {
-      video.preload = "auto";
-      video.load();
-    };
-    const idle = window.requestIdleCallback ?? ((fn: () => void) => window.setTimeout(fn, 1200));
-    const id = idle(start);
-    return () => (window.cancelIdleCallback ?? window.clearTimeout)(id);
-  }, []);
-
   // Once the envelope starts fading, tell the page it is open:
   // the hero text reveals itself and scrolling is unlocked (both in CSS).
   useEffect(() => {
     if (stage === "fading") document.documentElement.dataset.opened = "";
   }, [stage]);
 
-  // Start the video inside the tap itself: phones in low-power mode only
-  // allow playback that a user action started.
-  function playVideo() {
-    const video = document.getElementById(HERO_VIDEO_ID);
-    if (video instanceof HTMLVideoElement) video.play().catch(() => {});
-  }
-
   // Straight to the invitation, no animation: the Skip button, and guests
   // whose phone asks for less motion.
   function skip() {
     timers.current.forEach(clearTimeout);
     timers.current.length = 0;
-    playVideo();
     document.documentElement.dataset.opened = "";
     setStage("gone");
   }
@@ -126,7 +102,6 @@ export function Envelope({ tapLabel, skipLabel, photo, photoAlt }: Props) {
 
   function open() {
     if (stage !== "closed") return;
-    playVideo();
     for (const { name, at } of STAGES) {
       timers.current.push(window.setTimeout(() => setStage(name), at));
     }

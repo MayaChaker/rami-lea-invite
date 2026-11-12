@@ -69,19 +69,19 @@
 .left {
   transform-origin: 0 50%;
   transform: translateZ(2px);
-  filter: drop-shadow(6px 0 10px rgb(30 34 26 / 0.22));
+  filter: drop-shadow(6px 0 10px rgb(38 34 26 / 0.22));
 }
 
 .bottom {
   transform-origin: 50% 100%;
   transform: translateZ(3px);
-  filter: drop-shadow(0 -6px 10px rgb(30 34 26 / 0.26));
+  filter: drop-shadow(0 -6px 10px rgb(38 34 26 / 0.26));
 }
 
 .top {
   transform-origin: 50% 0;
   transform: translateZ(4px);
-  filter: drop-shadow(0 10px 14px rgb(30 34 26 / 0.34));
+  filter: drop-shadow(0 10px 14px rgb(38 34 26 / 0.34));
 }
 
 /* The sage linen of a flap: woven threads (a transparent tile) over a soft
@@ -238,8 +238,8 @@
   box-shadow:
     inset 3px 3px 5px rgb(255 255 255 / 0.95),
     inset -3px -3px 6px rgb(120 112 92 / 0.2),
-    0 12px 22px -8px rgb(20 22 16 / 0.55),
-    0 3px 6px rgb(20 22 16 / 0.25);
+    0 12px 22px -8px rgb(28 25 18 / 0.55),
+    0 3px 6px rgb(28 25 18 / 0.25);
 }
 
 .cameoPhoto {
@@ -258,7 +258,7 @@
   inset: calc(-30cqw * 26 / 200);
   background-image: var(--lace-oval);
   background-size: 100% 100%;
-  filter: drop-shadow(0 2px 3px rgb(20 22 16 / 0.4));
+  filter: drop-shadow(0 2px 3px rgb(28 25 18 / 0.4));
   pointer-events: none;
 }
 
@@ -289,7 +289,7 @@
   letter-spacing: 0.32em;
   text-transform: uppercase;
   color: var(--color-on-sage);
-  text-shadow: 0 1px 6px rgb(30 34 26 / 0.4);
+  text-shadow: 0 1px 6px rgb(38 34 26 / 0.4);
   animation: breathe 2.4s ease-in-out infinite;
   pointer-events: none;
 }

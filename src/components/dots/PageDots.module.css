@@ -23,7 +23,7 @@
   aspect-ratio: 1;
   border-radius: 50%;
   background: rgb(255 255 255 / 0.5);
-  box-shadow: 0 0 0 1px rgb(46 50 41 / 0.25);
+  box-shadow: 0 0 0 1px rgb(54 51 43 / 0.25);
   transition:
     transform 0.4s,
     background 0.4s;
@@ -35,7 +35,7 @@
 }
 
 .ink i {
-  background: rgb(46 50 41 / 0.18);
+  background: rgb(54 51 43 / 0.18);
   box-shadow: none;
 }
 

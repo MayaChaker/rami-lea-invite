@@ -1,10 +1,9 @@
-/* Ported from the prototype's .doily, .lz and .ros */
+/* An ivory card. Its lace is a canvas around it (.ring), drawn by <LaceRing />. */
 .doily {
+  --band: 6.2cqw; /* how far the lace reaches past the card */
   position: relative;
+  border-radius: 6px;
   background: var(--grain), #fcfaf5;
-  box-shadow:
-    0 26px 36px -22px rgb(20 22 16 / 0.6),
-    0 3px 6px rgb(20 22 16 / 0.14);
   color: var(--color-ink);
 }
 
@@ -17,75 +16,15 @@
   pointer-events: none;
 }
 
-.lace {
+/* The lace: one band wider than the card on every side. The shadow follows
+   the lace's own shape, so the card lifts off the linen. */
+.ring {
   position: absolute;
+  inset: calc(var(--band) * -1);
+  width: calc(100% + var(--band) * 2);
+  height: calc(100% + var(--band) * 2);
   pointer-events: none;
-}
-
-.top,
-.bottom {
-  left: -1cqw;
-  right: -1cqw;
-  height: 7cqw;
-  background-image: var(--lace-h);
-  background-repeat: repeat-x;
-  background-size: auto 100%;
-}
-
-.top {
-  top: -6.4cqw;
-  transform: scaleY(-1);
-}
-
-.bottom {
-  bottom: -6.4cqw;
-}
-
-.left,
-.right {
-  top: -1cqw;
-  bottom: -1cqw;
-  width: 7cqw;
-  background-image: var(--lace-v);
-  background-repeat: repeat-y;
-  background-size: 100% auto;
-}
-
-.left {
-  left: -6.4cqw;
-}
-
-.right {
-  right: -6.4cqw;
-  transform: scaleX(-1);
-}
-
-.rosette {
-  position: absolute;
-  z-index: 1;
-  width: 15cqw;
-  height: 15cqw;
-  background-image: var(--rosette);
-  background-size: 100% 100%;
-  pointer-events: none;
-}
-
-.tl {
-  left: -8.5cqw;
-  top: -8.5cqw;
-}
-
-.tr {
-  right: -8.5cqw;
-  top: -8.5cqw;
-}
-
-.bl {
-  left: -8.5cqw;
-  bottom: -8.5cqw;
-}
-
-.br {
-  right: -8.5cqw;
-  bottom: -8.5cqw;
+  filter:
+    drop-shadow(0 2px 2px rgb(36 32 25 / 0.18))
+    drop-shadow(0 14px 22px rgb(36 32 25 / 0.22));
 }

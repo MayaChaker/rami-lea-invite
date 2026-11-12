@@ -8,9 +8,10 @@
 /* ---------- text ---------- */
 .caps {
   margin: 0;
-  font-size: 2.7cqw;
+  font-size: 2.9cqw;
   font-weight: 500;
-  letter-spacing: 0.32em;
+  letter-spacing: 0.3em;
+  line-height: 1.8;
   text-transform: uppercase;
 }
 
@@ -24,8 +25,8 @@
 .body {
   margin: 0;
   max-width: 21em;
-  font-size: 4.1cqw;
-  line-height: 1.7;
+  font-size: 4.5cqw;
+  line-height: 1.6;
 }
 
 .it {
@@ -63,9 +64,6 @@
   background: var(--grain), var(--color-paper);
 }
 
-.paper.alt {
-  background: var(--grain), var(--color-paper-2);
-}
 
 .paper .caps {
   color: var(--color-muted);
@@ -159,6 +157,23 @@
 
 .scene .caps {
   text-shadow: 0 1px 10px rgb(0 0 0 / 0.35);
+}
+
+/* Sage linen, the cloth of the envelope, behind the lace cards */
+.linen {
+  background:
+    url("/lace/linen.webp") 0 0 / 130px 130px,
+    radial-gradient(90cqh 90cqh at 25% 15%, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0)),
+    linear-gradient(
+      150deg,
+      color-mix(in srgb, var(--color-sage), white 12%),
+      color-mix(in srgb, var(--color-sage), black 10%)
+    );
+}
+
+/* On linen, only a soft vignette, not the dark wash meant for photos */
+.scene.linen::before {
+  background: radial-gradient(80% 60% at 50% 45%, rgb(255 252 240 / 0.08), rgb(30 28 20 / 0.24));
 }
 
 /* Background photo, taller than the page so the parallax never shows an edge */

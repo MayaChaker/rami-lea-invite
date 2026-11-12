@@ -3,6 +3,9 @@ export type Localized = Record<Lang, string>;
 
 export type EventId = "zaffe" | "ceremony" | "reception";
 
+// A small line icon above a "Good to know" note, so its meaning is clear at a glance.
+export type NoteIcon = "dress" | "adults" | "gift";
+
 export interface EventItem {
   id: EventId;
   label: Localized;
@@ -40,16 +43,14 @@ export interface Invitation {
   city: Localized;
   rsvpBy: string;
   media: {
-    heroVideo: string;
-    heroPoster: string;
-    heroAlt: Localized; // describes the hero video for screen readers
+    hero: string; // the couple's photo on the first page
+    heroAlt: Localized; // describes the hero photo for screen readers
     ogPhoto: string; // JPEG behind the WhatsApp preview, 1200×630
-    landscape: string;
-    cameo: string;
-    framed: string;
+    cameo: string; // the oval photo on the envelope and the letter page (4:5)
+    framed: string; // the square photo in the lace frame
   };
   letter: Localized;
-  notes: { title: Localized; text: Localized }[];
+  notes: { title: Localized; text: Localized; icon?: NoteIcon }[];
   gifts?: GiftMethod[]; // leave out to show no gift options
   albumUrl?: string; // shared photo album for the QR page; leave out to hide it
   events: EventItem[];

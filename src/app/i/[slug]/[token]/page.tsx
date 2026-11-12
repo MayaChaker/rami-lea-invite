@@ -70,6 +70,13 @@ export default async function GuestInvitation({
   const weekday = formatDate(inv.date, L, { weekday: "long" });
   const when = `${day} · ${inv.city[L]}`;
 
+  // "The zaffé, the ceremony and the reception": this guest's events, in one line
+  const labels = myEvents.map((e, i) => {
+    const label = e.label[L];
+    return L === "en" && i > 0 ? label.charAt(0).toLowerCase() + label.slice(1) : label;
+  });
+  const eventList = new Intl.ListFormat(L === "ar" ? "ar" : "en-GB", { type: "conjunction" }).format(labels);
+
   return (
     <main className="invitation" lang={L} dir={L === "ar" ? "rtl" : "ltr"}>
       <Envelope
@@ -86,9 +93,8 @@ export default async function GuestInvitation({
         bride={inv.couple.bride[L]}
         when={when}
         scrollLabel={t.scroll}
-        video={inv.media.heroVideo}
-        poster={inv.media.heroPoster}
-        videoLabel={inv.media.heroAlt[L]}
+        photo={inv.media.hero}
+        photoAlt={inv.media.heroAlt[L]}
       />
 
       <Letter
@@ -101,7 +107,6 @@ export default async function GuestInvitation({
       />
 
       <FramedScene
-        background={inv.media.landscape}
         photo={inv.media.framed}
         photoAlt={names}
         monogram={inv.couple.monogram}
@@ -116,11 +121,11 @@ export default async function GuestInvitation({
         units={t.units}
       />
 
-      {/* TODO: the prototype uses hero.webp here; land.webp until it is added. */}
       <DetailsScene
-        background={inv.media.landscape}
         card={{
           title: t.details,
+          when: `${weekday} · ${day}`,
+          summary: eventList,
           tapOpen: t.tapOpen,
           tapClose: t.tapClose,
           mapLabel: t.map,
@@ -139,7 +144,7 @@ export default async function GuestInvitation({
 
       <Notes
         label={t.goodToKnow}
-        notes={inv.notes.map((n) => ({ title: n.title[L], text: n.text[L] }))}
+        notes={inv.notes.map((n) => ({ title: n.title[L], text: n.text[L], icon: n.icon }))}
         gifts={
           inv.gifts && {
             intro: t.giftIntro,
@@ -151,7 +156,6 @@ export default async function GuestInvitation({
       />
 
       <RsvpScene
-        background={inv.media.landscape}
         storageKey={`rsvp:${inv.slug}:${guest.token}`}
         guestName={guest.name[L]}
         seats={guest.seats}

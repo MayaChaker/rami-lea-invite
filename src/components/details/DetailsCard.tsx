@@ -16,6 +16,8 @@ export type DetailItem = {
 
 type Props = {
   title: string;
+  when: string; // "Saturday · 19 June 2027"
+  summary: string; // "The zaffé, the ceremony and the reception"
   tapOpen: string;
   tapClose: string;
   mapLabel: string;
@@ -61,13 +63,15 @@ export function DetailsCard(p: Props) {
       <div className={styles.inner}>
         {/* Front. `inert` takes the hidden face out of tab order and screen readers. */}
         <DoilyFrame className={`${styles.face} ${styles.front}`} inert={open}>
+          <p className={`caps ${styles.hint}`}>{p.when}</p>
           <p className={`scr ${styles.title}`}>{p.title}</p>
-          <p className={`caps ${styles.hint}`}>{p.tapOpen}</p>
+          <p className={`body it ${styles.summary}`}>{p.summary}</p>
           {!seen && (
             <span className={styles.ripple} aria-hidden="true">
               <HandIcon />
             </span>
           )}
+          <p className={`caps ${styles.hint}`}>{p.tapOpen}</p>
         </DoilyFrame>
 
         {/* Back */}

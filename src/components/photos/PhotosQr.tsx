@@ -18,11 +18,11 @@ export async function PhotosQr({ label, title, text, url, qrLabel }: Props) {
     type: "svg",
     margin: 0,
     errorCorrectionLevel: "M",
-    color: { dark: "#2E3229", light: "#FFFFFF" },
+    color: { dark: "#36332B", light: "#FFFFFF" },
   });
 
   return (
-    <section className="band">
+    <section className="paper">
       <p className="caps" data-a="up">
         {label}
       </p>

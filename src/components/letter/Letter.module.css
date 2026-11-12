@@ -60,10 +60,13 @@
 }
 
 .honour {
+  font-size: 4.6cqw;
+  line-height: 1.45;
   color: var(--color-muted);
 }
 
+/* The names are the heart of the letter: the largest line on the page */
 .sign {
-  margin-top: 2cqw;
-  font-size: 13cqw;
+  margin: 1cqw 0 2cqw;
+  font-size: 19cqw;
 }

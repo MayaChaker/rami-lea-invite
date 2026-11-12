@@ -5,7 +5,7 @@ import type { Lang } from "./types";
 const en = {
   getting: "We’re getting married",
   families: (groom: string, bride: string) => `The ${groom} & ${bride} families`,
-  honour: "have the honour of inviting you",
+  honour: "have the honour of inviting you to the marriage of their children",
   tapSeal: "Tap the seal to open",
   skip: "Skip",
   and: " & ",
@@ -58,7 +58,7 @@ const en = {
 const ar: typeof en = {
   getting: "نحتفل بزفافنا",
   families: (groom: string, bride: string) => `عائلتا ${groom} و${bride}`,
-  honour: "تتشرّفان بدعوتكم",
+  honour: "تتشرّفان بدعوتكم إلى حفل زفاف ولدَيهما",
   tapSeal: "اضغطوا على الختم",
   skip: "تخطّي",
   and: " و",

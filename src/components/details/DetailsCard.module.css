@@ -1,7 +1,7 @@
 /* Ported from the prototype's .tapcard */
 .card {
-  width: 74cqw;
-  height: 122cqw;
+  width: 72cqw;
+  height: 118cqw;
   margin-top: 4cqw;
   perspective: 1400px;
   cursor: pointer;
@@ -40,14 +40,19 @@
 }
 
 .title {
-  font-size: 17cqw;
+  font-size: 16cqw;
+  white-space: nowrap;
   color: var(--color-ink);
   text-shadow: none !important;
 }
 
 .hint {
-  color: var(--color-muted);
+  color: var(--color-sage-dark);
   text-shadow: none !important;
+}
+
+.summary {
+  color: var(--color-muted);
 }
 
 /* A soft light sweeps across the front, inviting a tap */
