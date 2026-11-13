@@ -1,22 +1,24 @@
+/* Title near the top, like the reference, not centred on the page */
+.page {
+  justify-content: flex-start;
+  padding-top: 26cqw;
+}
+
 .rows {
   display: flex;
   flex-direction: column;
   width: 100%;
+  margin-top: 2cqw;
 }
 
+/* Icon on the start side, title and text beside it */
 .row {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1.6cqw;
-  padding: 5cqw 0;
-}
-
-/* The small line icon above each note (shares the drawing animation of .icon) */
-.noteIcon {
-  width: 8.5cqw;
-  height: 8.5cqw;
-  stroke-width: 1.3;
+  display: grid;
+  grid-template-columns: 11cqw 1fr;
+  gap: 4.5cqw;
+  align-items: start;
+  padding: 4.5cqw 0;
+  text-align: start;
 }
 
 /* A hairline between notes */
@@ -24,14 +26,40 @@
   border-top: 1px solid var(--color-line);
 }
 
+.iconCell {
+  display: flex;
+  justify-content: center;
+  padding-top: 0.6cqw;
+}
+
+/* The small line icon (shares the drawing animation of .icon) */
+.noteIcon {
+  width: 10cqw;
+  height: 10cqw;
+  stroke-width: 1.2;
+}
+
+.noteTitle {
+  font-size: 3.3cqw;
+  color: var(--color-ink) !important;
+}
+
+.noteText {
+  max-width: none;
+  margin-top: 0.6cqw;
+  font-size: 4.1cqw;
+  line-height: 1.45;
+  color: var(--color-muted);
+}
+
 /* ---------- optional money gift ---------- */
 .gifts {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 3cqw;
+  gap: 2.4cqw;
   width: 100%;
-  padding-top: 5cqw;
+  padding-top: 4.5cqw;
   border-top: 1px solid var(--color-line);
 }
 
@@ -40,16 +68,28 @@
   color: var(--color-muted);
 }
 
+/* Name · number · Copy, on one line */
 .method {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 2cqw;
+  justify-content: center;
+  gap: 3cqw;
+}
+
+.methodName {
+  color: var(--color-ink) !important;
 }
 
 .value {
-  font-size: 5cqw;
+  font-size: 4.6cqw;
   letter-spacing: 0.04em;
   font-variant-numeric: lining-nums;
   user-select: all; /* one tap selects the whole number */
+}
+
+.method :global(.pill) {
+  min-height: 8cqw;
+  padding: 0 4cqw;
+  font-size: 2.5cqw;
 }

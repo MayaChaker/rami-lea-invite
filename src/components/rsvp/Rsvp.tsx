@@ -1,15 +1,12 @@
 "use client";
 
-import { useEffect, useId, useRef, useState, type FormEvent, type KeyboardEvent } from "react";
-import { BowIcon, HandIcon } from "@/components/icons";
-import { DoilyFrame } from "@/components/lace/DoilyFrame";
+import { useEffect, useId, useState, type FormEvent } from "react";
+import { LabelCard } from "@/components/card/LabelCard";
 import styles from "./Rsvp.module.css";
 
-// The RSVP: a lace card on the page, and a bottom sheet with the reply form.
-//
-// The sheet is a native <dialog>. showModal() puts it above everything
-// (the "top layer"), keeps keyboard focus inside it, closes on Escape,
-// and makes the page behind it inert. No library needed.
+// The RSVP form, right on the page, on a label card. The guest's name and
+// seats come from their link, so the form only asks: coming or not, how many,
+// and an optional note for the couple.
 //
 // For now the reply is saved in this guest's browser only (localStorage).
 // Step 5 replaces save() with a Server Action that writes to Supabase.
@@ -18,9 +15,8 @@ type Answer = "yes" | "no";
 type Reply = { answer: Answer; count: number; message: string };
 
 export type RsvpText = {
-  title: string; // "Kindly reply"
-  tapReply: string;
-  openLabel: string; // for screen readers
+  title: string; // "RSVP"
+  question: string; // "Will you be joining us?"
   accept: string;
   decline: string;
   howMany: string;
@@ -37,63 +33,43 @@ export type RsvpText = {
   attending: string; // "attending" (after the number)
   declined: string; // "Regretfully declined"
   change: string;
-  close: string;
 };
 
 type Props = {
   storageKey: string; // one saved reply per invitation and guest
   guestName: string;
   seats: number; // the most people this guest can bring
-  replyBy: string; // "Please reply before 19 May 2027"
+  replyBy: string; // "Kindly reply before 19 May 2027"
   seatsText: string; // "Two seats have been reserved in your honour."
   t: RsvpText;
 };
 
 export function Rsvp({ storageKey, guestName, seats, replyBy, seatsText, t }: Props) {
-  const dialog = useRef<HTMLDialogElement>(null);
-  const noteId = useId();
-  const [seen, setSeen] = useState(false);
-  const [answer, setAnswer] = useState<Answer | null>(null);
+  const ids = { answer: useId(), note: useId() };
+  const [answer, setAnswer] = useState<Answer | "">("");
   const [count, setCount] = useState(seats);
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
   const [sent, setSent] = useState<Reply | null>(null);
 
-  // A reply this guest already sent from this phone (browser only, so in an effect).
+  // A reply this guest already sent from this phone. localStorage only exists
+  // in the browser, so it is read after the first render, on the next frame.
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(storageKey);
-      if (!raw) return;
-      const saved = JSON.parse(raw) as Reply;
-      setSent(saved);
-      setAnswer(saved.answer);
-      setCount(saved.count || seats);
-      setMessage(saved.message);
-    } catch {
-      // Private mode or a bad value: start fresh.
-    }
+    const frame = requestAnimationFrame(() => {
+      try {
+        const raw = localStorage.getItem(storageKey);
+        if (!raw) return;
+        const saved = JSON.parse(raw) as Reply;
+        setSent(saved);
+        setAnswer(saved.answer);
+        setCount(saved.count || seats);
+        setMessage(saved.message);
+      } catch {
+        // Private mode or a bad value: start fresh.
+      }
+    });
+    return () => cancelAnimationFrame(frame);
   }, [storageKey, seats]);
-
-  function openSheet() {
-    setSeen(true);
-    dialog.current?.showModal();
-  }
-
-  function closeSheet() {
-    dialog.current?.close();
-  }
-
-  function onCardKey(e: KeyboardEvent) {
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      openSheet();
-    }
-  }
-
-  function choose(a: Answer) {
-    setAnswer(a);
-    setError(false);
-  }
 
   function save(reply: Reply) {
     try {
@@ -118,124 +94,127 @@ export function Rsvp({ storageKey, guestName, seats, replyBy, seatsText, t }: Pr
     sent?.answer === "yes" ? (sent.count === 1 ? t.thanksYesOne : t.thanksYesMany) : t.thanksNo;
 
   return (
-    <>
-      {/* The card on the page */}
-      <div
-        className={styles.card}
-        role="button"
-        tabIndex={0}
-        aria-haspopup="dialog"
-        aria-label={t.openLabel}
-        onClick={openSheet}
-        onKeyDown={onCardKey}
-      >
-        <DoilyFrame className={styles.face}>
-          <p className={`scr ${styles.cardTitle}`}>{t.title}</p>
-          <BowIcon className={`icon ${styles.bow}`} />
-          <p className={`caps ${styles.hint}`}>{replyBy}</p>
-          <p className={`body it ${styles.seats}`}>{seatsText}</p>
-          {!seen && (
-            <span className={styles.ripple} aria-hidden="true">
-              <HandIcon />
-            </span>
-          )}
-          <p className={`caps ${styles.hint}`}>{t.tapReply}</p>
-        </DoilyFrame>
-      </div>
+    <LabelCard className={styles.card}>
+      <h2 className={`title ${styles.title}`}>{sent ? t.merci : t.title}</h2>
+      {!sent && <p className={`caps ${styles.by}`}>{replyBy}</p>}
+      <span className="divider" aria-hidden="true">
+        <i />
+      </span>
 
-      {/* The bottom sheet. A click on the dark backdrop (the dialog itself) closes it. */}
-      <dialog
-        ref={dialog}
-        className={styles.sheet}
-        aria-label={t.title}
-        onClick={(e) => {
-          if (e.target === e.currentTarget) closeSheet();
-        }}
-      >
-        <div className={styles.inner}>
-          <span className={styles.lace} aria-hidden="true" />
-          <button type="button" className={styles.close} onClick={closeSheet} aria-label={t.close}>
-            ×
+      {sent ? (
+        <div className={styles.thanks} aria-live="polite">
+          {/* What was sent, so the guest knows the reply went through */}
+          <p className={`caps ${styles.summary}`}>
+            {guestName} · {sent.answer === "yes" ? `${sent.count} ${t.attending}` : t.declined}
+          </p>
+          <p className="body it">{thanks}</p>
+          <button type="button" className={styles.change} onClick={() => setSent(null)}>
+            {t.change}
           </button>
-          {/* Only one script title at a time: "Kindly reply" or "Merci" */}
-          {!sent && <p className={`scr ${styles.sheetTitle}`}>{t.title}</p>}
-
-          {sent ? (
-            <div className={styles.thanks}>
-              <BowIcon className={`icon ${styles.thanksBow}`} />
-              <p className={`scr ${styles.merci}`}>{t.merci}</p>
-              {/* What was sent, so the guest knows the reply went through */}
-              <p className={`caps ${styles.summary}`}>
-                {guestName} · {sent.answer === "yes" ? `${sent.count} ${t.attending}` : t.declined}
-              </p>
-              <p className="body it">{thanks}</p>
-              <span className={styles.rule} aria-hidden="true" />
-              <button type="button" className={styles.change} onClick={() => setSent(null)}>
-                {t.change}
-              </button>
-            </div>
-          ) : (
-            <form className={styles.box} onSubmit={submit} noValidate>
-              <span className={styles.who}>{guestName}</span>
-
-              <div className={styles.choice} role="group" aria-label={t.title}>
-                <button type="button" className="pill" aria-pressed={answer === "yes"} onClick={() => choose("yes")}>
-                  {t.accept}
-                </button>
-                <button type="button" className="pill" aria-pressed={answer === "no"} onClick={() => choose("no")}>
-                  {t.decline}
-                </button>
-              </div>
-
-              {answer === "yes" && seats > 1 && (
-                <div className={styles.count}>
-                  <span>{t.howMany}</span>
-                  <div className={styles.stepper}>
-                    <button
-                      type="button"
-                      aria-label={t.less}
-                      disabled={count <= 1}
-                      onClick={() => setCount((c) => Math.max(1, c - 1))}
-                    >
-                      −
-                    </button>
-                    <output aria-live="polite">{count}</output>
-                    <button
-                      type="button"
-                      aria-label={t.more}
-                      disabled={count >= seats}
-                      onClick={() => setCount((c) => Math.min(seats, c + 1))}
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              <div className={styles.field}>
-                <label htmlFor={noteId}>{t.note}</label>
-                <textarea
-                  id={noteId}
-                  rows={2}
-                  placeholder={t.optional}
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                />
-              </div>
-
-              {error && (
-                <p className={styles.error} role="alert">
-                  {t.chooseFirst}
-                </p>
-              )}
-
-              <button type="submit" className={`pill solid ${styles.send}`}>
-                {t.send}
-              </button>
-            </form>
-          )}
         </div>
-      </dialog>
-    </>
+      ) : (
+        <form className={styles.form} onSubmit={submit} noValidate>
+          {/* Who: known from the link, shown, not asked */}
+          <div className={`${styles.field} ${styles.who}`}>
+            <PersonIcon />
+            <span>
+              {guestName}
+              <small>{seatsText}</small>
+            </span>
+          </div>
+
+          <label className={`${styles.field} ${error ? styles.invalid : ""}`} htmlFor={ids.answer}>
+            <CheckIcon />
+            <select
+              id={ids.answer}
+              value={answer}
+              aria-invalid={error}
+              onChange={(e) => {
+                setAnswer(e.target.value as Answer);
+                setError(false);
+              }}
+            >
+              <option value="" disabled>
+                {t.question}
+              </option>
+              <option value="yes">{t.accept}</option>
+              <option value="no">{t.decline}</option>
+            </select>
+          </label>
+
+          {answer === "yes" && seats > 1 && (
+            <div className={`${styles.field} ${styles.count}`}>
+              <span>{t.howMany}</span>
+              <div className={styles.stepper}>
+                <button
+                  type="button"
+                  aria-label={t.less}
+                  disabled={count <= 1}
+                  onClick={() => setCount((c) => Math.max(1, c - 1))}
+                >
+                  −
+                </button>
+                <output aria-live="polite">{count}</output>
+                <button
+                  type="button"
+                  aria-label={t.more}
+                  disabled={count >= seats}
+                  onClick={() => setCount((c) => Math.min(seats, c + 1))}
+                >
+                  +
+                </button>
+              </div>
+            </div>
+          )}
+
+          <label className={`${styles.field} ${styles.note}`} htmlFor={ids.note}>
+            <NoteIcon />
+            <textarea
+              id={ids.note}
+              rows={2}
+              placeholder={`${t.note} (${t.optional})`}
+              value={message}
+              onChange={(e) => setMessage(e.target.value)}
+            />
+          </label>
+
+          {error && (
+            <p className={styles.error} role="alert">
+              {t.chooseFirst}
+            </p>
+          )}
+
+          <button type="submit" className={styles.send}>
+            {t.send}
+          </button>
+        </form>
+      )}
+    </LabelCard>
+  );
+}
+
+// Small line icons for the fields (16×16)
+function PersonIcon() {
+  return (
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+      <circle cx="8" cy="5" r="3" />
+      <path d="M2 15c0-4 3-6 6-6s6 2 6 6" />
+    </svg>
+  );
+}
+
+function CheckIcon() {
+  return (
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M3 8.5l3 3 7-7" />
+    </svg>
+  );
+}
+
+function NoteIcon() {
+  return (
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+      <path d="M2 3h12v8H7l-3 3v-3H2z" />
+    </svg>
   );
 }
