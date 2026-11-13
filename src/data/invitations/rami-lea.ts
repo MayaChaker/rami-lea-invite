@@ -28,6 +28,8 @@ export const ramiLea: Invitation = {
     envelope: `${base}/envelope-full.webp`,
     ribbon: `${base}/ribbon-bow.webp`,
     cameo: `${base}/couple-cameo.webp`,
+    detailsBackground: `${base}/scene-garden.webp`,
+    rsvpBackground: `${base}/scene-candles.webp`,
   },
   letter: {
     en: "As we begin this new chapter together, we would be honoured to have you by our side. Here you will find everything you need for the day: the details and a way to reply.",

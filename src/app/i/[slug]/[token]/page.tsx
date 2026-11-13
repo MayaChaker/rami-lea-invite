@@ -68,12 +68,6 @@ export default async function GuestInvitation({
   const day = formatDate(inv.date, L, { day: "numeric", month: "long", year: "numeric" });
   const weekday = formatDate(inv.date, L, { weekday: "long" });
 
-  // "The zaffé, the ceremony and the reception": this guest's events, in one line
-  const labels = myEvents.map((e, i) => {
-    const label = e.label[L];
-    return L === "en" && i > 0 ? label.charAt(0).toLowerCase() + label.slice(1) : label;
-  });
-  const eventList = new Intl.ListFormat(L === "ar" ? "ar" : "en-GB", { type: "conjunction" }).format(labels);
 
   return (
     <main className="invitation" lang={L} dir={L === "ar" ? "rtl" : "ltr"}>
@@ -114,15 +108,11 @@ export default async function GuestInvitation({
       />
 
       <DetailsScene
+        background={inv.media.detailsBackground}
         card={{
-          title: t.details,
+          title: t.celebration,
           when: `${weekday} · ${day}`,
-          summary: eventList,
-          tapOpen: t.tapOpen,
-          tapClose: t.tapClose,
           mapLabel: t.map,
-          openLabel: t.openDetails,
-          closeLabel: t.closeDetails,
           // Only the events this guest is invited to
           items: myEvents.map((e) => ({
             id: e.id,

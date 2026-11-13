@@ -1,13 +1,13 @@
-"use client";
-
-import { useState, type KeyboardEvent, type MouseEvent } from "react";
-import { DoilyFrame } from "@/components/lace/DoilyFrame";
-import { HandIcon } from "@/components/icons";
+import type { ComponentType, SVGProps } from "react";
+import { LabelCard } from "@/components/card/LabelCard";
+import { DrumIcon, GlassesIcon, TwoRingsIcon } from "@/components/icons";
+import type { EventId } from "@/lib/types";
 import styles from "./DetailsCard.module.css";
 
-// "The details": a lace card that flips over on tap to show the events.
+// "The celebration": the guest's events on a label card, each with a line
+// icon, its time and place, and a link to the map. Server Component.
 export type DetailItem = {
-  id: string;
+  id: EventId;
   label: string; // "The ceremony"
   time: string; // "five o'clock"
   place: string; // "Saint Elie Church, Jounieh"
@@ -15,88 +15,54 @@ export type DetailItem = {
 };
 
 type Props = {
-  title: string;
+  title: string; // "The celebration"
   when: string; // "Saturday · 19 June 2027"
-  summary: string; // "The zaffé, the ceremony and the reception"
-  tapOpen: string;
-  tapClose: string;
-  mapLabel: string;
-  openLabel: string; // for screen readers
-  closeLabel: string;
+  mapLabel: string; // "Map"
   items: DetailItem[];
 };
 
-export function DetailsCard(p: Props) {
-  const [open, setOpen] = useState(false);
-  // Once the guest has tapped once, the "tap here" hint is no longer needed.
-  const [seen, setSeen] = useState(false);
+// One icon per kind of event. `satisfies` makes TypeScript complain if a new
+// event id is added without an icon.
+const ICONS = {
+  zaffe: DrumIcon,
+  ceremony: TwoRingsIcon,
+  reception: GlassesIcon,
+} satisfies Record<EventId, ComponentType<SVGProps<SVGSVGElement>>>;
 
-  function toggle() {
-    setOpen((o) => !o);
-    setSeen(true);
-  }
-
-  function onClick(e: MouseEvent) {
-    // A tap on Map or Waze opens the link; it should not flip the card.
-    if ((e.target as HTMLElement).closest("a")) return;
-    toggle();
-  }
-
-  function onKeyDown(e: KeyboardEvent) {
-    if (e.target !== e.currentTarget) return;
-    if (e.key === "Enter" || e.key === " ") {
-      e.preventDefault();
-      toggle();
-    }
-  }
-
+export function DetailsCard({ title, when, mapLabel, items }: Props) {
   return (
-    <div
-      className={`${styles.card} ${open ? styles.open : ""}`}
-      role="button"
-      tabIndex={0}
-      aria-expanded={open}
-      aria-label={open ? p.closeLabel : p.openLabel}
-      onClick={onClick}
-      onKeyDown={onKeyDown}
-    >
-      <div className={styles.inner}>
-        {/* Front. `inert` takes the hidden face out of tab order and screen readers. */}
-        <DoilyFrame className={`${styles.face} ${styles.front}`} inert={open}>
-          <p className={`caps ${styles.hint}`}>{p.when}</p>
-          <p className={`scr ${styles.title}`}>{p.title}</p>
-          <p className={`body it ${styles.summary}`}>{p.summary}</p>
-          {!seen && (
-            <span className={styles.ripple} aria-hidden="true">
-              <HandIcon />
-            </span>
-          )}
-          <p className={`caps ${styles.hint}`}>{p.tapOpen}</p>
-        </DoilyFrame>
+    <LabelCard>
+      <h2 className={`title ${styles.title}`}>{title}</h2>
+      <p className={`caps ${styles.when}`}>{when}</p>
+      <span className="divider" aria-hidden="true">
+        <i />
+      </span>
 
-        {/* Back */}
-        <DoilyFrame className={`${styles.face} ${styles.back}`} inert={!open}>
-          {p.items.map((item) => {
-            const q = encodeURIComponent(item.mapsQuery);
-            return (
-              <div key={item.id} className={styles.item}>
-                <p className={`caps ${styles.hint}`}>{item.label}</p>
-                <span className={styles.time}>{item.time}</span>
-                <span className={styles.place}>{item.place}</span>
-                <div className="pills">
-                  <a className={`pill ${styles.small}`} href={`https://maps.google.com/?q=${q}`} target="_blank" rel="noopener">
-                    {p.mapLabel}
+      <ul className={styles.list}>
+        {items.map((item) => {
+          const Icon = ICONS[item.id];
+          const q = encodeURIComponent(item.mapsQuery);
+          return (
+            <li key={item.id} className={styles.item}>
+              <Icon className={styles.icon} />
+              <div>
+                <p className={styles.label}>{item.label}</p>
+                <p className={styles.time}>{item.time}</p>
+                <p className={styles.place}>{item.place}</p>
+                <p className={styles.links}>
+                  <a href={`https://maps.google.com/?q=${q}`} target="_blank" rel="noopener">
+                    {mapLabel}
                   </a>
-                  <a className={`pill ${styles.small}`} href={`https://waze.com/ul?q=${q}`} target="_blank" rel="noopener">
+                  <span aria-hidden="true"> · </span>
+                  <a href={`https://waze.com/ul?q=${q}`} target="_blank" rel="noopener">
                     Waze
                   </a>
-                </div>
+                </p>
               </div>
-            );
-          })}
-          <p className={`caps ${styles.hint} ${styles.backHint}`}>{p.tapClose}</p>
-        </DoilyFrame>
-      </div>
-    </div>
+            </li>
+          );
+        })}
+      </ul>
+    </LabelCard>
   );
 }

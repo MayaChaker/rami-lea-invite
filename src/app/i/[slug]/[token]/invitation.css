@@ -183,6 +183,16 @@
   background: radial-gradient(80% 60% at 50% 45%, rgb(255 252 240 / 0.08), rgb(30 28 20 / 0.24));
 }
 
+/* A photo page whose text is all on a card: only a light, warm vignette */
+.scene.clear::before {
+  background: radial-gradient(90% 70% at 50% 45%, rgb(36 32 25 / 0), rgb(36 32 25 / 0.28));
+}
+
+.scene.clear .caps,
+.scene.clear .scr {
+  text-shadow: none;
+}
+
 /* Background photo, taller than the page so the parallax never shows an edge */
 .bgx {
   position: absolute;

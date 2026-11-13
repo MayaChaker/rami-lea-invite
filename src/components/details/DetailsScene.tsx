@@ -1,24 +1,24 @@
+import Image from "next/image";
 import { DetailsCard, type DetailItem } from "./DetailsCard";
 
-// "The details": the floating lace card on sage linen.
-// Server Component; only the card itself runs in the browser.
+// "The celebration": a garden photo, and the label card with the guest's
+// events floating on top. Server Component: no JavaScript at all.
 type Props = {
+  background: string;
   card: {
     title: string;
-    when: string; // "Saturday · 19 June 2027"
-    summary: string; // "The zaffé, the ceremony and the reception"
-    tapOpen: string;
-    tapClose: string;
+    when: string;
     mapLabel: string;
-    openLabel: string;
-    closeLabel: string;
     items: DetailItem[];
   };
 };
 
-export function DetailsScene({ card }: Props) {
+export function DetailsScene({ background, card }: Props) {
   return (
-    <section className="scene linen">
+    <section className="scene clear">
+      <div className="bgx" data-p="0.25">
+        <Image src={background} alt="" fill sizes="100vw" className="bgx-img" />
+      </div>
       <div className="float">
         <div data-a="rise">
           <DetailsCard {...card} />

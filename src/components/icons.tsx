@@ -63,6 +63,42 @@ export function GiftIcon(props: SVGProps<SVGSVGElement>) {
   );
 }
 
+// ---------- icons for the events (48×48) ----------
+
+/** The zaffé: a tabl (drum) with its two sticks */
+export function DrumIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 48 48" aria-hidden="true" {...props}>
+      <ellipse cx="22" cy="20" rx="14" ry="5" />
+      <path d="M8 20 V33 C8 36 14.5 38.5 22 38.5 S36 36 36 33 V20" />
+      <path d="M8 27 L14 35 M14 25 L22 38 M22 25 L30 37 M30 25 L36 32" />
+      <path d="M31 13 L42 6 M34 16 L45 11" />
+    </svg>
+  );
+}
+
+/** The ceremony: two wedding rings */
+export function TwoRingsIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 48 48" aria-hidden="true" {...props}>
+      <circle cx="19" cy="29" r="10" />
+      <circle cx="29" cy="29" r="10" />
+      <path d="M15.5 19 L19 13.5 L22.5 19 Z" />
+    </svg>
+  );
+}
+
+/** The reception: two glasses */
+export function GlassesIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg viewBox="0 0 48 48" aria-hidden="true" {...props}>
+      <path d="M11 8 H21 L20 20 A4.5 4.5 0 0 1 12 20 Z M16 24.5 V39 M11 40 H21" />
+      <path d="M27 8 H37 L36 20 A4.5 4.5 0 0 1 28 20 Z M32 24.5 V39 M27 40 H37" />
+      <path d="M12 13 H20 M28 13 H36" />
+    </svg>
+  );
+}
+
 export function HandIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg viewBox="0 0 24 24" aria-hidden="true" {...props}>

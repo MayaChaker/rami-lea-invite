@@ -49,6 +49,8 @@ export interface Invitation {
     envelope: string; // the closed envelope, full screen, flaps meeting in the centre (941×1672)
     ribbon: string; // the satin ribbon and bow tied across it, transparent (1536×1024)
     cameo: string; // the oval photo on the letter page (4:5)
+    detailsBackground: string; // full-page photo behind "The celebration" card (no people)
+    rsvpBackground: string; // full-page photo behind the RSVP card (no people)
   };
   letter: Localized;
   notes: { title: Localized; text: Localized; icon?: NoteIcon }[];
