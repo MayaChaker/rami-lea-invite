@@ -24,10 +24,6 @@ const en = {
   rsvpTitle: "RSVP",
   replyBy: (date: string) => `Kindly reply before ${date}`,
   question: "Will you be joining us?",
-  seats: (n: number) =>
-    n === 1
-      ? "One seat has been reserved in your honour."
-      : `${n === 2 ? "Two" : n} seats have been reserved in your honour.`,
   accept: "Joyfully accept",
   decline: "Regretfully decline",
   howMany: "Number attending",
@@ -70,8 +66,6 @@ const ar: typeof en = {
   rsvpTitle: "تأكيد الحضور",
   question: "هل ستشاركوننا؟",
   replyBy: (date: string) => `نرجو الردّ قبل ${date}`,
-  seats: (n: number) =>
-    n === 1 ? "حُجز لكم مقعد واحد." : n === 2 ? "حُجز لكم مقعدان." : `حُجز لكم ${n} مقاعد.`,
   accept: "نلبّي الدعوة بكل فرح",
   decline: "نعتذر عن الحضور",
   howMany: "عدد الحضور",

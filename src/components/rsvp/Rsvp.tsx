@@ -39,11 +39,10 @@ type Props = {
   seats: number; // seats reserved for this guest: the starting number
   max: number; // the guest picks from 1 to this
   replyBy: string; // "Kindly reply before 19 May 2027"
-  seatsText: string; // "Two seats have been reserved in your honour."
   t: RsvpText;
 };
 
-export function Rsvp({ storageKey, guestName, seats, max, replyBy, seatsText, t }: Props) {
+export function Rsvp({ storageKey, guestName, seats, max, replyBy, t }: Props) {
   const ids = { answer: useId(), count: useId(), note: useId() };
   const start = Math.min(Math.max(seats, 1), max);
   const [answer, setAnswer] = useState<Answer | "">("");
@@ -117,10 +116,7 @@ export function Rsvp({ storageKey, guestName, seats, max, replyBy, seatsText, t 
           {/* Who: known from the link, shown, not asked */}
           <div className={`${styles.field} ${styles.who}`}>
             <PersonIcon />
-            <span>
-              {guestName}
-              <small>{seatsText}</small>
-            </span>
+            <span>{guestName}</span>
           </div>
 
           <label className={`${styles.field} ${error ? styles.invalid : ""}`} htmlFor={ids.answer}>

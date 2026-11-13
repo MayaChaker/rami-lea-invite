@@ -535,3 +535,16 @@
   text-align: center;
   color: var(--color-muted);
 }
+
+/* On a phone the summary stays on top, the guest list comes next and the
+   notes last: the side column dissolves into the page and the notes move
+   to the end. */
+@media (max-width: 899px) {
+  .side {
+    display: contents;
+  }
+
+  .notes {
+    order: 1;
+  }
+}
