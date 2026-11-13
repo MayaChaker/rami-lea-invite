@@ -13,3 +13,9 @@ export function formatDate(
     numberingSystem: "latn",
   }).format(new Date(iso));
 }
+
+/** Whole days from now until `iso` (0 once it has passed). Uses the clock, so
+ *  only call it where the page is rendered per request. */
+export function daysUntil(iso: string): number {
+  return Math.max(0, Math.ceil((new Date(iso).getTime() - Date.now()) / 86_400_000));
+}

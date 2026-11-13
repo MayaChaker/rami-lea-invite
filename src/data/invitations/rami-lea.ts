@@ -16,6 +16,8 @@ export const ramiLea: Invitation = {
   city: { en: "Jounieh, Lebanon", ar: "جونيه، لبنان" },
   rsvpBy: "2027-05-19",
   rsvpMax: 7,
+  // Demo only. A real couple gets a long random secret, never shown to guests.
+  dashboardSecret: "rami-lea-7f3k9q",
   media: {
     // Demo only: AI-made photos of a fake couple. A real invitation uses the
     // couple's own photos. File names change with the photo, so no image cache

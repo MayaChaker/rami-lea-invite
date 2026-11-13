@@ -30,8 +30,20 @@ export interface GiftMethod {
   value: string; // phone number or IBAN, copied by the guest
 }
 
+// One guest's answer, as the couple sees it on their dashboard. From a personal
+// link it carries the guest's token; from a shared link only the typed name.
+export interface RsvpReply {
+  token?: string;
+  name: string;
+  answer: "yes" | "no";
+  count: number; // people attending (0 when declined)
+  message: string; // the private note for the couple, may be empty
+  repliedAt: string; // ISO date
+}
+
 export interface Invitation {
   slug: string;
+  dashboardSecret: string; // the couple's private dashboard is /dashboard/<this>
   couple: {
     groom: Localized;
     bride: Localized;
