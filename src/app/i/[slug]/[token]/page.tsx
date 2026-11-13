@@ -5,7 +5,6 @@ import { DetailsScene } from "@/components/details/DetailsScene";
 import { PageDots } from "@/components/dots/PageDots";
 import { Envelope } from "@/components/envelope/Envelope";
 import { Hero } from "@/components/hero/Hero";
-import { FramedScene } from "@/components/framed/FramedScene";
 import { LaceTextures } from "@/components/lace/LaceTextures";
 import { Letter } from "@/components/letter/Letter";
 import { PageMotion } from "@/components/motion/PageMotion";
@@ -104,14 +103,6 @@ export default async function GuestInvitation({
         honour={t.honour}
         letter={inv.letter[L]}
         signature={names}
-      />
-
-      <FramedScene
-        photo={inv.media.framed}
-        photoAlt={names}
-        monogram={inv.couple.monogram}
-        title={t.married}
-        when={`${weekday} · ${day}`}
       />
 
       <CountdownBand
