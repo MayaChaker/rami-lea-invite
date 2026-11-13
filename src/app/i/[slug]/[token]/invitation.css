@@ -56,8 +56,7 @@
 }
 
 /* ---------- page types ---------- */
-.paper,
-.band {
+.paper {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -71,15 +70,8 @@
   background: var(--grain), var(--color-paper);
 }
 
-
 .paper .caps {
   color: var(--color-muted);
-}
-
-.band {
-  padding-inline: 8cqw;
-  background: var(--grain), var(--color-sage);
-  color: var(--color-on-sage);
 }
 
 /* Rounded outline buttons: Map, Waze, RSVP... */
@@ -164,23 +156,6 @@
 
 .scene .caps {
   text-shadow: 0 1px 10px rgb(0 0 0 / 0.35);
-}
-
-/* Sage linen, the cloth of the envelope, behind the lace cards */
-.linen {
-  background:
-    url("/lace/linen.webp") 0 0 / 130px 130px,
-    radial-gradient(90cqh 90cqh at 25% 15%, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0)),
-    linear-gradient(
-      150deg,
-      color-mix(in srgb, var(--color-sage), white 12%),
-      color-mix(in srgb, var(--color-sage), black 10%)
-    );
-}
-
-/* On linen, only a soft vignette, not the dark wash meant for photos */
-.scene.linen::before {
-  background: radial-gradient(80% 60% at 50% 45%, rgb(255 252 240 / 0.08), rgb(30 28 20 / 0.24));
 }
 
 /* A photo page whose text is all on a card: only a light, warm vignette */

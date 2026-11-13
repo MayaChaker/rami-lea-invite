@@ -5,7 +5,6 @@ import { DetailsScene } from "@/components/details/DetailsScene";
 import { PageDots } from "@/components/dots/PageDots";
 import { Envelope } from "@/components/envelope/Envelope";
 import { Hero } from "@/components/hero/Hero";
-import { LaceTextures } from "@/components/lace/LaceTextures";
 import { Letter } from "@/components/letter/Letter";
 import { PageMotion } from "@/components/motion/PageMotion";
 import { Notes } from "@/components/notes/Notes";
@@ -175,7 +174,6 @@ export default async function GuestInvitation({
       )}
 
       <PageDots />
-      <LaceTextures />
       <PageMotion />
     </main>
   );
