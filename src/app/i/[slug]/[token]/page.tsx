@@ -143,7 +143,6 @@ export default async function GuestInvitation({
         seats={guest.seats}
         max={inv.rsvpMax}
         replyBy={t.replyBy(formatDate(inv.rsvpBy, L, { day: "numeric", month: "long", year: "numeric" }))}
-        seatsText={t.seats(guest.seats)}
         t={{
           title: t.rsvpTitle,
           question: t.question,

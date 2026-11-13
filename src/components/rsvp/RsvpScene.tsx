@@ -10,7 +10,6 @@ type Props = {
   seats: number;
   max: number;
   replyBy: string;
-  seatsText: string;
   t: RsvpText;
 };
 
