@@ -51,17 +51,17 @@ export function Hero(p: Props) {
 
       <div className={styles.sheet}>
         <span className={styles.tear} style={{ clipPath: TORN }} aria-hidden="true" />
-        <p className={`${styles.caps} ${styles.reveal}`} style={delay(0.1)}>
+        <p className={`${styles.caps} ${styles.reveal}`} style={delay(0.2)}>
           {p.kicker}
         </p>
         <h1 className={`${styles.names} ${styles.reveal}`} style={delay(0.35)}>
           {p.groom} <span className={styles.amp}>{p.amp}</span> {p.bride}
         </h1>
-        <p className={`${styles.caps} ${styles.invited} ${styles.reveal}`} style={delay(0.7)}>
+        <p className={`${styles.caps} ${styles.invited} ${styles.reveal}`} style={delay(0.55)}>
           {p.invited}
         </p>
-        <span className={`${styles.divider} ${styles.reveal}`} style={delay(0.9)} aria-hidden="true" />
-        <p className={`${styles.caps} ${styles.reveal}`} style={delay(1)}>
+        <span className={`${styles.divider} ${styles.reveal}`} style={delay(0.65)} aria-hidden="true" />
+        <p className={`${styles.caps} ${styles.reveal}`} style={delay(0.7)}>
           {p.when}
         </p>
       </div>

@@ -42,10 +42,10 @@ export function Envelope({ envelope, ribbon, guestName, tapLabel, skipLabel }: P
     return () => pending.forEach(clearTimeout);
   }, []);
 
-  // Once the envelope starts fading, tell the page it is open:
-  // the hero text reveals itself and scrolling is unlocked (both in CSS).
+  // As soon as the flaps start opening, tell the page it is open: the hero
+  // text reveals itself while the flaps move, and scrolling is unlocked (CSS).
   useEffect(() => {
-    if (stage === "fading") document.documentElement.dataset.opened = "";
+    if (stage === "opened") document.documentElement.dataset.opened = "";
   }, [stage]);
 
   // Straight to the invitation, no animation: the Skip button, and guests
