@@ -1,0 +1,52 @@
+/* The label shape is a 9-slice border-image: a 64×64 SVG with scooped corners
+   and a fine inner line. The corners keep their size, the edges stretch, and
+   `fill` paints the middle, so the card works at any width and height. */
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 78cqw;
+  padding: 6cqw 4cqw 5cqw;
+  text-align: center;
+  color: var(--color-ink);
+  border: 28px solid transparent;
+  border-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='64' height='64'><path d='M18 0H46A18 18 0 0 0 64 18V46A18 18 0 0 0 46 64H18A18 18 0 0 0 0 46V18A18 18 0 0 0 18 0Z' fill='%23FBF8F3'/><path d='M24 7H40A25 25 0 0 0 57 24V40A25 25 0 0 0 40 57H24A25 25 0 0 0 7 40V24A25 25 0 0 0 24 7Z' fill='none' stroke='%23D9CDBB' stroke-width='1'/></svg>")
+    28 fill / 28px stretch;
+  filter: drop-shadow(0 2px 3px rgb(36 32 25 / 0.14)) drop-shadow(0 18px 26px rgb(36 32 25 / 0.26));
+}
+
+/* The small arch on top of the label, with the same fine line inside */
+.card::before {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: calc(-28px - 3.6cqw); /* above the 28px border: absolute children start inside it */
+  width: 26cqw;
+  height: calc(3.6cqw + 1px);
+  translate: -50% 0;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  background: #fbf8f3;
+}
+
+.card::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: calc(-28px - 3.6cqw + 7px);
+  width: calc(26cqw - 14px);
+  height: 3.6cqw;
+  translate: -50% 0;
+  border: 1px solid #d9cdbb;
+  border-bottom: 0;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+}
+
+/* A small hand-drawn flourish under the arch */
+.flourish {
+  width: 10cqw;
+  height: 4cqw;
+  margin: -6cqw 0 2cqw;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 16'><path d='M2 12C12 12 16 4 20 4S28 12 38 12M12 9Q9 5 6 6M28 9Q31 5 34 6' fill='none' stroke='%237C7A5C' stroke-width='1.1' stroke-linecap='round'/></svg>")
+    center / contain no-repeat;
+}

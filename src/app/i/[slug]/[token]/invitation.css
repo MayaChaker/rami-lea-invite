@@ -6,11 +6,19 @@
 }
 
 /* ---------- text ---------- */
+/* Lines of even length: never one word left alone on the last line */
+.caps,
+.scr,
+.body {
+  text-wrap: balance;
+}
+
 .caps {
   margin: 0;
-  font-size: 2.7cqw;
+  font-size: 2.9cqw;
   font-weight: 500;
-  letter-spacing: 0.32em;
+  letter-spacing: 0.3em;
+  line-height: 1.8;
   text-transform: uppercase;
 }
 
@@ -24,8 +32,8 @@
 .body {
   margin: 0;
   max-width: 21em;
-  font-size: 4.1cqw;
-  line-height: 1.7;
+  font-size: 4.5cqw;
+  line-height: 1.6;
 }
 
 .it {
@@ -63,9 +71,6 @@
   background: var(--grain), var(--color-paper);
 }
 
-.paper.alt {
-  background: var(--grain), var(--color-paper-2);
-}
 
 .paper .caps {
   color: var(--color-muted);
@@ -161,6 +166,33 @@
   text-shadow: 0 1px 10px rgb(0 0 0 / 0.35);
 }
 
+/* Sage linen, the cloth of the envelope, behind the lace cards */
+.linen {
+  background:
+    url("/lace/linen.webp") 0 0 / 130px 130px,
+    radial-gradient(90cqh 90cqh at 25% 15%, rgb(255 255 255 / 0.16), rgb(255 255 255 / 0)),
+    linear-gradient(
+      150deg,
+      color-mix(in srgb, var(--color-sage), white 12%),
+      color-mix(in srgb, var(--color-sage), black 10%)
+    );
+}
+
+/* On linen, only a soft vignette, not the dark wash meant for photos */
+.scene.linen::before {
+  background: radial-gradient(80% 60% at 50% 45%, rgb(255 252 240 / 0.08), rgb(30 28 20 / 0.24));
+}
+
+/* A photo page whose text is all on a card: only a light, warm vignette */
+.scene.clear::before {
+  background: radial-gradient(90% 70% at 50% 45%, rgb(36 32 25 / 0), rgb(36 32 25 / 0.28));
+}
+
+.scene.clear .caps,
+.scene.clear .scr {
+  text-shadow: none;
+}
+
 /* Background photo, taller than the page so the parallax never shows an edge */
 .bgx {
   position: absolute;
@@ -245,4 +277,85 @@
   .float {
     animation: none;
   }
+}
+
+/* ---------- reference style: shared pieces ---------- */
+/* Watercolour flowers and lace in the corners of the ivory pages. Decorative
+   only: CSS backgrounds, no layout, behind the content. Only on ivory, since
+   the images were cut out of a light background. */
+.deco {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.deco.sprig {
+  background-image: url("/decor/deco-sprig.webp");
+  aspect-ratio: 1303 / 1207;
+}
+
+.deco.roses {
+  background-image: url("/decor/deco-roses.webp");
+  aspect-ratio: 1312 / 1199;
+}
+
+.deco.lace {
+  background-image: url("/decor/deco-lace.webp");
+  aspect-ratio: 1536 / 1024;
+}
+
+/* Corners. The flowers are drawn for the top left (sprig) and bottom left
+   (roses); a mirror puts them on the other side. */
+.deco.tl { top: -1cqw; left: -2cqw; }
+.deco.tr { top: -1cqw; right: -1cqw; }
+.deco.bl { bottom: -3cqw; left: -3cqw; }
+.deco.br { bottom: -3cqw; right: -3cqw; }
+.deco.flip { transform: scaleX(-1); }
+
+.paper > :not(.deco) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Spaced serif capitals, the titles of the reference */
+.title {
+  margin: 0;
+  font-size: 6.4cqw;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-indent: 0.28em; /* keeps spaced capitals centred */
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+[dir="rtl"] .title {
+  font-family: var(--font-ar-display);
+  font-size: 9cqw;
+  letter-spacing: 0;
+  text-indent: 0;
+}
+
+/* A short line, a dot, a short line */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 2.4cqw;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  width: 7cqw;
+  height: 1px;
+  background: var(--color-line);
+}
+
+.divider i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-sage);
+  opacity: 0.7;
 }

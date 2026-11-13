@@ -1,15 +1,15 @@
 @import "tailwindcss";
 
 @theme inline {
-  /* Palette */
-  --color-paper: #F8F5EE;
-  --color-paper-2: #F1EDE3;
-  --color-sage: #6E7B5F;
-  --color-sage-dark: #56614A;
-  --color-ink: #2E3229;
-  --color-muted: #7D8273;
-  --color-line: #DAD3C4;
-  --color-on-sage: #F6F3EA;
+  /* Palette, taken from the photos: warm ivory sky, olive suit, olive leaves, champagne */
+  --color-paper: #F7F2EC;
+  --color-paper-2: #F1EAE1;
+  --color-sage: #7C7A5C;
+  --color-sage-dark: #5C5A42;
+  --color-ink: #36332B;
+  --color-muted: #8C8476;
+  --color-line: #E4DACD;
+  --color-on-sage: #F7F2EC;
 
   /* Fonts: role → actual font, with fallbacks */
   --font-script: var(--font-corinthia), "Snell Roundhand", cursive;

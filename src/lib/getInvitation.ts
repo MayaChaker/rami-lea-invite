@@ -13,3 +13,9 @@ export function allGuestPaths() {
     i.guests.map((g) => ({ slug: i.slug, token: g.token }))
   );
 }
+
+// The couple's dashboard is found by its secret, never by the public slug.
+export function getInvitationBySecret(secret: string): Invitation | undefined {
+  return invitations.find((i) => i.dashboardSecret === secret);
+}
+

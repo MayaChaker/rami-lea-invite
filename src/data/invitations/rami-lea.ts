@@ -15,24 +15,32 @@ export const ramiLea: Invitation = {
   date: "2027-06-19T17:00:00+03:00",
   city: { en: "Jounieh, Lebanon", ar: "جونيه، لبنان" },
   rsvpBy: "2027-05-19",
+  rsvpMax: 7,
+  // Demo only. A real couple gets a long random secret, never shown to guests.
+  dashboardSecret: "rami-lea-7f3k9q",
   media: {
-    heroVideo: `${base}/couple.mp4`,
-    heroPoster: `${base}/couple-poster.webp`,
+    // Demo only: AI-made photos of a fake couple. A real invitation uses the
+    // couple's own photos. File names change with the photo, so no image cache
+    // keeps showing an old one.
+    hero: `${base}/couple-hero.webp`,
     heroAlt: {
-      en: "Rami and Lea walking out under a white flower arch as guests throw petals",
-      ar: "رامي وليا يخرجان من تحت قوس الورود البيضاء والضيوف ينثرون البتلات",
+      en: "The bride and groom forehead to forehead under an olive tree",
+      ar: "العروسان جبينًا إلى جبين تحت شجرة زيتون",
     },
-    ogPhoto: `${base}/og.jpg`,
-    landscape: `${base}/land.webp`,
-    cameo: `${base}/cameo.webp`,
-    framed: `${base}/arch.webp`,
+    ogPhoto: `${base}/og-couple.jpg`,
+    envelope: `${base}/envelope-full.webp`,
+    ribbon: `${base}/ribbon-bow.webp`,
+    cameo: `${base}/couple-cameo.webp`,
+    detailsBackground: `${base}/scene-garden.webp`,
+    rsvpBackground: `${base}/scene-candles.webp`,
   },
   letter: {
-    en: "As we begin this new chapter together, we would be honoured to have you by our side. Here you will find everything you need for the day: the details, a way to reply, and a place to leave us a wish.",
-    ar: "ونحن نبدأ هذا الفصل الجديد معًا، يشرّفنا أن تكونوا إلى جانبنا. ستجدون هنا كل ما تحتاجونه لهذا اليوم: التفاصيل، وتأكيد الحضور، ومكانًا لتتركوا لنا أمنية.",
+    en: "As we begin this new chapter together, we would be honoured to have you by our side. Here you will find everything you need for the day: the details and a way to reply.",
+    ar: "ونحن نبدأ هذا الفصل الجديد معًا، يشرّفنا أن تكونوا إلى جانبنا. ستجدون هنا كل ما تحتاجونه لهذا اليوم: التفاصيل وتأكيد الحضور.",
   },
   notes: [
     {
+      icon: "dress",
       title: { en: "Dress code", ar: "اللباس" },
       text: {
         en: "Black tie. Soft greens, ivory and neutral tones are welcome.",
@@ -40,6 +48,7 @@ export const ramiLea: Invitation = {
       },
     },
     {
+      icon: "adults",
       title: { en: "Adults only", ar: "للكبار فقط" },
       text: {
         en: "We love your little ones, but this evening is for adults only.",
@@ -47,6 +56,7 @@ export const ramiLea: Invitation = {
       },
     },
     {
+      icon: "gift",
       title: { en: "Gifts", ar: "الهدايا" },
       text: {
         en: "Your presence is the best gift. A wishing well will be at the reception for those who wish.",

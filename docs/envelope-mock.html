@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Corinthia&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=block" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; }
+  body { width: 390px; height: 844px; overflow: hidden; font-family: "EB Garamond", serif; color: #4A4436; background: #F7F2EC; }
+  .caps { font-size: 11.5px; letter-spacing: .28em; text-transform: uppercase; line-height: 1.75; text-indent: .28em; }
+  .scr { font-family: Corinthia, cursive; color: #5C5A42; line-height: 1; }
+
+  /* the hero underneath */
+  .hero { position: absolute; inset: 0; }
+  .hero .ph { position: absolute; inset: 0 0 270px; background: url('../public/invitations/rami-lea/couple-hero.webp') 50% 30% / cover; }
+  .hero .sheet { position: absolute; left: 0; right: 0; bottom: 0; height: 300px; background: #F7F2EC; text-align: center; padding-top: 70px; }
+
+  /* the envelope */
+  .env { position: absolute; inset: 0; perspective: 1100px; cursor: pointer; transition: opacity .7s ease 2.1s; }
+  .env.open { opacity: 0; pointer-events: none; }
+  /* the photo keeps its own proportions (941×1672), centred, a little wider than the phone */
+  .box { position: absolute; top: 0; left: 50%; height: 100%; aspect-ratio: 941 / 1672; transform: translateX(-50%); transform-style: preserve-3d; }
+  .flap { position: absolute; inset: 0; background: url('../public/invitations/rami-lea/envelope-full.webp') center / 100% 100%;
+    backface-visibility: hidden; transition: transform 1.25s cubic-bezier(.55,0,.25,1) .85s, opacity .5s ease 1.55s; }
+  .top    { clip-path: polygon(0 0, 100% 0, 100% 23.6%, 50% 47.9%, 0 20.6%); transform-origin: 50% 0; z-index: 3;
+            filter: drop-shadow(0 6px 8px rgb(60 50 34 / .18)); }
+  .bottom { clip-path: polygon(0 100%, 100% 100%, 100% 70.6%, 50% 46.1%, 0 70.6%); transform-origin: 50% 100%; z-index: 2;
+            filter: drop-shadow(0 -4px 8px rgb(60 50 34 / .12)); }
+  .left   { clip-path: polygon(0 19%, 51% 47.9%, 0 72%); transform-origin: 0 50%; z-index: 1; }
+  .right  { clip-path: polygon(100% 22%, 49% 47.9%, 100% 72%); transform-origin: 100% 50%; z-index: 1; }
+  .open .top    { transform: rotateX(-170deg); }
+  .open .bottom { transform: rotateX(170deg); }
+  .open .left   { transform: rotateY(170deg); }
+  .open .right  { transform: rotateY(-170deg); }
+  .open .flap   { opacity: 0; }
+
+  /* the ribbon, in 3 pieces cut from one image: the left band, the bow, the right band.
+     Tap: the bow is pulled tight, the bands slip apart, then all three fall with gravity. */
+  .ribbon { position: absolute; left: -65px; top: 289px; width: 520px; height: 347px; z-index: 5; pointer-events: none; }
+  .piece { position: absolute; inset: 0; background: url("../public/invitations/rami-lea/ribbon-bow.webp") center / contain no-repeat;
+    filter: drop-shadow(0 6px 8px rgb(50 48 30 / .28)); }
+  .lband { clip-path: polygon(0 24%, 31% 24%, 31% 42%, 0 42%); }
+  .bow   { clip-path: polygon(31% 0, 76% 0, 76% 100%, 18% 100%, 18% 42%, 31% 42%); transform-origin: 50% 33%; }
+  .rband { clip-path: polygon(76% 24%, 100% 24%, 100% 42%, 76% 42%); }
+  .open .bow   { animation: untie 1.5s cubic-bezier(.45,0,.85,.5) forwards; }
+  .open .lband { animation: slipL 1.4s cubic-bezier(.5,0,.9,.6) .18s forwards; }
+  .open .rband { animation: slipR 1.4s cubic-bezier(.5,0,.9,.6) .24s forwards; }
+  @keyframes untie {
+    0%   { transform: none; }
+    14%  { transform: scale(1.05, .94); }               /* pulled */
+    30%  { transform: scale(.72, 1.08) rotate(-4deg); }  /* loops collapse */
+    100% { transform: translate(18px, 760px) scale(.7, 1.1) rotate(28deg); opacity: .9; }
+  }
+  @keyframes slipL {
+    0%   { transform: none; }
+    22%  { transform: translateX(-26px); }
+    100% { transform: translate(-50px, 820px) rotate(-16deg); }
+  }
+  @keyframes slipR {
+    0%   { transform: none; }
+    22%  { transform: translateX(26px); }
+    100% { transform: translate(60px, 800px) rotate(14deg); }
+  }
+
+  /* moving light across the paper */
+  .light { position: absolute; inset: 0; z-index: 4; pointer-events: none;
+    background: linear-gradient(115deg, transparent 30%, rgb(255 255 255 / .22) 45%, transparent 60%); background-size: 250% 100%;
+    animation: light 5s ease-in-out infinite; }
+  @keyframes light { from { background-position: 120% 0 } to { background-position: -20% 0 } }
+  .open .light { opacity: 0; }
+
+  .label { position: absolute; left: 0; right: 0; bottom: 64px; z-index: 6; text-align: center; transition: opacity .4s; }
+  .label .scr { font-size: 34px; margin-bottom: 12px; }
+  .label .chev { width: 12px; height: 12px; margin: 8px auto 0; border-right: 1px solid #4A4436; border-bottom: 1px solid #4A4436; transform: rotate(45deg); animation: bob 1.8s ease-in-out infinite; }
+  @keyframes bob { 50% { translate: 0 4px } }
+  .open .label { opacity: 0; }
+</style>
+</head>
+<body>
+  <div class="hero">
+    <div class="ph"></div>
+    <div class="sheet"><p class="caps">The wedding of</p><p class="scr" style="font-size:66px;margin:8px 0">Rami &amp; Lea</p><p class="caps" style="color:#8C8476">Saturday · 19 June 2027</p></div>
+  </div>
+
+  <div class="env" onclick="this.classList.add('open')">
+    <div class="box">
+      <div class="flap left"></div><div class="flap right"></div><div class="flap bottom"></div><div class="flap top"></div>
+    </div>
+    <div class="light"></div>
+    <div class="ribbon"><div class="piece lband"></div><div class="piece rband"></div><div class="piece bow"></div></div>
+    <div class="label"><p class="scr">The Haddad Family</p><p class="caps">Open the invitation</p><div class="chev"></div></div>
+  </div>
+</body>
+</html>

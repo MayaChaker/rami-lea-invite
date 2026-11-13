@@ -5,7 +5,6 @@ import { DetailsScene } from "@/components/details/DetailsScene";
 import { PageDots } from "@/components/dots/PageDots";
 import { Envelope } from "@/components/envelope/Envelope";
 import { Hero } from "@/components/hero/Hero";
-import { FramedScene } from "@/components/framed/FramedScene";
 import { LaceTextures } from "@/components/lace/LaceTextures";
 import { Letter } from "@/components/letter/Letter";
 import { PageMotion } from "@/components/motion/PageMotion";
@@ -68,27 +67,27 @@ export default async function GuestInvitation({
   const names = `${inv.couple.groom[L]}${t.and}${inv.couple.bride[L]}`;
   const day = formatDate(inv.date, L, { day: "numeric", month: "long", year: "numeric" });
   const weekday = formatDate(inv.date, L, { weekday: "long" });
-  const when = `${day} · ${inv.city[L]}`;
+
 
   return (
     <main className="invitation" lang={L} dir={L === "ar" ? "rtl" : "ltr"}>
       <Envelope
-        tapLabel={t.tapOpen}
+        envelope={inv.media.envelope}
+        ribbon={inv.media.ribbon}
+        guestName={guest.name[L]}
+        tapLabel={t.openInvitation}
         skipLabel={t.skip}
-        photo={inv.media.cameo}
-        photoAlt={names}
       />
 
       <Hero
-        kicker={t.getting}
+        kicker={t.weddingOf}
         groom={inv.couple.groom[L]}
         amp={t.amp}
         bride={inv.couple.bride[L]}
-        when={when}
-        scrollLabel={t.scroll}
-        video={inv.media.heroVideo}
-        poster={inv.media.heroPoster}
-        videoLabel={inv.media.heroAlt[L]}
+        invited={t.invited}
+        when={`${weekday} · ${day}`}
+        photo={inv.media.hero}
+        photoAlt={inv.media.heroAlt[L]}
       />
 
       <Letter
@@ -100,32 +99,20 @@ export default async function GuestInvitation({
         signature={names}
       />
 
-      <FramedScene
-        background={inv.media.landscape}
-        photo={inv.media.framed}
-        photoAlt={names}
-        monogram={inv.couple.monogram}
-        title={t.married}
-        when={`${weekday} · ${day}`}
-      />
-
       <CountdownBand
         label={`${weekday} · ${day}`}
         title={t.countdown}
+        closing={t.untilForever}
         target={inv.date}
         units={t.units}
       />
 
-      {/* TODO: the prototype uses hero.webp here; land.webp until it is added. */}
       <DetailsScene
-        background={inv.media.landscape}
+        background={inv.media.detailsBackground}
         card={{
-          title: t.details,
-          tapOpen: t.tapOpen,
-          tapClose: t.tapClose,
+          title: t.celebration,
+          when: `${weekday} · ${day}`,
           mapLabel: t.map,
-          openLabel: t.openDetails,
-          closeLabel: t.closeDetails,
           // Only the events this guest is invited to
           items: myEvents.map((e) => ({
             id: e.id,
@@ -139,7 +126,7 @@ export default async function GuestInvitation({
 
       <Notes
         label={t.goodToKnow}
-        notes={inv.notes.map((n) => ({ title: n.title[L], text: n.text[L] }))}
+        notes={inv.notes.map((n) => ({ title: n.title[L], text: n.text[L], icon: n.icon }))}
         gifts={
           inv.gifts && {
             intro: t.giftIntro,
@@ -151,21 +138,19 @@ export default async function GuestInvitation({
       />
 
       <RsvpScene
-        background={inv.media.landscape}
+        background={inv.media.rsvpBackground}
         storageKey={`rsvp:${inv.slug}:${guest.token}`}
         guestName={guest.name[L]}
         seats={guest.seats}
+        max={inv.rsvpMax}
         replyBy={t.replyBy(formatDate(inv.rsvpBy, L, { day: "numeric", month: "long", year: "numeric" }))}
         seatsText={t.seats(guest.seats)}
         t={{
           title: t.rsvpTitle,
-          tapReply: t.tapReply,
-          openLabel: t.openReply,
+          question: t.question,
           accept: t.accept,
           decline: t.decline,
           howMany: t.howMany,
-          less: t.less,
-          more: t.more,
           note: t.noteFor(names),
           optional: t.optional,
           send: t.send,
@@ -177,13 +162,12 @@ export default async function GuestInvitation({
           attending: t.attending,
           declined: t.declined,
           change: t.change,
-          close: t.close,
         }}
       />
       {inv.albumUrl && (
         <PhotosQr
-          label={t.onTheDay}
-          title={t.shareMoments}
+          title={t.thankYou}
+          label={t.partOfStory}
           text={t.scanText}
           url={inv.albumUrl}
           qrLabel={t.qrLabel}

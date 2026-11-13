@@ -1,12 +1,18 @@
-/* A white card so the code scans well on the sage band */
+/* The code on the card colour, in a fine frame, so it scans well */
 .qr {
-  padding: 4cqw;
-  background: #fff;
-  box-shadow: 0 10px 24px -14px rgb(20 22 16 / 0.5);
+  margin: 3cqw 0 1cqw;
+  padding: 3cqw;
+  background: #fbf8f3;
+  border: 1px solid var(--color-line);
+  box-shadow: 0 10px 24px -16px rgb(36 32 25 / 0.35);
 }
 
 .qr svg {
   display: block;
-  width: 32cqw;
-  height: 32cqw;
+  width: 34cqw;
+  height: 34cqw;
+}
+
+.scan {
+  max-width: 20em;
 }

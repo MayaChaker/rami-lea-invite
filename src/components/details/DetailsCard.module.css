@@ -1,192 +1,91 @@
-/* Ported from the prototype's .tapcard */
-.card {
-  width: 74cqw;
-  height: 122cqw;
-  margin-top: 4cqw;
-  perspective: 1400px;
-  cursor: pointer;
-}
-
-.inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transform-style: preserve-3d;
-  transition: transform 1.1s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.open .inner {
-  transform: rotateY(180deg);
-}
-
-.face {
-  position: absolute !important;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 3cqw;
-  padding: 9cqw 7cqw;
-  text-align: center;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-.back {
-  justify-content: space-evenly;
-  gap: 0;
-  transform: rotateY(180deg);
-}
-
 .title {
-  font-size: 17cqw;
-  color: var(--color-ink);
-  text-shadow: none !important;
+  font-size: 6cqw;
 }
 
-.hint {
+.when {
+  margin-top: 1.4cqw;
   color: var(--color-muted);
-  text-shadow: none !important;
 }
 
-/* A soft light sweeps across the front, inviting a tap */
-.front::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 2;
-  pointer-events: none;
-  background: linear-gradient(105deg, transparent 35%, rgb(255 255 255 / 0.75) 50%, transparent 65%);
-  background-size: 260% 100%;
-  background-position: 130% 0;
-  animation: sheen 3.6s ease-in-out infinite 1s;
-}
-
-/* Rings that spread out from a pressing hand */
-.ripple {
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 15cqw;
-  height: 15cqw;
-  margin-top: 4cqw;
-}
-
-.ripple::before,
-.ripple::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border: 1px solid var(--color-sage);
-  border-radius: 50%;
-  animation: ripple 2.2s ease-out infinite;
-}
-
-.ripple::after {
-  animation-delay: 1.1s;
-}
-
-.ripple svg {
-  width: 7cqw;
-  height: 7cqw;
-  fill: none;
-  stroke: var(--color-sage-dark);
-  stroke-width: 1.3;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-  animation: press 2.2s ease-in-out infinite;
-}
-
-/* ---------- back: one block per event ---------- */
-.item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 1cqw;
+/* The events: icon on the start side, text beside it */
+.list {
   width: 100%;
+  margin: 2cqw 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: grid;
+  grid-template-columns: 11cqw 1fr;
+  gap: 4cqw;
+  align-items: center;
+  padding: 3.4cqw 0;
+  text-align: start;
 }
 
 .item + .item {
-  padding-top: 4cqw;
   border-top: 1px solid var(--color-line);
 }
 
+.icon {
+  width: 11cqw;
+  height: 11cqw;
+  fill: none;
+  stroke: var(--color-sage-dark);
+  stroke-width: 1.15;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.item p {
+  margin: 0;
+}
+
+.label {
+  font-size: 3.3cqw;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
 .time {
-  font-size: 6.4cqw;
-  line-height: 1.1;
+  font-size: 3.1cqw;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--color-muted);
 }
 
 .place {
-  margin-bottom: 1.6cqw;
   font-size: 3.8cqw;
   font-style: italic;
+  color: var(--color-muted);
+}
+
+.links {
+  margin-top: 0.8cqw !important;
+  font-size: 2.6cqw;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+}
+
+.links a {
+  color: var(--color-sage-dark);
+  text-decoration: none;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.links a:focus-visible {
+  outline: 2px solid var(--color-sage);
+  outline-offset: 2px;
+}
+
+:global([dir="rtl"]) .label,
+:global([dir="rtl"]) .time,
+:global([dir="rtl"]) .links {
+  font-size: 3.8cqw;
+  letter-spacing: 0;
 }
 
 :global([dir="rtl"]) .place {
   font-style: normal;
-}
-
-.small {
-  min-height: 8cqw !important;
-  padding: 0 4.6cqw !important;
-  font-size: 2.5cqw !important;
-}
-
-.backHint {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 3.6cqw;
-  font-size: 2.3cqw !important;
-}
-
-.card:focus-visible {
-  outline: 2px solid #fff;
-  outline-offset: 6px;
-}
-
-@keyframes sheen {
-  0% {
-    background-position: 130% 0;
-  }
-  45%,
-  100% {
-    background-position: -30% 0;
-  }
-}
-
-@keyframes ripple {
-  from {
-    transform: scale(0.35);
-    opacity: 0.9;
-  }
-  to {
-    transform: scale(1.4);
-    opacity: 0;
-  }
-}
-
-@keyframes press {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  40% {
-    transform: translateY(3px) scale(0.94);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .inner {
-    transition-duration: 0.01s;
-  }
-
-  .front::before,
-  .ripple::before,
-  .ripple::after,
-  .ripple svg {
-    animation: none;
-  }
 }

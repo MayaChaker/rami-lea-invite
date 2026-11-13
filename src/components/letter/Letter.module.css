@@ -1,43 +1,32 @@
-/* The cameo holds the oval and the lace ring drawn around it. */
+/* The oval: a thin line around the photo, and a second, fainter one outside */
 .cameo {
   position: relative;
-  margin: 6cqw 0 7cqw;
+  margin-bottom: 3cqw;
+  padding: 1.8cqw;
+  border: 1px solid var(--color-line);
+  border-radius: 50%;
 }
 
-/* Lace ring: drawn for a 200×250 oval with a 26 px band, so it reaches
-   26/200 of the oval's width past each side. A soft shadow lifts the ivory
-   lace off the ivory paper. */
 .cameo::after {
   content: "";
   position: absolute;
-  inset: calc(-52cqw * 26 / 200) calc(-52cqw * 26 / 200);
-  background-image: var(--lace-oval);
-  background-size: 100% 100%;
-  filter: drop-shadow(0 2px 3px rgb(120 112 92 / 0.35));
+  inset: -1.6cqw;
+  border: 1px solid rgb(124 122 92 / 0.3);
+  border-radius: 50%;
   pointer-events: none;
 }
 
-/* An oval photo pressed into the paper, with a thin outer line. */
 .oval {
   position: relative;
-  width: 52cqw;
+  width: 42cqw;
   aspect-ratio: 4 / 5;
   overflow: hidden;
   border-radius: 50%;
-  background: var(--color-paper);
-  box-shadow:
-    inset 3px 3px 5px rgb(255 255 255 / 0.95),
-    inset -3px -3px 6px rgb(120 112 92 / 0.2),
-    2px 3px 6px rgb(120 112 92 / 0.18);
 }
 
 .photo {
-  /* inset inside the paper border */
-  inset: 3.4cqw !important;
-  width: calc(100% - 6.8cqw) !important;
-  height: calc(100% - 6.8cqw) !important;
   object-fit: cover;
-  border-radius: 50%;
+  object-position: 50% 30%;
   transition: transform 3s ease;
 }
 
@@ -56,14 +45,16 @@
 .families :global(.caps) {
   color: var(--color-ink);
   line-height: 1.6;
-  text-wrap: balance;
 }
 
 .honour {
+  font-size: 4.4cqw;
+  line-height: 1.45;
   color: var(--color-muted);
 }
 
+/* The names are the heart of the letter: the largest line on the page */
 .sign {
-  margin-top: 2cqw;
-  font-size: 13cqw;
+  font-size: 18cqw;
+  color: var(--color-sage-dark);
 }
