@@ -166,8 +166,8 @@ export default async function GuestInvitation({
       />
       {inv.albumUrl && (
         <PhotosQr
-          label={t.onTheDay}
-          title={t.shareMoments}
+          title={t.thankYou}
+          label={t.partOfStory}
           text={t.scanText}
           url={inv.albumUrl}
           qrLabel={t.qrLabel}
