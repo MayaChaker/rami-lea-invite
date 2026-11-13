@@ -138,20 +138,19 @@ export default async function GuestInvitation({
       />
 
       <RsvpScene
+        background={inv.media.rsvpBackground}
         storageKey={`rsvp:${inv.slug}:${guest.token}`}
         guestName={guest.name[L]}
         seats={guest.seats}
+        max={inv.rsvpMax}
         replyBy={t.replyBy(formatDate(inv.rsvpBy, L, { day: "numeric", month: "long", year: "numeric" }))}
         seatsText={t.seats(guest.seats)}
         t={{
           title: t.rsvpTitle,
-          tapReply: t.tapReply,
-          openLabel: t.openReply,
+          question: t.question,
           accept: t.accept,
           decline: t.decline,
           howMany: t.howMany,
-          less: t.less,
-          more: t.more,
           note: t.noteFor(names),
           optional: t.optional,
           send: t.send,
@@ -163,7 +162,6 @@ export default async function GuestInvitation({
           attending: t.attending,
           declined: t.declined,
           change: t.change,
-          close: t.close,
         }}
       />
       {inv.albumUrl && (

@@ -14,7 +14,8 @@ export function PageDots() {
     const root = document.querySelector<HTMLElement>(".invitation");
     if (!root) return;
     const pages = [...root.querySelectorAll<HTMLElement>(":scope > section")];
-    setCount(pages.length);
+    // Set on the next frame, not while React is still running this effect
+    const frame = requestAnimationFrame(() => setCount(pages.length));
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -27,7 +28,10 @@ export function PageDots() {
       { root, threshold: [0.55] },
     );
     pages.forEach((p) => observer.observe(p));
-    return () => observer.disconnect();
+    return () => {
+      cancelAnimationFrame(frame);
+      observer.disconnect();
+    };
   }, []);
 
   if (!count) return null;

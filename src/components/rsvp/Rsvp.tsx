@@ -20,8 +20,6 @@ export type RsvpText = {
   accept: string;
   decline: string;
   howMany: string;
-  less: string;
-  more: string;
   note: string; // "A note for Rami & Lea"
   optional: string;
   send: string;
@@ -38,16 +36,18 @@ export type RsvpText = {
 type Props = {
   storageKey: string; // one saved reply per invitation and guest
   guestName: string;
-  seats: number; // the most people this guest can bring
+  seats: number; // seats reserved for this guest: the starting number
+  max: number; // the guest picks from 1 to this
   replyBy: string; // "Kindly reply before 19 May 2027"
   seatsText: string; // "Two seats have been reserved in your honour."
   t: RsvpText;
 };
 
-export function Rsvp({ storageKey, guestName, seats, replyBy, seatsText, t }: Props) {
-  const ids = { answer: useId(), note: useId() };
+export function Rsvp({ storageKey, guestName, seats, max, replyBy, seatsText, t }: Props) {
+  const ids = { answer: useId(), count: useId(), note: useId() };
+  const start = Math.min(Math.max(seats, 1), max);
   const [answer, setAnswer] = useState<Answer | "">("");
-  const [count, setCount] = useState(seats);
+  const [count, setCount] = useState(start);
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
   const [sent, setSent] = useState<Reply | null>(null);
@@ -62,14 +62,14 @@ export function Rsvp({ storageKey, guestName, seats, replyBy, seatsText, t }: Pr
         const saved = JSON.parse(raw) as Reply;
         setSent(saved);
         setAnswer(saved.answer);
-        setCount(saved.count || seats);
+        setCount(saved.count || start);
         setMessage(saved.message);
       } catch {
         // Private mode or a bad value: start fresh.
       }
     });
     return () => cancelAnimationFrame(frame);
-  }, [storageKey, seats]);
+  }, [storageKey, start]);
 
   function save(reply: Reply) {
     try {
@@ -142,29 +142,19 @@ export function Rsvp({ storageKey, guestName, seats, replyBy, seatsText, t }: Pr
             </select>
           </label>
 
-          {answer === "yes" && seats > 1 && (
-            <div className={`${styles.field} ${styles.count}`}>
+          {/* How many: the guest picks 1 to max (7 by default in the data) */}
+          {answer === "yes" && (
+            <label className={`${styles.field} ${styles.count}`} htmlFor={ids.count}>
+              <PeopleIcon />
               <span>{t.howMany}</span>
-              <div className={styles.stepper}>
-                <button
-                  type="button"
-                  aria-label={t.less}
-                  disabled={count <= 1}
-                  onClick={() => setCount((c) => Math.max(1, c - 1))}
-                >
-                  −
-                </button>
-                <output aria-live="polite">{count}</output>
-                <button
-                  type="button"
-                  aria-label={t.more}
-                  disabled={count >= seats}
-                  onClick={() => setCount((c) => Math.min(seats, c + 1))}
-                >
-                  +
-                </button>
-              </div>
-            </div>
+              <select id={ids.count} value={count} onChange={(e) => setCount(Number(e.target.value))}>
+                {Array.from({ length: max }, (_, i) => i + 1).map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+            </label>
           )}
 
           <label className={`${styles.field} ${styles.note}`} htmlFor={ids.note}>
@@ -207,6 +197,16 @@ function CheckIcon() {
   return (
     <svg viewBox="0 0 16 16" aria-hidden="true">
       <path d="M3 8.5l3 3 7-7" />
+    </svg>
+  );
+}
+
+function PeopleIcon() {
+  return (
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+      <circle cx="5.5" cy="5" r="2.5" />
+      <circle cx="11" cy="5.5" r="2" />
+      <path d="M1 14c0-3 2-4.8 4.5-4.8S10 11 10 14M10 9.6c.4-.2.8-.3 1-.3 2.2 0 4 1.6 4 4.7" />
     </svg>
   );
 }

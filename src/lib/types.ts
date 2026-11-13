@@ -42,6 +42,7 @@ export interface Invitation {
   date: string;
   city: Localized;
   rsvpBy: string;
+  rsvpMax: number; // the most people one reply can bring (the guest picks 1 to this)
   media: {
     hero: string; // the couple's photo on the first page
     heroAlt: Localized; // describes the hero photo for screen readers
