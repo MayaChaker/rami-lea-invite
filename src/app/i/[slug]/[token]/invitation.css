@@ -268,3 +268,84 @@
     animation: none;
   }
 }
+
+/* ---------- reference style: shared pieces ---------- */
+/* Watercolour flowers and lace in the corners of the ivory pages. Decorative
+   only: CSS backgrounds, no layout, behind the content. Only on ivory, since
+   the images were cut out of a light background. */
+.deco {
+  position: absolute;
+  z-index: 0;
+  pointer-events: none;
+  background-repeat: no-repeat;
+  background-size: contain;
+}
+
+.deco.sprig {
+  background-image: url("/decor/deco-sprig.webp");
+  aspect-ratio: 1303 / 1207;
+}
+
+.deco.roses {
+  background-image: url("/decor/deco-roses.webp");
+  aspect-ratio: 1312 / 1199;
+}
+
+.deco.lace {
+  background-image: url("/decor/deco-lace.webp");
+  aspect-ratio: 1536 / 1024;
+}
+
+/* Corners. The flowers are drawn for the top left (sprig) and bottom left
+   (roses); a mirror puts them on the other side. */
+.deco.tl { top: -1cqw; left: -2cqw; }
+.deco.tr { top: -1cqw; right: -1cqw; }
+.deco.bl { bottom: -3cqw; left: -3cqw; }
+.deco.br { bottom: -3cqw; right: -3cqw; }
+.deco.flip { transform: scaleX(-1); }
+
+.paper > :not(.deco) {
+  position: relative;
+  z-index: 1;
+}
+
+/* Spaced serif capitals, the titles of the reference */
+.title {
+  margin: 0;
+  font-size: 6.4cqw;
+  font-weight: 400;
+  letter-spacing: 0.28em;
+  text-indent: 0.28em; /* keeps spaced capitals centred */
+  text-transform: uppercase;
+  text-wrap: balance;
+}
+
+[dir="rtl"] .title {
+  font-family: var(--font-ar-display);
+  font-size: 9cqw;
+  letter-spacing: 0;
+  text-indent: 0;
+}
+
+/* A short line, a dot, a short line */
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 2.4cqw;
+}
+
+.divider::before,
+.divider::after {
+  content: "";
+  width: 7cqw;
+  height: 1px;
+  background: var(--color-line);
+}
+
+.divider i {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--color-sage);
+  opacity: 0.7;
+}

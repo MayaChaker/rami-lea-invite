@@ -117,6 +117,7 @@ export default async function GuestInvitation({
       <CountdownBand
         label={`${weekday} · ${day}`}
         title={t.countdown}
+        closing={t.untilForever}
         target={inv.date}
         units={t.units}
       />
