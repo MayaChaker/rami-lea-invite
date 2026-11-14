@@ -31,7 +31,7 @@ export async function saveRsvp(input: {
   }
 
   // One reply per personal link: a second reply updates the same row.
-  const { error } = await db.from("rsvps").upsert(
+  const { error } = await db().from("rsvps").upsert(
     {
       invitation_slug: inv.slug,
       guest_token: guest.token,

@@ -32,17 +32,23 @@ export async function getReplies(inv: Invitation): Promise<{
     ...(isDemo ? demoInvited : []),
   ];
 
-  const { data, error } = await db
-    .from("rsvps")
-    .select("guest_token, name, answer, count, message, updated_at")
-    .eq("invitation_slug", inv.slug)
-    .order("updated_at", { ascending: true })
-    .returns<Row[]>();
+  // If the database cannot be reached (or has no keys), show what we have
+  // rather than crash.
+  let rows: Row[] = [];
+  try {
+    const { data, error } = await db()
+      .from("rsvps")
+      .select("guest_token, name, answer, count, message, updated_at")
+      .eq("invitation_slug", inv.slug)
+      .order("updated_at", { ascending: true })
+      .returns<Row[]>();
+    if (error) throw new Error(error.message);
+    rows = data ?? [];
+  } catch (e) {
+    console.error("getReplies failed:", e instanceof Error ? e.message : e);
+  }
 
-  // If the database cannot be reached, show what we have rather than crash.
-  if (error) console.error("getReplies failed:", error.message);
-
-  const real: RsvpReply[] = (data ?? []).map((r) => ({
+  const real: RsvpReply[] = rows.map((r) => ({
     token: r.guest_token ?? undefined,
     name: r.name,
     answer: r.answer,
