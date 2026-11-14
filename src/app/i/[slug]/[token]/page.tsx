@@ -138,6 +138,8 @@ export default async function GuestInvitation({
 
       <RsvpScene
         background={inv.media.rsvpBackground}
+        slug={inv.slug}
+        token={guest.token}
         storageKey={`rsvp:${inv.slug}:${guest.token}`}
         guestName={guest.name[L]}
         seats={guest.seats}
@@ -153,6 +155,7 @@ export default async function GuestInvitation({
           optional: t.optional,
           send: t.send,
           chooseFirst: t.chooseFirst,
+          sendFailed: t.sendFailed,
           merci: t.merci,
           thanksYesOne: t.thanksYesOne,
           thanksYesMany: t.thanksYesMany,

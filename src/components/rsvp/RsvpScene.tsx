@@ -5,6 +5,8 @@ import { Rsvp, type RsvpText } from "./Rsvp";
 // Server Component; only the form runs in the browser.
 type Props = {
   background: string;
+  slug: string;
+  token: string;
   storageKey: string;
   guestName: string;
   seats: number;
