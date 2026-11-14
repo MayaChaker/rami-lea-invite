@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useId, useState, type FormEvent } from "react";
+import { useEffect, useId, useState, useTransition, type FormEvent } from "react";
+import { saveRsvp } from "@/app/i/[slug]/[token]/actions";
 import { LabelCard } from "@/components/card/LabelCard";
 import styles from "./Rsvp.module.css";
 
@@ -8,8 +9,8 @@ import styles from "./Rsvp.module.css";
 // seats come from their link, so the form only asks: coming or not, how many,
 // and an optional note for the couple.
 //
-// For now the reply is saved in this guest's browser only (localStorage).
-// Step 5 replaces save() with a Server Action that writes to Supabase.
+// The reply is saved in the database by a Server Action (saveRsvp). This phone
+// also remembers it (localStorage), so the guest sees their answer next time.
 
 type Answer = "yes" | "no";
 type Reply = { answer: Answer; count: number; message: string };
@@ -24,6 +25,7 @@ export type RsvpText = {
   optional: string;
   send: string;
   chooseFirst: string;
+  sendFailed: string; // "Something went wrong, please try again."
   merci: string;
   thanksYesOne: string;
   thanksYesMany: string;
@@ -34,6 +36,8 @@ export type RsvpText = {
 };
 
 type Props = {
+  slug: string; // the invitation
+  token: string; // the guest
   storageKey: string; // one saved reply per invitation and guest
   guestName: string;
   seats: number; // seats reserved for this guest: the starting number
@@ -42,7 +46,7 @@ type Props = {
   t: RsvpText;
 };
 
-export function Rsvp({ storageKey, guestName, seats, max, replyBy, t }: Props) {
+export function Rsvp({ slug, token, storageKey, guestName, seats, max, replyBy, t }: Props) {
   const ids = { answer: useId(), count: useId(), note: useId() };
   const start = Math.min(Math.max(seats, 1), max);
   const [answer, setAnswer] = useState<Answer | "">("");
@@ -50,6 +54,8 @@ export function Rsvp({ storageKey, guestName, seats, max, replyBy, t }: Props) {
   const [message, setMessage] = useState("");
   const [error, setError] = useState(false);
   const [sent, setSent] = useState<Reply | null>(null);
+  const [failed, setFailed] = useState(false);
+  const [sending, startSending] = useTransition();
 
   // A reply this guest already sent from this phone. localStorage only exists
   // in the browser, so it is read after the first render, on the next frame.
@@ -70,11 +76,11 @@ export function Rsvp({ storageKey, guestName, seats, max, replyBy, t }: Props) {
     return () => cancelAnimationFrame(frame);
   }, [storageKey, start]);
 
-  function save(reply: Reply) {
+  function remember(reply: Reply) {
     try {
       localStorage.setItem(storageKey, JSON.stringify(reply));
     } catch {
-      // Not saved on this phone; the thank-you still shows.
+      // Not remembered on this phone; the reply is still in the database.
     }
   }
 
@@ -85,8 +91,18 @@ export function Rsvp({ storageKey, guestName, seats, max, replyBy, t }: Props) {
       return;
     }
     const reply = { answer, count: answer === "yes" ? count : 0, message: message.trim() };
-    save(reply);
-    setSent(reply);
+    setFailed(false);
+    startSending(async () => {
+      try {
+        const result = await saveRsvp({ slug, token, ...reply });
+        if (!result.ok) throw new Error(result.error);
+        remember(reply);
+        setSent(reply);
+      } catch {
+        // Offline, or the server refused: keep the form, ask to try again.
+        setFailed(true);
+      }
+    });
   }
 
   const thanks =
@@ -169,8 +185,13 @@ export function Rsvp({ storageKey, guestName, seats, max, replyBy, t }: Props) {
               {t.chooseFirst}
             </p>
           )}
+          {failed && (
+            <p className={styles.error} role="alert">
+              {t.sendFailed}
+            </p>
+          )}
 
-          <button type="submit" className={styles.send}>
+          <button type="submit" className={styles.send} disabled={sending} aria-busy={sending}>
             {t.send}
           </button>
         </form>
