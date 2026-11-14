@@ -6,9 +6,9 @@ import { Rsvp, type RsvpText } from "./Rsvp";
 type Props = {
   background: string;
   slug: string;
-  token: string;
+  token?: string;
   storageKey: string;
-  guestName: string;
+  guestName?: string;
   seats: number;
   max: number;
   replyBy: string;

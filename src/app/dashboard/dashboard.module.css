@@ -548,3 +548,79 @@
     order: 1;
   }
 }
+
+/* ---------- the password screen ---------- */
+.signIn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 100svh;
+  padding: 24px 16px;
+  text-align: center;
+}
+
+.signIn .names {
+  margin: 10px 0 0;
+  font-size: 44px;
+}
+
+.signInForm {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  width: min(320px, 100%);
+  margin-top: 28px;
+}
+
+.password {
+  padding: 12px 14px;
+  border: 1px solid var(--color-line);
+  border-radius: 10px;
+  background: #fbf8f3;
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 17px;
+  text-align: center;
+  outline: none;
+}
+
+.password:focus {
+  border-color: var(--color-sage);
+}
+
+.password[aria-invalid="true"] {
+  border-color: #b9806b;
+}
+
+.wrong {
+  margin: 0;
+  font-size: 14px;
+  font-style: italic;
+  color: #8a4f3c;
+}
+
+.enter {
+  min-height: 46px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--color-sage);
+  color: var(--color-on-sage);
+  font: inherit;
+  font-size: 13px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.enter:disabled {
+  opacity: 0.6;
+}
+
+.enter:focus-visible,
+.password:focus-visible {
+  outline: 2px solid var(--color-sage);
+  outline-offset: 2px;
+}

@@ -43,7 +43,7 @@ export interface RsvpReply {
 
 export interface Invitation {
   slug: string;
-  dashboardSecret: string; // the couple's private dashboard is /dashboard/<this>
+  sharedLang: Lang; // the language of the shared link (the site's home page), chosen by the couple
   couple: {
     groom: Localized;
     bride: Localized;
