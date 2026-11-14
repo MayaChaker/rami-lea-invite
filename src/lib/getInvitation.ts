@@ -14,8 +14,9 @@ export function allGuestPaths() {
   );
 }
 
-// The couple's dashboard is found by its secret, never by the public slug.
-export function getInvitationBySecret(secret: string): Invitation | undefined {
-  return invitations.find((i) => i.dashboardSecret === secret);
+// The site belongs to one couple: its home page is their shared invitation,
+// and /dashboard is their dashboard. (A platform would pick it by domain.)
+export function getHomeInvitation(): Invitation {
+  return invitations[0];
 }
 

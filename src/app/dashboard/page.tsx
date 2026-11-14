@@ -1,15 +1,16 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
 import { connection } from "next/server";
 import { daysUntil, formatDate } from "@/lib/format";
-import { getInvitationBySecret } from "@/lib/getInvitation";
+import { isSignedIn, passwordIsSet } from "@/lib/dashboardAuth";
+import { getHomeInvitation } from "@/lib/getInvitation";
 import { getReplies } from "@/lib/getReplies";
 import { initials } from "@/lib/initials";
 import { GuestList, type Row } from "./GuestList";
+import { SignIn } from "./SignIn";
 import styles from "./dashboard.module.css";
 
 // The couple's private dashboard: who is coming, who declined, who has not
-// replied yet, and the notes guests left. Reached only by its secret link.
+// replied yet, and the notes guests left. At /dashboard, behind a password.
 // Attendance is never shown on the guests' pages.
 
 // The couple opens it straight from their link, never through in-app navigation.
@@ -23,13 +24,18 @@ export const metadata: Metadata = {
 
 const short = (iso: string) => formatDate(iso, "en", { day: "numeric", month: "short" });
 
-export default async function Dashboard({ params }: { params: Promise<{ secret: string }> }) {
+export default async function Dashboard() {
   // Rendered on every visit, never at build time: the replies change all the
   // time (once the database is connected), and so does "days to go".
   await connection();
-  const { secret } = await params;
-  const inv = getInvitationBySecret(secret);
-  if (!inv) notFound();
+  const inv = getHomeInvitation();
+
+  if (!passwordIsSet()) {
+    return <p className={styles.demo}>Set DASHBOARD_PASSWORD (in .env.local and in Vercel) to open the dashboard.</p>;
+  }
+  if (!(await isSignedIn())) {
+    return <SignIn names={`${inv.couple.groom.en} & ${inv.couple.bride.en}`} monogram={inv.couple.monogram} />;
+  }
 
   const { invited, replies } = await getReplies(inv);
 

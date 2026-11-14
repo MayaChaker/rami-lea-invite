@@ -99,6 +99,24 @@
   padding-bottom: 2cqw;
 }
 
+/* The name, on the shared link */
+.field input {
+  flex: 1;
+  min-width: 0;
+  height: 12cqw;
+  border: 0;
+  background: transparent;
+  color: var(--color-ink);
+  font: inherit;
+  font-size: 4.2cqw;
+  outline: none;
+}
+
+.field input::placeholder {
+  font-style: italic;
+  color: var(--color-muted);
+}
+
 .note textarea {
   flex: 1;
   min-width: 0;

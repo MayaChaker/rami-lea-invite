@@ -13,10 +13,14 @@ import styles from "./Rsvp.module.css";
 // also remembers it (localStorage), so the guest sees their answer next time.
 
 type Answer = "yes" | "no";
-type Reply = { answer: Answer; count: number; message: string };
+// `id`: the database row of a shared-link reply, so changing it updates the
+// same row instead of adding a second one.
+type Reply = { answer: Answer; count: number; message: string; name?: string; id?: string };
 
 export type RsvpText = {
   title: string; // "RSVP"
+  yourName: string; // shared link: "Your name"
+  nameFirst: string; // shared link: "Please write your name first."
   question: string; // "Will you be joining us?"
   accept: string;
   decline: string;
@@ -37,9 +41,9 @@ export type RsvpText = {
 
 type Props = {
   slug: string; // the invitation
-  token: string; // the guest
+  token?: string; // the guest; none on the shared link
   storageKey: string; // one saved reply per invitation and guest
-  guestName: string;
+  guestName?: string; // known from a personal link; on the shared link the guest types it
   seats: number; // seats reserved for this guest: the starting number
   max: number; // the guest picks from 1 to this
   replyBy: string; // "Kindly reply before 19 May 2027"
@@ -47,12 +51,16 @@ type Props = {
 };
 
 export function Rsvp({ slug, token, storageKey, guestName, seats, max, replyBy, t }: Props) {
-  const ids = { answer: useId(), count: useId(), note: useId() };
+  const ids = { name: useId(), answer: useId(), count: useId(), note: useId() };
+  const shared = !token;
   const start = Math.min(Math.max(seats, 1), max);
   const [answer, setAnswer] = useState<Answer | "">("");
   const [count, setCount] = useState(start);
   const [message, setMessage] = useState("");
+  const [name, setName] = useState("");
+  const [rowId, setRowId] = useState<string | undefined>();
   const [error, setError] = useState(false);
+  const [nameError, setNameError] = useState(false);
   const [sent, setSent] = useState<Reply | null>(null);
   const [failed, setFailed] = useState(false);
   const [sending, startSending] = useTransition();
@@ -69,6 +77,8 @@ export function Rsvp({ slug, token, storageKey, guestName, seats, max, replyBy, 
         setAnswer(saved.answer);
         setCount(saved.count || start);
         setMessage(saved.message);
+        setName(saved.name ?? "");
+        setRowId(saved.id);
       } catch {
         // Private mode or a bad value: start fresh.
       }
@@ -86,18 +96,25 @@ export function Rsvp({ slug, token, storageKey, guestName, seats, max, replyBy, 
 
   function submit(e: FormEvent) {
     e.preventDefault();
-    if (!answer) {
-      setError(true);
-      return;
-    }
-    const reply = { answer, count: answer === "yes" ? count : 0, message: message.trim() };
+    const missingName = shared && name.trim().length < 2;
+    setNameError(missingName);
+    setError(!answer);
+    if (missingName || !answer) return;
+    const reply: Reply = {
+      answer,
+      count: answer === "yes" ? count : 0,
+      message: message.trim(),
+      ...(shared && { name: name.trim(), id: rowId }),
+    };
     setFailed(false);
     startSending(async () => {
       try {
         const result = await saveRsvp({ slug, token, ...reply });
         if (!result.ok) throw new Error(result.error);
-        remember(reply);
-        setSent(reply);
+        const saved = { ...reply, id: result.id };
+        setRowId(result.id);
+        remember(saved);
+        setSent(saved);
       } catch {
         // Offline, or the server refused: keep the form, ask to try again.
         setFailed(true);
@@ -120,7 +137,7 @@ export function Rsvp({ slug, token, storageKey, guestName, seats, max, replyBy, 
         <div className={styles.thanks} aria-live="polite">
           {/* What was sent, so the guest knows the reply went through */}
           <p className={`caps ${styles.summary}`}>
-            {guestName} · {sent.answer === "yes" ? `${sent.count} ${t.attending}` : t.declined}
+            {guestName ?? sent.name} · {sent.answer === "yes" ? `${sent.count} ${t.attending}` : t.declined}
           </p>
           <p className="body it">{thanks}</p>
           <button type="button" className={styles.change} onClick={() => setSent(null)}>
@@ -129,11 +146,30 @@ export function Rsvp({ slug, token, storageKey, guestName, seats, max, replyBy, 
         </div>
       ) : (
         <form className={styles.form} onSubmit={submit} noValidate>
-          {/* Who: known from the link, shown, not asked */}
-          <div className={`${styles.field} ${styles.who}`}>
-            <PersonIcon />
-            <span>{guestName}</span>
-          </div>
+          {/* Who: known from a personal link (shown); asked on the shared link */}
+          {shared ? (
+            <label className={`${styles.field} ${nameError ? styles.invalid : ""}`} htmlFor={ids.name}>
+              <PersonIcon />
+              <input
+                id={ids.name}
+                type="text"
+                autoComplete="name"
+                maxLength={80}
+                placeholder={t.yourName}
+                value={name}
+                aria-invalid={nameError}
+                onChange={(e) => {
+                  setName(e.target.value);
+                  setNameError(false);
+                }}
+              />
+            </label>
+          ) : (
+            <div className={`${styles.field} ${styles.who}`}>
+              <PersonIcon />
+              <span>{guestName}</span>
+            </div>
+          )}
 
           <label className={`${styles.field} ${error ? styles.invalid : ""}`} htmlFor={ids.answer}>
             <CheckIcon />
@@ -180,6 +216,11 @@ export function Rsvp({ slug, token, storageKey, guestName, seats, max, replyBy, 
             />
           </label>
 
+          {nameError && (
+            <p className={styles.error} role="alert">
+              {t.nameFirst}
+            </p>
+          )}
           {error && (
             <p className={styles.error} role="alert">
               {t.chooseFirst}
