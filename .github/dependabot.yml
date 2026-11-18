@@ -1,0 +1,18 @@
+# Dependabot opens a pull request when a package has an update, and at once
+# when it has a security fix. The CI then tests the update before merging.
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+    # One pull request for all small updates, instead of one per package
+    groups:
+      minor-and-patch:
+        update-types: [minor, patch]
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
