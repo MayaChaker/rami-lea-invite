@@ -34,7 +34,13 @@ export default async function Dashboard() {
     return <p className={styles.demo}>Set DASHBOARD_PASSWORD (in .env.local and in Vercel) to open the dashboard.</p>;
   }
   if (!(await isSignedIn())) {
-    return <SignIn names={`${inv.couple.groom.en} & ${inv.couple.bride.en}`} monogram={inv.couple.monogram} />;
+    return (
+      <SignIn
+        names={`${inv.couple.groom.en} & ${inv.couple.bride.en}`}
+        monogram={inv.couple.monogram}
+        background={inv.media.detailsBackground}
+      />
+    );
   }
 
   const { invited, replies } = await getReplies(inv);
