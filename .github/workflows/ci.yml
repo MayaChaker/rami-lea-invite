@@ -74,9 +74,9 @@ jobs:
 
       - name: Speed table header
         run: |
-          echo "### Invitation speed (Slow 4G, mid-range Android, empty cache)" >> "$GITHUB_STEP_SUMMARY"
-          echo "| | FCP | LCP / budget | JS / budget | Fonts | Until load |" >> "$GITHUB_STEP_SUMMARY"
-          echo "|---|---|---|---|---|---|" >> "$GITHUB_STEP_SUMMARY"
+          echo "### Invitation speed (mid-range Android, empty cache)" >> "$GITHUB_STEP_SUMMARY"
+          echo "| | Network | FCP / budget | LCP / budget | JS | Fonts | Until load |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|---|---|---|---|---|" >> "$GITHUB_STEP_SUMMARY"
 
       # Builds the site, starts it with a fake database, runs tests/e2e
       - name: End-to-end tests
