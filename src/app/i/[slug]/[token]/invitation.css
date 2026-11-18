@@ -267,18 +267,31 @@
 }
 
 .deco.sprig {
-  background-image: url("/decor/deco-sprig.webp");
   aspect-ratio: 1303 / 1207;
 }
 
 .deco.roses {
-  background-image: url("/decor/deco-roses.webp");
   aspect-ratio: 1312 / 1199;
 }
 
 .deco.lace {
-  background-image: url("/decor/deco-lace.webp");
   aspect-ratio: 1536 / 1024;
+}
+
+/* The images (200 KB) are asked for only once the envelope has arrived, or
+   the invitation is open (see Envelope.tsx). Before that, on a slow network,
+   they would share the bandwidth with the envelope, the first thing a guest
+   sees. They are for the pages after it, so they are ready in time. */
+:root:is([data-decor], [data-opened]) .deco.sprig {
+  background-image: url("/decor/deco-sprig.webp");
+}
+
+:root:is([data-decor], [data-opened]) .deco.roses {
+  background-image: url("/decor/deco-roses.webp");
+}
+
+:root:is([data-decor], [data-opened]) .deco.lace {
+  background-image: url("/decor/deco-lace.webp");
 }
 
 /* Corners. The flowers are drawn for the top left (sprig) and bottom left
