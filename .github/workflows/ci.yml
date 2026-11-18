@@ -19,9 +19,11 @@ concurrency:
 permissions:
   contents: read
 
+# Ubuntu pinned, not "latest": a new Ubuntu can arrive before Playwright
+# supports it, and the CI would break with no change in the code.
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
@@ -54,7 +56,7 @@ jobs:
         run: npm run build
 
   e2e:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
