@@ -62,6 +62,18 @@ test("invitation pages ask search engines not to list them", async ({ page }) =>
   }
 });
 
+test("the browser tab and the phone home screen show the couple's monogram icon", async ({ page, request }) => {
+  await page.goto("/");
+  for (const rel of ["icon", "apple-touch-icon"]) {
+    const href = await page.locator(`link[rel="${rel}"]`).getAttribute("href");
+    expect(href, rel).toBeTruthy();
+    const response = await request.get(href!);
+    expect(response.headers()["content-type"]).toBe("image/png");
+  }
+  // Not the default Next.js icon
+  expect((await request.get("/favicon.ico")).status()).toBe(404);
+});
+
 test("the WhatsApp preview has a title and a picture", async ({ page, request }) => {
   await page.goto("/i/rami-lea/haddad-7x2k");
   await expect(page.locator('meta[property="og:title"]')).toHaveAttribute("content", /Rami/);

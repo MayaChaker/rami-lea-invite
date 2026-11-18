@@ -1,6 +1,8 @@
 # Checks every pull request and every push to main, so a mistake is caught
-# before it reaches the live site. Next.js 16 no longer runs ESLint during
-# `next build`, so lint runs here on its own.
+# before it reaches the live site. Two jobs run side by side:
+#   check  lint, types, unit tests, known security holes, build
+#   e2e    the built site in a real browser: guests, RSVP, dashboard, speed
+# Next.js 16 no longer runs ESLint during `next build`, so lint runs here.
 name: CI
 
 on:
@@ -13,28 +15,78 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# The workflow only reads the code; it cannot change the repository.
+permissions:
+  contents: read
+
+# Ubuntu pinned, not "latest": a new Ubuntu can arrive before Playwright
+# supports it, and the CI would break with no change in the code.
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
 
       # Exactly the versions in package-lock.json
       - run: npm ci
 
       - name: Lint
-        run: npx eslint src
+        run: npx eslint src tests
 
       - name: Type check
         run: npx next typegen && npx tsc --noEmit
+
+      - name: Unit tests
+        run: npm test
+
+      # Known security holes in what the site ships. Dev tools are left out:
+      # they never run on the live site (Dependabot keeps them updated).
+      - name: Security audit
+        run: npm audit --omit=dev --audit-level=high
 
       # The build needs no secrets: the database and the dashboard password
       # are only read when a page is visited.
       - name: Build
         run: npm run build
+
+  e2e:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # The browser, and the Linux libraries it needs
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Speed table header
+        run: |
+          echo "### Invitation speed (Slow 4G, mid-range Android, empty cache)" >> "$GITHUB_STEP_SUMMARY"
+          echo "| | FCP | LCP / budget | JS / budget | Fonts | Until load |" >> "$GITHUB_STEP_SUMMARY"
+          echo "|---|---|---|---|---|---|" >> "$GITHUB_STEP_SUMMARY"
+
+      # Builds the site, starts it with a fake database, runs tests/e2e
+      - name: End-to-end tests
+        run: npm run test:e2e
+
+      # When a test fails: screenshots and a step-by-step trace, to download
+      - name: Upload report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 14
