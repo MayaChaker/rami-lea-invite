@@ -11,6 +11,8 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/i/[slug]/[token]/opengraph-image": ["./src/assets/og/**", "./public/invitations/*/og-*.jpg"],
     "/opengraph-image": ["./src/assets/og/**", "./public/invitations/*/og-*.jpg"],
+    "/icon": ["./src/assets/og/**"],
+    "/apple-icon": ["./src/assets/og/**"],
   },
   partialPrefetching: true,
   turbopack: {
