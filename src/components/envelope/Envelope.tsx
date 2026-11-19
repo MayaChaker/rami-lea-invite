@@ -57,6 +57,23 @@ export function Envelope({ envelope, ribbon, guestName, tapLabel, skipLabel }: P
     setStage("gone");
   }
 
+  // Once the envelope and ribbon have arrived, the decorations of the next
+  // pages may load (invitation.css, .deco). Never later than 4 s, so they are
+  // never held back by a slow image.
+  useEffect(() => {
+    const allow = () => {
+      document.documentElement.dataset.decor = "";
+    };
+    const loaded = [envelope, ribbon].map((src) => {
+      const img = new Image();
+      img.src = src; // already asked for by preload() below: no second download
+      return img.decode().catch(() => {});
+    });
+    Promise.all(loaded).then(allow);
+    const fallback = window.setTimeout(allow, 4000);
+    return () => clearTimeout(fallback);
+  }, [envelope, ribbon]);
+
   // Runs once on mount. skip() waits for the next frame, so the state does
   // not change while React is still running the effect.
   useEffect(() => {
