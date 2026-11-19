@@ -59,6 +59,26 @@ test("the right password opens the dashboard, with the replies from the database
   await expect(page.getByText("Guests coming")).toBeVisible();
 });
 
+test("signing out closes the dashboard on this phone, until the password is typed again", async ({ page, context }) => {
+  await page.goto("/dashboard");
+  await page.getByLabel("Password").fill(DASHBOARD_PASSWORD);
+  await page.getByRole("button", { name: "Open" }).click();
+  await expect(page.getByText("Guests coming")).toBeVisible();
+
+  await page.getByRole("button", { name: "Sign out" }).click();
+
+  await expect(page.getByRole("dialog").getByLabel("Password")).toBeVisible();
+  await expect(page.getByText("Guests coming")).toHaveCount(0);
+  expect((await context.cookies()).find((c) => c.name === "dashboard")).toBeUndefined();
+
+  // Reloading, or going back, does not bring it back
+  await page.reload();
+  await expect(page.getByText("Guests coming")).toHaveCount(0);
+  await page.goBack();
+  await page.goto("/dashboard");
+  await expect(page.getByText("Guests coming")).toHaveCount(0);
+});
+
 test("the dashboard is never listed by search engines", async ({ page }) => {
   await page.goto("/dashboard");
   await expect(page.locator('meta[name="robots"]')).toHaveAttribute("content", /noindex/);

@@ -30,3 +30,10 @@ export async function signIn(_: SignInState, form: FormData): Promise<SignInStat
   });
   redirect("/dashboard");
 }
+
+// Sign out: the cookie is deleted on this phone, so the dashboard asks for
+// the password again. For a shared phone or laptop, once the couple is done.
+export async function signOut(): Promise<void> {
+  (await cookies()).delete({ name: COOKIE, path: "/dashboard" });
+  redirect("/dashboard");
+}

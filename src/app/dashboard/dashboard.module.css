@@ -64,6 +64,65 @@
   color: var(--color-ink);
 }
 
+/* Sign out: a quiet pill in sage line, like the dashboard's other buttons */
+.signOut {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 40px;
+  padding: 0 14px 0 11px;
+  border: 1px solid var(--color-line);
+  border-radius: 999px;
+  background: #fbf8f3;
+  color: var(--color-sage-dark);
+  font: inherit;
+  font-size: 11px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
+}
+
+.signOut:hover {
+  border-color: var(--color-sage);
+  background: var(--color-paper-2);
+}
+
+.signOut:focus-visible {
+  outline: 2px solid var(--color-sage);
+  outline-offset: 2px;
+}
+
+.signOutIcon {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* On a phone: the icon alone, in a circle (the word stays for screen readers) */
+@media (max-width: 600px) {
+  .signOut {
+    justify-content: center;
+    width: 40px;
+    padding: 0;
+  }
+
+  .signOut span {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+}
+
 /* ---------- layout ---------- */
 .layout {
   display: grid;
