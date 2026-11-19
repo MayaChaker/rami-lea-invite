@@ -26,8 +26,9 @@ A wedding invitation that opens like a real envelope, in English or Arabic, with
 
 **For guests**
 
-- An envelope tied with a satin ribbon that unties and opens, with a skip button.
+- An envelope tied with a satin ribbon that unties and opens with a tap.
 - Their own name, language (English or Arabic, right to left) and only the events they are invited to.
+- A language button in the top corner: the same invitation in the other language, on the same screen, without the envelope again.
 - The couple's photo, a letter from both families, a live countdown and the events with a map link.
 - An RSVP form: coming or not, how many people (1 to 7), and a note for the couple. They can change their reply later.
 - Practical notes, gift details that copy with one tap, and a QR code to the shared photo album.
