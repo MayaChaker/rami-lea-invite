@@ -3,6 +3,7 @@ import { DetailsScene } from "@/components/details/DetailsScene";
 import { PageDots } from "@/components/dots/PageDots";
 import { Envelope } from "@/components/envelope/Envelope";
 import { Hero } from "@/components/hero/Hero";
+import { LanguageSwitch } from "@/components/language/LanguageSwitch";
 import { Letter } from "@/components/letter/Letter";
 import { PageMotion } from "@/components/motion/PageMotion";
 import { Notes } from "@/components/notes/Notes";
@@ -10,7 +11,7 @@ import { PhotosQr } from "@/components/photos/PhotosQr";
 import { RsvpScene } from "@/components/rsvp/RsvpScene";
 import { copy } from "@/lib/copy";
 import { formatDate } from "@/lib/format";
-import type { Guest, Invitation } from "@/lib/types";
+import type { Guest, Invitation, Lang } from "@/lib/types";
 import "@/app/i/[slug]/[token]/invitation.css";
 
 // The whole invitation, one screen per page. Used by two links:
@@ -23,10 +24,15 @@ import "@/app/i/[slug]/[token]/invitation.css";
 type Props = {
   inv: Invitation;
   guest: Guest | null;
+  // The language the guest chose with the language button. Without it: the
+  // guest's language set by the couple (or the shared link's language).
+  lang?: Lang;
 };
 
-export function InvitationPage({ inv, guest }: Props) {
-  const L = guest?.lang ?? inv.sharedLang;
+export function InvitationPage({ inv, guest, lang }: Props) {
+  const L = lang ?? guest?.lang ?? inv.sharedLang;
+  const other: Lang = L === "ar" ? "en" : "ar";
+  const otherHref = guest ? `/i/${inv.slug}/${guest.token}/${other}` : `/${other}`;
   const t = copy[L];
   const myEvents = guest ? inv.events.filter((e) => guest.events.includes(e.id)) : inv.events;
 
@@ -41,7 +47,6 @@ export function InvitationPage({ inv, guest }: Props) {
         ribbon={inv.media.ribbon}
         guestName={guest ? guest.name[L] : t.dearGuests}
         tapLabel={t.openInvitation}
-        skipLabel={t.skip}
       />
 
       <Hero
@@ -143,6 +148,7 @@ export function InvitationPage({ inv, guest }: Props) {
         />
       )}
 
+      <LanguageSwitch href={otherHref} lang={other} label={t.switchLang} title={t.switchLangLabel} />
       <PageDots />
       <PageMotion />
     </main>

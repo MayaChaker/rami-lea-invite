@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { preload } from "react-dom";
+import { SKIP_ENVELOPE } from "@/components/language/LanguageSwitch";
 import styles from "./Envelope.module.css";
 
 type FlapName = "top" | "bottom" | "left" | "right";
@@ -29,10 +30,9 @@ type Props = {
   ribbon: string; // the ribbon and its bow, on a transparent background
   guestName: string; // "The Haddad Family"
   tapLabel: string; // "Open the invitation"
-  skipLabel: string; // "Skip"
 };
 
-export function Envelope({ envelope, ribbon, guestName, tapLabel, skipLabel }: Props) {
+export function Envelope({ envelope, ribbon, guestName, tapLabel }: Props) {
   const [stage, setStage] = useState<Stage>("closed");
   const timers = useRef<number[]>([]);
 
@@ -47,15 +47,6 @@ export function Envelope({ envelope, ribbon, guestName, tapLabel, skipLabel }: P
   useEffect(() => {
     if (stage === "opened") document.documentElement.dataset.opened = "";
   }, [stage]);
-
-  // Straight to the invitation, no animation: the Skip button, and guests
-  // whose phone asks for less motion.
-  function skip() {
-    timers.current.forEach(clearTimeout);
-    timers.current.length = 0;
-    document.documentElement.dataset.opened = "";
-    setStage("gone");
-  }
 
   // Once the envelope and ribbon have arrived, the decorations of the next
   // pages may load (invitation.css, .deco). Never later than 4 s, so they are
@@ -74,8 +65,23 @@ export function Envelope({ envelope, ribbon, guestName, tapLabel, skipLabel }: P
     return () => clearTimeout(fallback);
   }, [envelope, ribbon]);
 
-  // Runs once on mount. skip() waits for the next frame, so the state does
-  // not change while React is still running the effect.
+  // A guest who switched language after opening the envelope does not see it
+  // again (the event comes from LanguageSwitch).
+  useEffect(() => {
+    const pending = timers.current;
+    const onSkip = () => {
+      pending.forEach(clearTimeout);
+      pending.length = 0;
+      document.documentElement.dataset.opened = "";
+      setStage("gone");
+    };
+    window.addEventListener(SKIP_ENVELOPE, onSkip);
+    return () => window.removeEventListener(SKIP_ENVELOPE, onSkip);
+  }, []);
+
+  // Straight to the invitation, no animation, for guests whose phone asks for
+  // less motion. Runs once on mount, and waits for the next frame, so the
+  // state does not change while React is still running the effect.
   useEffect(() => {
     if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const frame = requestAnimationFrame(() => {
@@ -122,17 +128,6 @@ export function Envelope({ envelope, ribbon, guestName, tapLabel, skipLabel }: P
         <span className={styles.guest}>{guestName}</span>
         <span className={styles.tap}>{tapLabel}</span>
         <span className={styles.chevron} aria-hidden="true" />
-      </button>
-
-      <button
-        type="button"
-        className={styles.skip}
-        onClick={(e) => {
-          e.stopPropagation(); // do not also start the opening animation
-          skip();
-        }}
-      >
-        {skipLabel}
       </button>
     </div>
   );

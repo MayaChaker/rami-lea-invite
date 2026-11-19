@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { openEnvelope } from "./helpers";
 
 // The RSVP, from the guest's tap to the row in the database. The database is
 // the fake one (tests/e2e/fake-supabase.mjs): we ask it what was saved.
@@ -14,7 +15,7 @@ async function savedRows(page: Page): Promise<Row[]> {
 // Open the invitation and go straight to the RSVP card
 async function openRsvp(page: Page, path: string) {
   await page.goto(path);
-  await page.getByRole("button", { name: "Skip" }).click();
+  await openEnvelope(page);
   const form = page.locator("#rsvp");
   await form.scrollIntoViewIfNeeded();
   return {

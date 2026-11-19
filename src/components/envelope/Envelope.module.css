@@ -152,32 +152,6 @@
   outline-offset: 6px;
 }
 
-/* Skip the opening, top corner */
-.skip {
-  position: absolute;
-  top: max(12px, env(safe-area-inset-top, 0px));
-  inset-inline-end: 12px;
-  padding: 8px;
-  border: 0;
-  background: none;
-  color: var(--color-muted);
-  font: inherit;
-  font-size: 2.5cqw;
-  letter-spacing: 0.32em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-:global([dir="rtl"]) .skip {
-  font-size: 3.6cqw;
-  letter-spacing: 0;
-}
-
-.skip:focus-visible {
-  outline: 2px solid var(--color-sage);
-  outline-offset: 2px;
-}
-
 /* ---------- stages (each one stays on once reached) ---------- */
 .untie {
   background-color: transparent; /* the hero shows through as the flaps open */
@@ -188,7 +162,6 @@
 }
 
 .untie .label,
-.untie .skip,
 .untie .light {
   opacity: 0;
   pointer-events: none;

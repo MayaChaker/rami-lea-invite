@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { openEnvelope } from "./helpers";
 import { DASHBOARD_PASSWORD } from "../../playwright.config";
 
 // Bots: the hidden honeypot field, and the limits per visitor
@@ -12,7 +13,7 @@ test.beforeEach(async ({ page }) => {
 
 async function sharedRsvp(page: import("@playwright/test").Page, name: string) {
   await page.goto("/");
-  await page.getByRole("button", { name: "Skip" }).click();
+  await openEnvelope(page);
   const form = page.locator("#rsvp");
   await form.scrollIntoViewIfNeeded();
   await form.getByPlaceholder("Your name").fill(name);

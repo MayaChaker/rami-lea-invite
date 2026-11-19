@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { openEnvelope } from "./helpers";
 
 // What a guest sees when they open their link.
 
@@ -23,17 +24,16 @@ test("Arabic guest: right to left, Arabic name, only their events", async ({ pag
   await expect(page.locator("main")).toHaveAttribute("dir", "rtl");
   await expect(page.getByRole("button", { name: /عائلة خوري الكريمة/ })).toBeVisible();
 
-  await page.getByRole("button", { name: "تخطّي" }).click(); // Skip
+  await openEnvelope(page);
   // Khoury is invited to the ceremony and reception, not the zaffe
   await expect(page.getByText("الإكليل", { exact: true })).toBeAttached();
   await expect(page.getByText("حفل الاستقبال", { exact: true })).toBeAttached();
   await expect(page.getByText("الزفّة", { exact: true })).toHaveCount(0);
 });
 
-test("Skip goes straight to the invitation", async ({ page }) => {
+test("there is no Skip button: the envelope opens with a tap", async ({ page }) => {
   await page.goto("/i/rami-lea/haddad-7x2k");
-  await page.getByRole("button", { name: "Skip" }).click();
-  await expect(page.getByRole("button", { name: "Skip" })).toBeHidden();
+  await expect(page.getByRole("button", { name: /^Skip$|^تخطّي$/ })).toHaveCount(0);
 });
 
 test("a guest whose phone asks for less motion skips the animation", async ({ page }) => {
