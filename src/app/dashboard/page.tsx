@@ -6,6 +6,7 @@ import { getHomeInvitation } from "@/lib/getInvitation";
 import { getReplies } from "@/lib/getReplies";
 import { initials } from "@/lib/initials";
 import { GuestList, type Row } from "./GuestList";
+import { signOut } from "./actions";
 import { SignIn } from "./SignIn";
 import styles from "./dashboard.module.css";
 
@@ -106,6 +107,13 @@ export default async function Dashboard() {
         <p className={styles.days}>
           <b>{days}</b> days to go
         </p>
+        {/* Sign out, so the dashboard does not stay open on this phone */}
+        <form action={signOut}>
+          <button type="submit" className={styles.signOut} title="Sign out">
+            <SignOutIcon />
+            <span>Sign out</span>
+          </button>
+        </form>
       </header>
 
       <div className={styles.layout}>
@@ -186,8 +194,19 @@ export default async function Dashboard() {
       </div>
 
       <p className={styles.demo}>
-        Demo data. Once the database is connected (step 5), replies appear here as guests send them.
+        Demo: sample guests are shown next to the real replies, which arrive as guests send them.
       </p>
     </main>
+  );
+}
+
+// A door with an arrow going out, drawn in lines like the invitation's icons
+function SignOutIcon() {
+  return (
+    <svg viewBox="0 0 24 24" aria-hidden="true" className={styles.signOutIcon}>
+      <path d="M14 4.5H6.5a1.5 1.5 0 0 0-1.5 1.5v12a1.5 1.5 0 0 0 1.5 1.5H14" />
+      <path d="M10.5 12H20" />
+      <path d="M16.5 8.5 20 12l-3.5 3.5" />
+    </svg>
   );
 }
