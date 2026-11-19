@@ -66,6 +66,22 @@ async function measure(page: Page, context: BrowserContext, path: string, networ
   return { fcp, lcp, jsKB: Math.round(kb.script), fontsKB: Math.round(kb.font), loadKB };
 }
 
+// The first request for each resized photo (/_next/image) makes the server
+// resize it, which takes a while. On Vercel the CDN already has them ready,
+// so guests never wait for that: open each page once before measuring.
+test.beforeAll(async ({ browser }) => {
+  const page = await browser.newPage();
+  for (const path of ["/i/rami-lea/haddad-7x2k", "/i/rami-lea/khoury-m4q9"]) {
+    await page.goto(path, { waitUntil: "load" });
+    await page.getByRole("button", { name: /Skip|تخطّي/ }).click();
+    for (const section of await page.locator("main.invitation > section").all()) {
+      await section.scrollIntoViewIfNeeded();
+    }
+    await page.waitForLoadState("networkidle");
+  }
+  await page.close();
+});
+
 for (const network of Object.keys(NETWORKS) as (keyof typeof NETWORKS)[]) {
   for (const [lang, path] of [
     ["en", "/i/rami-lea/haddad-7x2k"],
