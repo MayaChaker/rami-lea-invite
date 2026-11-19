@@ -80,7 +80,7 @@ Guests open the invitation from WhatsApp, often on mobile data.
 - **Unit tests** (Vitest, 51): the RSVP Server Action with a fake database, the dashboard password and cookie, the rate limits, and the invitation data itself (unique tokens, events that exist, photos that exist, both languages filled in).
 - **End-to-end tests** (Playwright, 37): the built site in a real browser on a phone screen, with a fake database. Opening the envelope in both languages, replying, changing a reply, a database that is down, the dashboard sign-in and sign-out, bots, security headers, and that the secret key never reaches the browser.
 - **Speed budgets**: the invitation is measured on 4G and on Slow 4G, and a pull request fails if it gets slower or heavier.
-- **Security audit** of dependencies, and Dependabot pull requests for updates.
+- **Security audit** of dependencies on every pull request, and GitHub security alerts by email.
 
 ## Tech stack
 

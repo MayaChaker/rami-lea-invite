@@ -46,7 +46,7 @@ jobs:
         run: npm test
 
       # Known security holes in what the site ships. Dev tools are left out:
-      # they never run on the live site (Dependabot keeps them updated).
+      # they never run on the live site.
       - name: Security audit
         run: npm audit --omit=dev --audit-level=high
 
