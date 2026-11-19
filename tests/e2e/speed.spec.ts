@@ -1,5 +1,5 @@
 import { appendFileSync } from "node:fs";
-import { expect, test, type BrowserContext, type Page } from "@playwright/test";
+import { devices, expect, test, type Browser } from "@playwright/test";
 
 // Speed of the invitation on a mid-range Android (CPU 4x slower than a
 // laptop), empty cache: a guest opening the link from WhatsApp for the first
@@ -30,7 +30,10 @@ const BYTES_BUDGET = {
   loadKB: { en: 1150, ar: 1150 }, // everything downloaded until the page "load" event
 };
 
-async function measure(page: Page, context: BrowserContext, path: string, network: keyof typeof NETWORKS) {
+// One visit, in a fresh browser context (empty cache)
+async function measureOnce(browser: Browser, path: string, network: keyof typeof NETWORKS) {
+  const context = await browser.newContext({ ...devices["Pixel 5"], baseURL: test.info().project.use.baseURL });
+  const page = await context.newPage();
   const cdp = await context.newCDPSession(page);
   await cdp.send("Network.enable");
   await cdp.send("Network.setCacheDisabled", { cacheDisabled: true });
@@ -63,16 +66,44 @@ async function measure(page: Page, context: BrowserContext, path: string, networ
     fcp: Math.round(performance.getEntriesByName("first-contentful-paint")[0]?.startTime ?? -1),
     lcp: Math.round((window as unknown as { lcp?: number }).lcp ?? -1),
   }));
+  await context.close();
   return { fcp, lcp, jsKB: Math.round(kb.script), fontsKB: Math.round(kb.font), loadKB };
 }
+
+// Three visits, the middle value of each number: one moment when the
+// computer was busy cannot fail the test on its own.
+async function measure(browser: Browser, path: string, network: keyof typeof NETWORKS) {
+  type Result = Awaited<ReturnType<typeof measureOnce>>;
+  const runs: Result[] = [];
+  for (let i = 0; i < 3; i++) runs.push(await measureOnce(browser, path, network));
+  const median = (key: keyof Result) => runs.map((r) => r[key]).sort((a, b) => a - b)[1];
+  return { fcp: median("fcp"), lcp: median("lcp"), jsKB: median("jsKB"), fontsKB: median("fontsKB"), loadKB: median("loadKB") };
+}
+
+// The first request for each resized photo (/_next/image) makes the server
+// resize it, which takes a while. On Vercel the CDN already has them ready,
+// so guests never wait for that: open each page once before measuring.
+test.beforeAll(async ({ browser }) => {
+  const page = await browser.newPage();
+  for (const path of ["/i/rami-lea/haddad-7x2k", "/i/rami-lea/khoury-m4q9"]) {
+    await page.goto(path, { waitUntil: "load" });
+    await page.getByRole("button", { name: /Skip|تخطّي/ }).click();
+    for (const section of await page.locator("main.invitation > section").all()) {
+      await section.scrollIntoViewIfNeeded();
+    }
+    await page.waitForLoadState("networkidle");
+  }
+  await page.close();
+});
 
 for (const network of Object.keys(NETWORKS) as (keyof typeof NETWORKS)[]) {
   for (const [lang, path] of [
     ["en", "/i/rami-lea/haddad-7x2k"],
     ["ar", "/i/rami-lea/khoury-m4q9"],
   ] as const) {
-    test(`${lang} invitation on ${network} stays within its speed budget`, async ({ page, context }) => {
-      const r = await measure(page, context, path, network);
+    test(`${lang} invitation on ${network} stays within its speed budget`, async ({ browser }) => {
+      test.slow(); // three visits
+      const r = await measure(browser, path, network);
       const time = TIME_BUDGET[network];
 
       test.info().annotations.push({ type: "speed", description: JSON.stringify(r) });

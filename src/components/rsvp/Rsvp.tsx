@@ -59,6 +59,7 @@ export function Rsvp({ slug, token, storageKey, guestName, seats, max, replyBy, 
   const [message, setMessage] = useState("");
   const [name, setName] = useState("");
   const [rowId, setRowId] = useState<string | undefined>();
+  const [trap, setTrap] = useState(""); // the honeypot: stays empty for a person
   const [error, setError] = useState(false);
   const [nameError, setNameError] = useState(false);
   const [sent, setSent] = useState<Reply | null>(null);
@@ -109,7 +110,7 @@ export function Rsvp({ slug, token, storageKey, guestName, seats, max, replyBy, 
     setFailed(false);
     startSending(async () => {
       try {
-        const result = await saveRsvp({ slug, token, ...reply });
+        const result = await saveRsvp({ slug, token, ...reply, trap });
         if (!result.ok) throw new Error(result.error);
         const saved = { ...reply, id: result.id };
         setRowId(result.id);
@@ -146,6 +147,18 @@ export function Rsvp({ slug, token, storageKey, guestName, seats, max, replyBy, 
         </div>
       ) : (
         <form className={styles.form} onSubmit={submit} noValidate>
+          {/* Honeypot: invisible, out of the keyboard order and hidden from
+              screen readers. Bots fill every field; a filled one is ignored. */}
+          <div className={styles.trap} aria-hidden="true">
+            <input
+              type="text"
+              name="rsvp_extra_info"
+              tabIndex={-1}
+              autoComplete="off"
+              value={trap}
+              onChange={(e) => setTrap(e.target.value)}
+            />
+          </div>
           {/* Who: known from a personal link (shown); asked on the shared link */}
           {shared ? (
             <label className={`${styles.field} ${nameError ? styles.invalid : ""}`} htmlFor={ids.name}>
