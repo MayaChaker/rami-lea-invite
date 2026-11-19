@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { openEnvelope } from "./helpers";
 import { DASHBOARD_PASSWORD } from "../../playwright.config";
 
 // The couple's private dashboard, and what must never reach a guest.
@@ -34,7 +35,7 @@ test("a wrong password is refused", async ({ page }) => {
 test("the right password opens the dashboard, with the replies from the database", async ({ page, context }) => {
   // A guest replies first
   await page.goto("/i/rami-lea/haddad-7x2k");
-  await page.getByRole("button", { name: "Skip" }).click();
+  await openEnvelope(page);
   await page.locator("#rsvp select").first().selectOption("yes");
   await page.getByPlaceholder(/A note for/).fill("See you in Faraya");
   await page.getByRole("button", { name: "Confirm RSVP" }).click();

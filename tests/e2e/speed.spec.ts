@@ -1,5 +1,6 @@
 import { appendFileSync } from "node:fs";
 import { devices, expect, test, type Browser } from "@playwright/test";
+import { openEnvelope } from "./helpers";
 
 // Speed of the invitation on a mid-range Android (CPU 4x slower than a
 // laptop), empty cache: a guest opening the link from WhatsApp for the first
@@ -87,7 +88,7 @@ test.beforeAll(async ({ browser }) => {
   const page = await browser.newPage();
   for (const path of ["/i/rami-lea/haddad-7x2k", "/i/rami-lea/khoury-m4q9"]) {
     await page.goto(path, { waitUntil: "load" });
-    await page.getByRole("button", { name: /Skip|تخطّي/ }).click();
+    await openEnvelope(page);
     for (const section of await page.locator("main.invitation > section").all()) {
       await section.scrollIntoViewIfNeeded();
     }

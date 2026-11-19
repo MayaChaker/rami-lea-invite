@@ -26,8 +26,9 @@ A wedding invitation that opens like a real envelope, in English or Arabic, with
 
 **For guests**
 
-- An envelope tied with a satin ribbon that unties and opens, with a skip button.
+- An envelope tied with a satin ribbon that unties and opens with a tap.
 - Their own name, language (English or Arabic, right to left) and only the events they are invited to.
+- A language button in the top corner: the same invitation in the other language, on the same screen, without the envelope again.
 - The couple's photo, a letter from both families, a live countdown and the events with a map link.
 - An RSVP form: coming or not, how many people (1 to 7), and a note for the couple. They can change their reply later.
 - Practical notes, gift details that copy with one tap, and a QR code to the shared photo album.
@@ -80,7 +81,7 @@ Guests open the invitation from WhatsApp, often on mobile data.
 - **Unit tests** (Vitest, 51): the RSVP Server Action with a fake database, the dashboard password and cookie, the rate limits, and the invitation data itself (unique tokens, events that exist, photos that exist, both languages filled in).
 - **End-to-end tests** (Playwright, 37): the built site in a real browser on a phone screen, with a fake database. Opening the envelope in both languages, replying, changing a reply, a database that is down, the dashboard sign-in and sign-out, bots, security headers, and that the secret key never reaches the browser.
 - **Speed budgets**: the invitation is measured on 4G and on Slow 4G, and a pull request fails if it gets slower or heavier.
-- **Security audit** of dependencies, and Dependabot pull requests for updates.
+- **Security audit** of dependencies on every pull request, and GitHub security alerts by email.
 
 ## Tech stack
 
