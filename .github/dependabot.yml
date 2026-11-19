@@ -11,6 +11,18 @@ updates:
     groups:
       minor-and-patch:
         update-types: [minor, patch]
+    # Major versions that must move together with something else, by hand:
+    # - @types/node follows the Node version the site runs on (22)
+    # - typescript and eslint follow what Next.js supports
+    #   (eslint-config-next 16 is built for ESLint 9)
+    # Security fixes still come for all of them.
+    ignore:
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
+      - dependency-name: eslint
+        update-types: ["version-update:semver-major"]
 
   - package-ecosystem: github-actions
     directory: /
