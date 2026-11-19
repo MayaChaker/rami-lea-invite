@@ -24,6 +24,16 @@ const fake = vi.hoisted(() => {
 
 vi.mock("@/lib/supabase", () => ({ db: () => fake.query }));
 
+// The rate limit (tested on its own in rateLimit.test.ts): allowed unless a
+// test says otherwise
+const limit = vi.hoisted(() => ({ allowed: true, checks: 0 }));
+vi.mock("@/lib/rateLimit", () => ({
+  allow: async () => {
+    limit.checks++;
+    return limit.allowed;
+  },
+}));
+
 const base = { slug: "rami-lea", answer: "yes", count: 2, message: "" };
 // The arguments of the first call to `method`
 const argsOf = (method: string) => fake.calls.find((c) => c.method === method)?.args;
@@ -32,6 +42,8 @@ const argsOf = (method: string) => fake.calls.find((c) => c.method === method)?.
 beforeEach(() => {
   fake.calls = [];
   fake.result = { data: null, error: null };
+  limit.allowed = true;
+  limit.checks = 0;
   vi.spyOn(console, "error").mockImplementation(() => {}); // keep the output clean
 });
 
@@ -111,5 +123,32 @@ describe("saveRsvp: when the database fails", () => {
   it("answers 'server' instead of crashing", async () => {
     fake.result = { data: null, error: { message: "connection refused" } };
     expect(await saveRsvp({ ...base, token: "haddad-7x2k" })).toEqual({ ok: false, error: "server" });
+  });
+});
+
+describe("saveRsvp: bots", () => {
+  it("a filled honeypot looks like a success to the bot, and nothing is saved", async () => {
+    expect(await saveRsvp({ ...base, name: "Spam Bot", trap: "http://spam.example" })).toEqual({ ok: true });
+    expect(fake.calls).toHaveLength(0);
+  });
+
+  it("a new shared-link reply over the limit is refused, and nothing is saved", async () => {
+    limit.allowed = false;
+    expect(await saveRsvp({ ...base, name: "Nadine" })).toEqual({ ok: false, error: "limit" });
+    expect(argsOf("insert")).toBeUndefined();
+  });
+
+  it("a personal link is never limited: it cannot add rows", async () => {
+    limit.allowed = false;
+    expect(await saveRsvp({ ...base, token: "haddad-7x2k" })).toEqual({ ok: true });
+    expect(limit.checks).toBe(0);
+  });
+
+  it("changing a shared-link reply is never limited: it updates the same row", async () => {
+    limit.allowed = false;
+    const id = "44444444-4444-4444-4444-444444444444";
+    fake.result = { data: [{ id }], error: null };
+    expect(await saveRsvp({ ...base, name: "Nadine", id })).toEqual({ ok: true, id });
+    expect(limit.checks).toBe(0);
   });
 });

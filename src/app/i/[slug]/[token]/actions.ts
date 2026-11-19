@@ -1,6 +1,7 @@
 "use server";
 
 import { getGuest, getInvitation } from "@/lib/getInvitation";
+import { allow } from "@/lib/rateLimit";
 import { db } from "@/lib/supabase";
 
 // Saves an RSVP in the database. A Server Action: the RSVP form calls it like
@@ -14,7 +15,8 @@ import { db } from "@/lib/supabase";
 // - shared link (no token): the guest typed their name; a new row, or the
 //   same row again (`id`) when they change their reply.
 
-export type SaveResult = { ok: true; id?: string } | { ok: false; error: "invalid" | "server" };
+// "limit": too many new replies from this visitor (see src/lib/rateLimit.ts)
+export type SaveResult = { ok: true; id?: string } | { ok: false; error: "invalid" | "server" | "limit" };
 
 const UUID = /^[0-9a-f-]{36}$/i;
 
@@ -26,9 +28,13 @@ export async function saveRsvp(input: {
   answer: string;
   count: number;
   message: string;
+  trap?: string; // the hidden honeypot field: only a bot fills it
 }): Promise<SaveResult> {
   const inv = getInvitation(input.slug);
   if (!inv) return { ok: false, error: "invalid" };
+
+  // A bot filled the field no person can see: tell it all went well, save nothing.
+  if (input.trap) return { ok: true };
 
   const answer = input.answer === "yes" || input.answer === "no" ? input.answer : null;
   const count = answer === "yes" ? Math.trunc(Number(input.count)) : 0;
@@ -67,6 +73,10 @@ export async function saveRsvp(input: {
       if (data?.length) return { ok: true, id: input.id };
       // Not found (deleted meanwhile): save it as a new reply below.
     }
+
+    // A new row: the only place one visitor could fill the guest list, so it
+    // is limited. Changing a reply, or a personal link, never adds rows.
+    if (!(await allow("rsvp"))) return { ok: false, error: "limit" };
 
     const { data, error } = await db()
       .from("rsvps")

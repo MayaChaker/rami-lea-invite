@@ -8,12 +8,19 @@
 //   GET  /__rows   every row, to check what was saved
 //   POST /__reset  empty the table
 //   POST /__fail   make the next request fail, like a database that is down
+//   POST /__seed   {"kind":"rsvp","count":20}: as if the visitor had already
+//                  tried that many times (no need to fill a form 20 times)
+//
+// It also runs rate_limit_hit (supabase/rate_limits.sql) the same way: it
+// counts each visitor's attempts in the window and refuses over the limit.
 import { randomUUID } from "node:crypto";
 import { createServer } from "node:http";
 
 const PORT = Number(process.env.FAKE_SUPABASE_PORT ?? 54321);
 let rows = [];
 let failNext = false;
+let hits = []; // rate limit attempts: { bucket, at }
+let seeded = {}; // kind → attempts to add for every visitor
 
 // ?invitation_slug=eq.rami-lea&guest_token=is.null → a test for each row
 function filters(params) {
@@ -43,8 +50,20 @@ createServer(async (req, res) => {
   const body = raw ? JSON.parse(raw) : null;
 
   if (url.pathname === "/__rows") return send(res, 200, rows);
-  if (url.pathname === "/__reset") return (rows = []), send(res, 200, { ok: true });
+  if (url.pathname === "/__reset") return (rows = []), (hits = []), (seeded = {}), send(res, 200, { ok: true });
   if (url.pathname === "/__fail") return (failNext = true), send(res, 200, { ok: true });
+
+  if (url.pathname === "/__seed") return (seeded[body.kind] = body.count), send(res, 200, { ok: true });
+
+  if (url.pathname === "/rest/v1/rpc/rate_limit_hit") {
+    const { p_bucket, p_limit, p_window_seconds } = body;
+    const since = Date.now() - p_window_seconds * 1000;
+    const kind = p_bucket.split(":")[0];
+    const recent = hits.filter((h) => h.bucket === p_bucket && h.at > since).length + (seeded[kind] ?? 0);
+    if (recent >= p_limit) return send(res, 200, false);
+    hits.push({ bucket: p_bucket, at: Date.now() });
+    return send(res, 200, true);
+  }
 
   if (url.pathname !== "/rest/v1/rsvps") return send(res, 404, { message: "not found" });
   if (failNext) {

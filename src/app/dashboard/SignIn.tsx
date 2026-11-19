@@ -42,7 +42,9 @@ export function SignIn({ names, monogram, background }: Props) {
           />
           {state.error && (
             <p className={styles.wrong} role="alert">
-              Wrong password, please try again.
+              {state.tooMany
+                ? "Too many attempts. Please wait 15 minutes and try again."
+                : "Wrong password, please try again."}
             </p>
           )}
           <button type="submit" className={styles.enter} disabled={pending}>
